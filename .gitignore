@@ -3,3 +3,13 @@ __pycache__/
 
 # Environments
 venv/
+
+# Hidden files
+.DS_Store
+
+# NPM modules
+frontend/node_modules/
+
+# Bundle
+frontend/build/bundle.js
+frontend/build/bundle.js.map
