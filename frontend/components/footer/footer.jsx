@@ -37,12 +37,13 @@ class Footer extends React.Component {
     render () {
 
         const display = (
-            <Container>
+            <Container fluid>
                 <Row>
+                    <p style={{ textAlign: 'center', fontSize: '10px', lineHeight: 0.9}}>
                     This is {this.state.app_name}
-                </Row>
-                <Row>
+                    <br></br>
                     version {this.state.app_version}
+                    </p>
                 </Row>
             </Container>
         );
