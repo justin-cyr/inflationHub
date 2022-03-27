@@ -9,7 +9,3 @@ venv/
 
 # NPM modules
 frontend/node_modules/
-
-# Bundle
-frontend/build/bundle.js
-frontend/build/bundle.js.map
