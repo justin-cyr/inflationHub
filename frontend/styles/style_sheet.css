@@ -1,0 +1,14 @@
+
+/* Global */
+body {
+    background-color: #0a0e1a;
+    color: #bdbdbd;
+    padding: 10px;
+}
+
+/* NavBar */
+.nav-link {
+    align-content: center;
+    text-align: center;
+    vertical-align: middle;
+}
