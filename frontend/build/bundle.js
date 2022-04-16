@@ -72,7 +72,20 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     super(props);
     this.state = {
       allDataNames: []
-    };
+    }; // bind methods
+
+    this.getData = this.getData.bind(this);
+  }
+
+  getData(name) {
+    // Request default data
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/data/' + name,
+      method: 'GET',
+      success: response => {
+        console.log(response.data);
+      }
+    });
   }
 
   componentDidMount() {
@@ -86,6 +99,7 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         });
       }
     });
+    this.getData('US CPI NSA');
   }
 
   render() {

@@ -12,6 +12,20 @@ class DataViewer extends React.Component {
         this.state = {
             allDataNames: [],
         };
+
+        // bind methods
+        this.getData = this.getData.bind(this);
+    }
+
+    getData(name) {
+        // Request default data
+        $.ajax({
+            url: '/data/' + name,
+            method: 'GET',
+            success: (response) => {
+                console.log(response.data);
+            }
+        })
     }
 
     componentDidMount() {
@@ -24,7 +38,9 @@ class DataViewer extends React.Component {
                     allDataNames: response.names
                 });
             }
-        })
+        });
+
+        this.getData('US CPI NSA');
     }
 
     render() {
