@@ -2,13 +2,15 @@ import os
 import requests
 import pandas as pd
 
+# get logger from current_app instance
+from flask import current_app as app
+
 # Read DataConfig.csv
 DATA_CONFIG = pd.read_csv(
                 os.path.join(os.getcwd(), 'backend/DataConfig.csv'),
                 index_col='Name',
                 keep_default_na=False
             ).to_dict(orient='index')
-print(DATA_CONFIG)
 
 class DataAPI(object):
     def __init__(self, name):
@@ -59,11 +61,13 @@ class DataAPI(object):
         try:
             response = self.data_getter.get(self.url_query())
         except Exception as e:
+            app.logger.error('DataAPI(\'' + self.name + '\').get_and_parse_data failed to get data: ' + str(e))
             return dict(errors=str(e))
 
         try:
             parsed_data = self.data_parser.parse(response)
         except Exception as e:
+            app.logger.error('DataAPI(\'' + self.name + '\').get_and_parse_data failed to parse data: ' + str(e))
             return dict(errors=str(e))
 
         return dict(data=parsed_data)
@@ -72,6 +76,7 @@ class DataAPI(object):
 class DataGetter(object):
     def get(self, url):
         """Default implementation: make GET request to url and return response as text."""
+        app.logger.info('DataAPI(\'' + self.name + '\') making request GET ' + url)
         response = requests.get(url)
         return response
 
