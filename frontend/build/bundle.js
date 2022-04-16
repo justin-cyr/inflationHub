@@ -71,7 +71,8 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
     this.state = {
-      allDataNames: []
+      allDataNames: [],
+      chartData: []
     }; // bind methods
 
     this.getData = this.getData.bind(this);
@@ -84,6 +85,29 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       method: 'GET',
       success: response => {
         console.log(response.data);
+        const dates = response.data.Date;
+        let values = [];
+        let title = "";
+
+        for (const key of Object.keys(response.data)) {
+          if (key != "Date") {
+            title = key;
+            values = response.data[key];
+            break;
+          }
+        } // add to chart data
+
+
+        const newSeries = {
+          x: dates,
+          y: values,
+          type: 'scatter',
+          mode: 'lines',
+          name: title
+        };
+        this.setState({
+          chartData: this.state.chartData.concat(newSeries)
+        });
       }
     });
   }
@@ -100,12 +124,47 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       }
     });
     this.getData('US CPI NSA');
+    this.getData('US CPI SA');
+  }
+
+  componentDidUpdate() {
+    // Chart layout
+    const chartLayout = {
+      title: 'Data Viewer',
+      paper_bgcolor: '#091020',
+      plot_bgcolor: '#14171C',
+      showLegend: true,
+      xaxis: {
+        title: 'Date',
+        tickfont: {
+          color: '#91ABBD'
+        },
+        tickcolor: '#91ABBD'
+      },
+      yaxis: {
+        autotypenumbers: 'strict',
+        minexponent: 9,
+        tickfont: {
+          color: '#91ABBD'
+        },
+        tickcolor: '#91ABBD',
+        tickformat: ",.0f",
+        hoverformat: ",.3f"
+      }
+    };
+    const chartConfig = {
+      displayModeBar: true,
+      scrollZoom: true
+    };
+    Plotly.react('data-viewer-chart', this.state.chartData, chartLayout, chartConfig);
   }
 
   render() {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, "This is the DataViewer."));
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, "This is the DataViewer."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "data-viewer-chart"
+    })));
   }
 
 }
