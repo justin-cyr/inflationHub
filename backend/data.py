@@ -12,6 +12,9 @@ DATA_CONFIG = pd.read_csv(
                 keep_default_na=False
             ).to_dict(orient='index')
 
+# Flag icon folcer
+FLAG_FOLDER = os.path.join(os.getcwd(), 'backend/flag_icons')
+
 class DataAPI(object):
     def __init__(self, name):
 
