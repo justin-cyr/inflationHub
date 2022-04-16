@@ -42,11 +42,17 @@ class DataAPI(object):
         # set DataGetter and Parser
         data_getter = data_config.get('Getter')
         if not data_getter:
-            self.data_getter = DataGetter()
+            self.data_getter = DataGetter(self.name)
+        else:
+            raise Exception('DataAPI(\'' + name + '\') - unrecognized Getter: ' + data_getter)
 
         data_parser = data_config.get('Parser')
         if not data_parser:
             self.data_parser = Parser()
+        elif data_parser == 'TimeSeriesCsvParser':
+            self.data_parser = TimeSeriesCsvParser(self.name)
+        else:
+            raise Exception('DataAPI(\'' + name + '\') - unrecognized Parser: ' + data_parser)
 
 
     def __repr__(self):
@@ -74,6 +80,12 @@ class DataAPI(object):
         
 
 class DataGetter(object):
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return 'DataGetter(\'' + self.name + '\')'
+
     def get(self, url):
         """Default implementation: make GET request to url and return response as text."""
         app.logger.info('DataAPI(\'' + self.name + '\') making request GET ' + url)
@@ -82,9 +94,49 @@ class DataGetter(object):
 
 
 class Parser(object):
+
     def parse(self, data):
         """Default implementation: do nothing."""
         if isinstance(data, requests.Response):
             return data.text
         else:
             return str(data)
+
+    
+    def validate_response(self, response, fmt='*'):
+        """Ensure response has correct python type, successful status code and expected format."""
+        if not isinstance(response, requests.Response):
+            raise Exception('TimeSeriesCsvParser.parse - invalid response type ' + str(type(response)) 
+                            + ' type must be requests.Response.')
+        
+        if response.status_code != 200:
+            # Raise HTTPError for this status code
+            response.raise_for_status()
+
+
+class TimeSeriesCsvParser(Parser):
+    def __init__(self, value_col_name='Value', date_col_name='Date'):
+        self.value_col_name = value_col_name
+        self.date_col_name = date_col_name
+
+    def __repr__(self):
+        return 'TimeSeriesCsvParser(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        """Handle response as CSV and retur data as {date_col_name:[...], value_col_name:[...]}
+            dates: yyyy-mm-dd format
+            values: float
+        """
+        self.validate_response(response)
+        dates = []
+        values = []
+        line_generator = response.iter_lines()
+        # skip the headings
+        next(line_generator)
+        for line in line_generator:
+            d, v = line.decode('UTF-8').split(',')
+            dates.append(d)
+            values.append(float(v))
+
+        return {self.date_col_name: dates,
+                self.value_col_name: values}

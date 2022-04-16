@@ -1,3 +1,3 @@
 ﻿Name,Label,Type,URL,Description,Getter,Parser,Icon,Source,QueryParam1
-US CPI NSA,CPIAUCNS,CPIPrintIndex,https://fred.stlouisfed.org/graph/fredgraph.csv,Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (not seasonally-adjusted),,,,https://www.bls.gov/,id=CPIAUCNS
-US CPI SA,CPIAUCSL,CPIPrintIndex,https://fred.stlouisfed.org/graph/fredgraph.csv,Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (seasonally-adjusted),,,,https://www.bls.gov/,id=CPIAUCSL
+US CPI NSA,CPIAUCNS,CPIPrintIndex,https://fred.stlouisfed.org/graph/fredgraph.csv,Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (not seasonally-adjusted),,TimeSeriesCsvParser,,https://www.bls.gov/,id=CPIAUCNS
+US CPI SA,CPIAUCSL,CPIPrintIndex,https://fred.stlouisfed.org/graph/fredgraph.csv,Consumer Price Index for All Urban Consumers: All Items in U.S. City Average (seasonally-adjusted),,TimeSeriesCsvParser,,https://www.bls.gov/,id=CPIAUCSL
