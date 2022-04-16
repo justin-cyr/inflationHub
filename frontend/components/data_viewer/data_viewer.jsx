@@ -10,12 +10,21 @@ class DataViewer extends React.Component {
         super(props);
 
         this.state = {
-
+            allDataNames: [],
         };
     }
 
     componentDidMount() {
         // Request default data
+        $.ajax({
+            url: '/all_data_names',
+            method: 'GET',
+            success: (response) => {
+                this.setState({
+                    allDataNames: response.names
+                });
+            }
+        })
     }
 
     render() {

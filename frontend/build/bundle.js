@@ -70,10 +70,22 @@ __webpack_require__.r(__webpack_exports__);
 class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      allDataNames: []
+    };
   }
 
-  componentDidMount() {// Request default data
+  componentDidMount() {
+    // Request default data
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/all_data_names',
+      method: 'GET',
+      success: response => {
+        this.setState({
+          allDataNames: response.names
+        });
+      }
+    });
   }
 
   render() {
