@@ -19,6 +19,11 @@ class DataViewer extends React.Component {
     }
 
     getData(name) {
+        if (this.state.chartData.findIndex((series) => series.name === name) >= 0) {
+            // do nothing if series already is already plotted
+            return;
+        }
+
         // Request default data
         $.ajax({
             url: '/data/' + name,
@@ -45,8 +50,20 @@ class DataViewer extends React.Component {
                     name: title,
                 }
 
+                // insert new series in alphabetical order by title
+                const insertIndex = this.state.chartData.findIndex((series) => series.name > title);
+                let newChartData = this.state.chartData;
+                if (insertIndex >= 0) {
+                    // insert at index
+                    newChartData.splice(insertIndex, 0, newSeries);
+                }
+                else {
+                    // append
+                    newChartData.push(newSeries);
+                }
+                
                 this.setState({
-                    chartData: this.state.chartData.concat(newSeries)
+                    chartData: newChartData
                 });
 
             }
