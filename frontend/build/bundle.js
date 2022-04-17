@@ -148,25 +148,39 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     // Chart layout
     const chartLayout = {
       title: 'Data Viewer',
-      paper_bgcolor: '#091020',
+      titlefont: {
+        color: '#BDBDBD'
+      },
+      paper_bgcolor: '#0a0e1a',
       plot_bgcolor: '#14171C',
-      showLegend: true,
       xaxis: {
         title: 'Date',
-        tickfont: {
-          color: '#91ABBD'
+        titlefont: {
+          color: '#BDBDBD'
         },
-        tickcolor: '#91ABBD'
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD'
       },
       yaxis: {
+        titlefont: {
+          color: '#BDBDBD'
+        },
         autotypenumbers: 'strict',
         minexponent: 9,
         tickfont: {
-          color: '#91ABBD'
+          color: '#BDBDBD'
         },
-        tickcolor: '#91ABBD',
+        tickcolor: '#BDBDBD',
         tickformat: ",.0f",
         hoverformat: ",.3f"
+      },
+      showLegend: true,
+      legend: {
+        font: {
+          color: '#BDBDBD'
+        }
       }
     };
     const chartConfig = {
