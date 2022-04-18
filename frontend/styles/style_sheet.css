@@ -12,3 +12,26 @@ body {
     text-align: center;
     vertical-align: middle;
 }
+
+/* DataViewer */
+.list-group {
+    width: 405px
+}
+
+.list-group-item {
+    background-color: #91ABBD;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-left: 0px;
+    margin-right: 0px
+}
+
+.data-series-name-text {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.btn-close.data-series-clear-btn {
+    background-color: #91ABBD;
+    opacity: .5;
+}

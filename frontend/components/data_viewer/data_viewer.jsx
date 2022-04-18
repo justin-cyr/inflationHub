@@ -1,8 +1,14 @@
 import React from 'react';
 import $ from 'jquery';
 
+import CloseButton from 'react-bootstrap/CloseButton';
 import Container from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+
+import FuzzySearch from 'react-fuzzy';
 
 class DataViewer extends React.Component {
 
@@ -16,6 +22,7 @@ class DataViewer extends React.Component {
 
         // bind methods
         this.getData = this.getData.bind(this);
+        this.removeData = this.removeData.bind(this);
     }
 
     getData(name) {
@@ -47,6 +54,7 @@ class DataViewer extends React.Component {
                     y: values,
                     type: 'scatter',
                     mode: 'lines',
+                    showlegend: true,
                     name: title,
                 }
 
@@ -70,6 +78,20 @@ class DataViewer extends React.Component {
         })
     }
 
+    removeData(name) {
+        // Delete this data series from chartData
+        const index = this.state.chartData.findIndex((series) => series.name === name);
+        if (index === -1) {
+            // do nothing if series is not plotted
+            return;
+        }
+        let newChartData = this.state.chartData;
+        newChartData.splice(index, 1);
+        this.setState({
+            chartData: newChartData
+        });
+    }
+
     componentDidMount() {
         // Request default data
         $.ajax({
@@ -83,16 +105,11 @@ class DataViewer extends React.Component {
         });
 
         this.getData('US CPI NSA');
-        this.getData('US CPI SA');
     }
 
     componentDidUpdate() {
         // Chart layout
         const chartLayout = {
-            title: 'Data Viewer',
-            titlefont: {
-                color: '#BDBDBD'
-            },
             paper_bgcolor: '#0a0e1a',
             plot_bgcolor: '#14171C',
             xaxis: {
@@ -132,6 +149,43 @@ class DataViewer extends React.Component {
 
     render() {
 
+        // selected data series
+        let selectedDataSeries = Array();
+
+        if (this.state.chartData.length > 0) {
+            selectedDataSeries = this.state.chartData.map(chartData => 
+                <ListGroup.Item
+                    key={chartData.name}
+                >
+                    <Container fluid className="selected-data-series-container">
+                        <Row>
+                            <Col className="data-series-name-text">
+                                {chartData.name}
+                            </Col>
+                            <Col xs md="1">
+                                <CloseButton
+                                    className="data-series-clear-btn"
+                                    onClick={(e) => this.removeData(chartData.name) }
+                                />
+                            </Col>
+                        </Row>
+                    </Container>
+                </ListGroup.Item>);
+        }
+
+        // Styles for data series fuzzy search
+        const fsInputStyle = {
+            color: "black",
+            marginTop: "0px",
+            marginBottom: "0px",
+        };
+        const fsInputWrapperStyle = {
+            borderRadius: "5px",
+            padding: "0px",
+        };
+        const fsListItemStyle = fsInputStyle;
+        const fsListWrapperStyle = {};
+        const fsSelectedListItemStyle = { ...fsInputStyle, ...{ backgroundColor: "#36A0C9" } };
 
         return (
             <Container fluid>
@@ -141,6 +195,37 @@ class DataViewer extends React.Component {
                 <Row>
                     {/* Chart */}
                     <div id="data-viewer-chart"></div>
+                </Row>
+                <Row>
+                    <Col>
+                        <Row>
+                            <FuzzySearch
+                                className="data-series-search"
+                                list={this.state.allDataNames.map(t => Object({name: t}))}
+                                keys={['name']}
+                                onSelect={(object) => this.getData(object.name)}
+                                keyForDisplayName={'name'}
+                                maxResults={7}
+                                placeholder={'Search data series'}
+                                inputStyle={fsInputStyle}
+                                inputWrapperStyle={fsInputWrapperStyle}
+                                listItemStyle={fsListItemStyle}
+                                listWrapperStyle={fsListWrapperStyle}
+                                selectedListItemStyle={fsSelectedListItemStyle}
+                            />
+                        </Row>
+                        <Row>
+                            <Form.Group
+                                as={Col}
+                                md
+                            >
+                            <Form.Label column md>Selected data series:</Form.Label>
+                                <ListGroup>
+                                    {selectedDataSeries}
+                                </ListGroup>
+                            </Form.Group>
+                        </Row>
+                    </Col>
                 </Row>
             </Container>
         );
