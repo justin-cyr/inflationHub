@@ -128,7 +128,7 @@ class DataViewer extends React.Component {
                 minexponent: 9,
                 tickfont: { color: '#BDBDBD' },
                 tickcolor: '#BDBDBD',
-                tickformat: ",.0f",
+                tickformat: ",.1f",
                 hoverformat: ",.3f"
             },
             showLegend: true,

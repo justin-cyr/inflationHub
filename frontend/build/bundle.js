@@ -834,7 +834,7 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           color: '#BDBDBD'
         },
         tickcolor: '#BDBDBD',
-        tickformat: ",.0f",
+        tickformat: ",.1f",
         hoverformat: ",.3f"
       },
       showLegend: true,
