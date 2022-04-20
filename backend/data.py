@@ -55,6 +55,8 @@ class DataAPI(object):
             self.data_parser = Parser()
         elif data_parser == 'TimeSeriesCsvParser':
             self.data_parser = TimeSeriesCsvParser(self.name)
+        elif data_parser == 'TimeSeriesCnbcJsonParser':
+            self.data_parser = TimeSeriesCnbcJsonParser(self.name)
         else:
             raise Exception('DataAPI(\'' + name + '\') - unrecognized Parser: ' + data_parser)
 
@@ -110,12 +112,23 @@ class Parser(object):
     def validate_response(self, response, fmt='*'):
         """Ensure response has correct python type, successful status code and expected format."""
         if not isinstance(response, requests.Response):
-            raise Exception('TimeSeriesCsvParser.parse - invalid response type ' + str(type(response)) 
+            raise Exception('Parser.validate_response - invalid response type ' + str(type(response))
                             + ' type must be requests.Response.')
         
         if response.status_code != 200:
             # Raise HTTPError for this status code
             response.raise_for_status()
+
+        # check format
+        content_type = response.headers.get('Content-Type')
+        if content_type:
+            s = str(content_type).split('/')
+            if len(s) > 1:
+                content_type_format = s[1]
+
+                if fmt == 'json':
+                    if content_type_format[:4] != fmt:
+                        raise Exception('Parser.validate_response - expected Content-Type json but got ' + content_type_format)
 
     def parse_date(self, date_str, fmt):
         """Try to parse a date to yyyy-mm-dd format based on a format string fmt."""
@@ -130,6 +143,7 @@ class Parser(object):
         """
         supported_formats = [
             '%Y-%m-%d', # 2022-04-01
+            '%Y%m%d',   # 20220401
             '%Y %b'     # 2022 Apr
         ]
         for fmt in supported_formats:
@@ -156,7 +170,7 @@ class TimeSeriesCsvParser(Parser):
         return 'TimeSeriesCsvParser(' + str(self.__dict__) + ')'
 
     def parse(self, response):
-        """Handle response as CSV and retur data as {date_col_name:[...], value_col_name:[...]}
+        """Handle response as CSV and return data as {date_col_name:[...], value_col_name:[...]}
             dates: yyyy-mm-dd format
             values: float
         """
@@ -170,6 +184,38 @@ class TimeSeriesCsvParser(Parser):
                 continue
             d = self.chop_quotes(decoded_line[0])
             v = self.chop_quotes(decoded_line[1])
+            date_str = self.standard_date_str(d)
+            if not date_str:
+                continue
+            dates.append(date_str)
+            values.append(float(v))
+
+        return {self.date_col_name: dates,
+                self.value_col_name: values}
+
+
+class TimeSeriesCnbcJsonParser(Parser):
+    """Parser for CNBC quotes JSON data."""
+    def __init__(self, value_col_name='Value', date_col_name='Date'):
+        self.value_col_name = value_col_name
+        self.date_col_name = date_col_name
+
+    def __repr__(self):
+        return 'TimeSeriesCnbcJsonParser(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
+            dates: yyyy-mm-dd format
+            values: float
+        """
+        self.validate_response(response)
+        response_data = response.json()
+        time_series = response_data['barData']['priceBars']
+        dates = []
+        values = []
+        for record in time_series:
+            d = record['tradeTime'][:8]
+            v = record['close']
             date_str = self.standard_date_str(d)
             if not date_str:
                 continue
