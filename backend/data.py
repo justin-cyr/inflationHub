@@ -2,6 +2,7 @@ import datetime
 import os
 import requests
 import pandas as pd
+from xml.etree import ElementTree
 
 # get logger from current_app instance
 from flask import current_app as app
@@ -57,6 +58,8 @@ class DataAPI(object):
             self.data_parser = TimeSeriesCsvParser(self.name)
         elif data_parser == 'TimeSeriesCnbcJsonParser':
             self.data_parser = TimeSeriesCnbcJsonParser(self.name)
+        elif data_parser == 'TimeSeriesStatCanXmlParser':
+            self.data_parser = TimeSeriesStatCanXmlParser(self.name)
         else:
             raise Exception('DataAPI(\'' + name + '\') - unrecognized Parser: ' + data_parser)
 
@@ -66,7 +69,10 @@ class DataAPI(object):
 
 
     def url_query(self):
-        return self.url + '?' + '&'.join(self.query_params)
+        if self.query_params:
+            return self.url + '?' + '&'.join(self.query_params)
+        else:
+            return self.url
 
     
     def get_and_parse_data(self):
@@ -144,6 +150,7 @@ class Parser(object):
         supported_formats = [
             '%Y-%m-%d', # 2022-04-01
             '%Y%m%d',   # 20220401
+            '%Y-%m',    # 2022-04
             '%Y %b'     # 2022 Apr
         ]
         for fmt in supported_formats:
@@ -208,7 +215,7 @@ class TimeSeriesCnbcJsonParser(Parser):
             dates: yyyy-mm-dd format
             values: float
         """
-        self.validate_response(response)
+        self.validate_response(response, fmt='json')
         response_data = response.json()
         time_series = response_data['barData']['priceBars']
         dates = []
@@ -216,6 +223,36 @@ class TimeSeriesCnbcJsonParser(Parser):
         for record in time_series:
             d = record['tradeTime'][:8]
             v = record['close']
+            date_str = self.standard_date_str(d)
+            if not date_str:
+                continue
+            dates.append(date_str)
+            values.append(float(v))
+
+        return {self.date_col_name: dates,
+                self.value_col_name: values}
+
+class TimeSeriesStatCanXmlParser(Parser):
+    """Parser for time series from Statistics Canada."""
+    def __init__(self, value_col_name='Value', date_col_name='Date'):
+        self.value_col_name = value_col_name
+        self.date_col_name = date_col_name
+
+    def __repr__(self):
+        return 'TimeSeriesStatCanXmlParser(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
+            dates: yyyy-mm-dd format
+            values: float
+        """
+        self.validate_response(response)
+        root = ElementTree.fromstring(response.text)
+        dates = []
+        values = []
+        for record in root[1][0]:
+            d = record.get('TIME_PERIOD')
+            v = record.get('OBS_VALUE')
             date_str = self.standard_date_str(d)
             if not date_str:
                 continue
