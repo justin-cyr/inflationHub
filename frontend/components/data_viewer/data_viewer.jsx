@@ -190,9 +190,6 @@ class DataViewer extends React.Component {
         return (
             <Container fluid>
                 <Row>
-                    This is the DataViewer.
-                </Row>
-                <Row>
                     {/* Chart */}
                     <div id="data-viewer-chart"></div>
                 </Row>
