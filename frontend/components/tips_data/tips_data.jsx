@@ -114,6 +114,11 @@ class TipsData extends React.Component {
         return (
             <Container fluid>
                 <Row>
+                    <center>
+                        <h2>US Treasury Inflation-Protected Securities</h2>
+                    </center>
+                </Row>
+                <Row>
                     {/* Table */}
                     {data_table}
                 </Row>
