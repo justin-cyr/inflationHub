@@ -12,30 +12,57 @@ class TipsData extends React.Component {
         super(props);
 
         this.state = {
+            cusips: [],
             referenceData: []
         }
 
         // bind methods
+        this.getTipsCusips = this.getTipsCusips.bind(this);
         this.getTipsData = this.getTipsData.bind(this);
     }
 
-    getTipsData() {
-        // Request TIPS reference data
+    getTipsCusips() {
+        // Request TIPS CUSIPs
         $.ajax({
-            url: '/tips_reference_data',
+            url: '/tips_cusips',
             method: 'GET',
             success: (response) => {
-                console.log(response.referenceData);
+                this.setState({
+                    cusips: response.cusips
+                },
+                // get reference data for each cusip in callback 
+                () => { this.state.cusips.map((cusip) => this.getTipsData(cusip)); });
+            }
+        });
+    }
+
+    getTipsData(cusip) {
+        // Request TIPS reference data
+        $.ajax({
+            url: '/tips_reference_data/' + cusip,
+            method: 'GET',
+            success: (response) => {
+                const responseData = response.referenceData;
+
+                // insert into list in order of increasing maturity date
+                const insertIndex = this.state.referenceData.findIndex((record) => record['tenor'] > responseData['tenor']);
+                let newReferenceData = this.state.referenceData;
+                if (insertIndex >= 0) {
+                    newReferenceData.splice(insertIndex, 0, responseData);
+                }
+                else {
+                    newReferenceData.push(responseData);
+                }
 
                 this.setState({
-                    referenceData: response.referenceData
+                    referenceData: newReferenceData
                 });
             }
         });
     }
 
     componentDidMount() {
-        this.getTipsData();
+        this.getTipsCusips();
     }
 
     render() {

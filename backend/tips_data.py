@@ -15,45 +15,35 @@ def get_tips_cusips():
     return [record['cusip'] for record in response.json()]
 
 
-def get_treasury_reference_data(cusips, sort_by_tenor=True):
+def get_treasury_reference_data(cusip):
     """Get reference data for each cusip in CUSIPs from TreasuryDirect."""
-    endpoint = 'https://www.treasurydirect.gov/TA_WS/securities/search?format=json'
+    url = 'https://www.treasurydirect.gov/TA_WS/securities/search?format=json&cusip=' + cusip
     today = datetime.date.today()
-    reference_data = []
-    for cusip in cusips:
-        try:
-            getter = DataGetter(cusip)
-            response = getter.get(endpoint + '&cusip=' + cusip)
-            record = response.json()[0]
+    
+    getter = DataGetter(cusip)
+    response = getter.get(url)
+    record = response.json()[0]
+    
+    # strip timestamp out of date fields
+    date_fields = [
+        'issueDate',
+        'maturityDate',
+        'announcementDate',
+        'auctionDate',
+        'datedDate',
+        'backDatedDate',
+        'firstInterestPaymentDate',
+        'maturingDate'
+    ]
+    for key in date_fields:
+        record[key] = record[key][:10]
 
-            # strip timestamp out of date fields
-            date_fields = [
-                'issueDate',
-                'maturityDate',
-                'announcementDate',
-                'auctionDate',
-                'datedDate',
-                'backDatedDate',
-                'firstInterestPaymentDate',
-                'maturingDate'
-            ]
-            for key in date_fields:
-                record[key] = record[key][:10]
+    # calculate tenor
+    maturity_date_str = record['maturityDate']
+    maturity_date = datetime.datetime.strptime(maturity_date_str, '%Y-%m-%d').date()
+    record['tenor'] = (maturity_date - today).days / 365.0
 
-            # calculate tenor
-            maturity_date_str = record['maturityDate']
-            maturity_date = datetime.datetime.strptime(maturity_date_str, '%Y-%m-%d').date()
-            record['tenor'] = (maturity_date - today).days / 365.0
-
-            reference_data.append(record)
-
-        except Exception as e:
-            app.logger.error('get_treasury_reference_data - failed for cusip ' + cusip + ': ' + str(e))
-
-    if sort_by_tenor:
-        reference_data.sort(key=lambda record: record['tenor'])
-
-    return reference_data
+    return record
 
     
 

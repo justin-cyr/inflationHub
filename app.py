@@ -33,12 +33,22 @@ def get_data(name):
         app.logger.error(str(e))
         return dict(errors=str(e))
 
-@app.route('/tips_reference_data')
-def get_tips_reference_data():
+@app.route('/tips_cusips')
+def get_tips_cusips():
     try:
-        from backend.tips_data import get_tips_cusips, get_treasury_reference_data
+        from backend.tips_data import get_tips_cusips
         cusips = get_tips_cusips()
-        reference_data = get_treasury_reference_data(cusips)
+        return dict(cusips=cusips)
+
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))
+
+@app.route('/tips_reference_data/<cusip>')
+def get_tips_reference_data(cusip):
+    try:
+        from backend.tips_data import get_treasury_reference_data
+        reference_data = get_treasury_reference_data(cusip)
         return dict(referenceData=reference_data)
 
     except Exception as e:

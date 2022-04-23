@@ -1213,28 +1213,56 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
     this.state = {
+      cusips: [],
       referenceData: []
     }; // bind methods
 
+    this.getTipsCusips = this.getTipsCusips.bind(this);
     this.getTipsData = this.getTipsData.bind(this);
   }
 
-  getTipsData() {
-    // Request TIPS reference data
+  getTipsCusips() {
+    // Request TIPS CUSIPs
     jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
-      url: '/tips_reference_data',
+      url: '/tips_cusips',
       method: 'GET',
       success: response => {
-        console.log(response.referenceData);
         this.setState({
-          referenceData: response.referenceData
+          cusips: response.cusips
+        }, // get reference data for each cusip in callback 
+        () => {
+          this.state.cusips.map(cusip => this.getTipsData(cusip));
+        });
+      }
+    });
+  }
+
+  getTipsData(cusip) {
+    // Request TIPS reference data
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/tips_reference_data/' + cusip,
+      method: 'GET',
+      success: response => {
+        const responseData = response.referenceData; // insert into list in order of increasing maturity date
+
+        const insertIndex = this.state.referenceData.findIndex(record => record['tenor'] > responseData['tenor']);
+        let newReferenceData = this.state.referenceData;
+
+        if (insertIndex >= 0) {
+          newReferenceData.splice(insertIndex, 0, responseData);
+        } else {
+          newReferenceData.push(responseData);
+        }
+
+        this.setState({
+          referenceData: newReferenceData
         });
       }
     });
   }
 
   componentDidMount() {
-    this.getTipsData();
+    this.getTipsCusips();
   }
 
   render() {
