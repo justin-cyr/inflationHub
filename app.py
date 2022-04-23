@@ -32,3 +32,15 @@ def get_data(name):
     except Exception as e:
         app.logger.error(str(e))
         return dict(errors=str(e))
+
+@app.route('/tips_reference_data')
+def get_tips_reference_data():
+    try:
+        from backend.tips_data import get_tips_cusips, get_treasury_reference_data
+        cusips = get_tips_cusips()
+        reference_data = get_treasury_reference_data(cusips)
+        return dict(referenceData=reference_data)
+
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))

@@ -17,6 +17,9 @@ export default () => {
                     <Link to="/data_viewer">Data Viewer</Link>
                 </Col>
                 <Col className="nav-link">
+                    <Link to="/tips_data">TIPS Data</Link>
+                </Col>
+                <Col className="nav-link">
                     <Link to="/knowledge_center">Knowledge Center</Link>
                 </Col>
             </Row>
