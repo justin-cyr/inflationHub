@@ -1219,6 +1219,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     this.getTipsCusips = this.getTipsCusips.bind(this);
     this.getTipsData = this.getTipsData.bind(this);
+    this.getTipsPrices = this.getTipsPrices.bind(this);
   }
 
   getTipsCusips() {
@@ -1261,8 +1262,21 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     });
   }
 
+  getTipsPrices() {
+    // Request TIPS price data
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/tips_prices',
+      method: 'GET',
+      success: response => {
+        const priceData = response.priceData;
+        console.log(priceData);
+      }
+    });
+  }
+
   componentDidMount() {
     this.getTipsCusips();
+    this.getTipsPrices();
   }
 
   render() {

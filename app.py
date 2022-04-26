@@ -54,3 +54,14 @@ def get_tips_reference_data(cusip):
     except Exception as e:
         app.logger.error(str(e))
         return dict(errors=str(e))
+
+@app.route('/tips_prices')
+def get_tips_prices():
+    try:
+        from backend.tips_data import get_tips_prices_wsj as get_prices
+        price_data = get_prices()
+        return dict(priceData=price_data)
+
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))

@@ -19,6 +19,7 @@ class TipsData extends React.Component {
         // bind methods
         this.getTipsCusips = this.getTipsCusips.bind(this);
         this.getTipsData = this.getTipsData.bind(this);
+        this.getTipsPrices = this.getTipsPrices.bind(this);
     }
 
     getTipsCusips() {
@@ -61,8 +62,22 @@ class TipsData extends React.Component {
         });
     }
 
+    getTipsPrices() {
+        // Request TIPS price data
+        $.ajax({
+            url: '/tips_prices',
+            method: 'GET',
+            success: (response) => {
+                const priceData = response.priceData;
+
+                console.log(priceData);
+            }
+        });
+    }
+
     componentDidMount() {
         this.getTipsCusips();
+        this.getTipsPrices();
     }
 
     render() {

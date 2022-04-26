@@ -1,6 +1,8 @@
 import datetime
+import os
 
 from backend.data import DataGetter
+from backend import config as cfg
 
 # get logger from current_app instance
 from flask import current_app as app
@@ -45,5 +47,79 @@ def get_treasury_reference_data(cusip):
 
     return record
 
+
+def get_tips_prices_wsj():
+    """Return TIPS bid/ask prices and yields from WSJ markets page.
+    Data returned as
+    [
+        {
+            'MATURITY': '2022-07-15',
+            'COUPON': 0.125,
+            'BID': 101.28,
+            'ASK': 101.30,
+            'CHANGE': -4.0,
+            'YIELD': -8.408,
+            'ACCRUED PRINCIPAL': 1231.0
+        }
+    ]
+    """
+    from selenium import webdriver
+    from selenium.webdriver.common.service import Service
+    from selenium.webdriver.common.by import By
+
+    # configure web driver
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--no-sandbox')
+    if cfg.IS_PROD in os.environ:
+        options.binary_location = os.environ[cfg.GOOGLE_CHROME_BIN]
+
+    app.logger.info('Environ = ' + str(os.environ))
+    driver = webdriver.Chrome(executable_path=os.environ[cfg.CHROMEDRIVER_PATH],
+                            options=options)
+
+    # get page
+    driver.get('https://www.wsj.com/market-data/bonds/tips')
+
+    # find table data elements
+    table_data = driver.find_elements(By.TAG_NAME, 'td')
+
+    # parse into row data (takes around 20-25 seconds)
+    columns = [
+        'MATURITY',
+        'COUPON',
+        'BID',
+        'ASK',
+        'CHANGE',
+        'YIELD',
+        'ACCRUED PRINCIPAL'
+    ]
+    # use number of columns to determine row endings based on counter
+    num_cols = len(columns)
+
+    row_data = []
+    column_count = 0
+    row = {}
+    for td in table_data:
+        row[columns[column_count]] = td.text
     
+        column_count += 1
+        column_count %= num_cols
+        if column_count % num_cols == 0:
+            row_data.append(row)
+            row = {}
+
+    # close page
+    driver.quit()
+
+    # post processing
+    for row in row_data:
+        row['MATURITY'] = str(datetime.datetime.strptime(row['MATURITY'], '%Y %b %d').date())
+        row['CHANGE'] = 0.0 if row['CHANGE'] == 'unch.' else float(row['CHANGE'])
+        
+        for col in ['COUPON', 'BID', 'ASK', 'YIELD', 'ACCRUED PRINCIPAL']:
+            row[col] = float(row[col])
+
+    return row_data
 
