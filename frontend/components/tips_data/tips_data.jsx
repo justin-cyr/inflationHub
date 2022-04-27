@@ -12,6 +12,7 @@ class TipsData extends React.Component {
         super(props);
 
         this.state = {
+            chartData: [],
             cusips: [],
             referenceData: []
         }
@@ -70,6 +71,20 @@ class TipsData extends React.Component {
             success: (response) => {
                 const priceData = response.priceData;
 
+                const series = {
+                    x: priceData.map(record => record.TENOR),
+                    y: priceData.map(record => record.YIELD / 100),
+                    text: priceData.map(record => record.MATURITY),
+                    type: 'scatter',
+                    mode: 'markers',
+                    showlegend: false,
+                    name: 'Real Yields'
+                }
+
+                this.setState({
+                    chartData: [series]
+                });
+
                 console.log(priceData);
             }
         });
@@ -80,8 +95,56 @@ class TipsData extends React.Component {
         this.getTipsPrices();
     }
 
+    componentDidUpdate() {
+        // Chart layout
+        const chartLayout = {
+            paper_bgcolor: '#0a0e1a',
+            plot_bgcolor: '#14171C',
+            title: 'US TIPS Real Yields',
+            titlefont: {
+                color: '#BDBDBD'
+            },
+            xaxis: {
+                title: 'Tenor (Y)',
+                titlefont: {
+                    color: '#BDBDBD'
+                },
+                tickfont: { color: '#BDBDBD' },
+                tickcolor: '#BDBDBD',
+                tickformat: ",.1f",
+                hoverformat: ",.2f"
+            },
+            yaxis: {
+                title: 'Real Yield',
+                titlefont: {
+                    color: '#BDBDBD'
+                },
+                autotypenumbers: 'strict',
+                minexponent: 9,
+                tickfont: { color: '#BDBDBD' },
+                tickcolor: '#BDBDBD',
+                tickformat: ",.1%",
+                hoverformat: ",.3%"
+            },
+            showLegend: false,
+            legend: {
+                font: {
+                    color: '#BDBDBD',
+                }
+            }
+        };
+
+        const chartConfig = {
+            displayModeBar: true,
+            scrollZoom: true,
+        };
+
+        Plotly.react('real-yield-chart', this.state.chartData, chartLayout, chartConfig);
+    }
+
     render() {
 
+        // Reference data table
         let data_table = <center>{'... Loading data ...'}</center>;
         if (this.state.referenceData) {
 
@@ -132,6 +195,10 @@ class TipsData extends React.Component {
                     <center>
                         <h2>US Treasury Inflation-Protected Securities</h2>
                     </center>
+                </Row>
+                <Row>
+                    {/* Chart */}
+                    <div id="real-yield-chart"></div>
                 </Row>
                 <Row>
                     {/* Table */}

@@ -1213,6 +1213,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
     this.state = {
+      chartData: [],
       cusips: [],
       referenceData: []
     }; // bind methods
@@ -1269,6 +1270,18 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       method: 'GET',
       success: response => {
         const priceData = response.priceData;
+        const series = {
+          x: priceData.map(record => record.TENOR),
+          y: priceData.map(record => record.YIELD / 100),
+          text: priceData.map(record => record.MATURITY),
+          type: 'scatter',
+          mode: 'markers',
+          showlegend: false,
+          name: 'Real Yields'
+        };
+        this.setState({
+          chartData: [series]
+        });
         console.log(priceData);
       }
     });
@@ -1279,7 +1292,57 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.getTipsPrices();
   }
 
+  componentDidUpdate() {
+    // Chart layout
+    const chartLayout = {
+      paper_bgcolor: '#0a0e1a',
+      plot_bgcolor: '#14171C',
+      title: 'US TIPS Real Yields',
+      titlefont: {
+        color: '#BDBDBD'
+      },
+      xaxis: {
+        title: 'Tenor (Y)',
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD',
+        tickformat: ",.1f",
+        hoverformat: ",.2f"
+      },
+      yaxis: {
+        title: 'Real Yield',
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        autotypenumbers: 'strict',
+        minexponent: 9,
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD',
+        tickformat: ",.1%",
+        hoverformat: ",.3%"
+      },
+      showLegend: false,
+      legend: {
+        font: {
+          color: '#BDBDBD'
+        }
+      }
+    };
+    const chartConfig = {
+      displayModeBar: true,
+      scrollZoom: true
+    };
+    Plotly.react('real-yield-chart', this.state.chartData, chartLayout, chartConfig);
+  }
+
   render() {
+    // Reference data table
     let data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...');
 
     if (this.state.referenceData) {
@@ -1378,7 +1441,9 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "US Treasury Inflation-Protected Securities"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, data_table));
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "US Treasury Inflation-Protected Securities"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "real-yield-chart"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, data_table));
   }
 
 }

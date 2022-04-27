@@ -7,6 +7,18 @@ from backend import config as cfg
 # get logger from current_app instance
 from flask import current_app as app
 
+def calc_tenor(maturity_date, start_date=datetime.date.today()):
+    """Return tenor in years from start_date to maturity_date.
+        maturity_date can be a datetime.date or a yyyy-mm-dd string.
+    """
+    if isinstance(maturity_date, str):
+        end_date = datetime.datetime.strptime(maturity_date, '%Y-%m-%d').date()
+    else:
+        end_date = maturity_date
+
+    dcf = (end_date - start_date).days / 365.0
+    return dcf
+
 
 def get_tips_cusips():
     """Return list of TIPS cusips"""
@@ -20,7 +32,6 @@ def get_tips_cusips():
 def get_treasury_reference_data(cusip):
     """Get reference data for each cusip in CUSIPs from TreasuryDirect."""
     url = 'https://www.treasurydirect.gov/TA_WS/securities/search?format=json&cusip=' + cusip
-    today = datetime.date.today()
     
     getter = DataGetter(cusip)
     response = getter.get(url)
@@ -41,9 +52,7 @@ def get_treasury_reference_data(cusip):
         record[key] = record[key][:10]
 
     # calculate tenor
-    maturity_date_str = record['maturityDate']
-    maturity_date = datetime.datetime.strptime(maturity_date_str, '%Y-%m-%d').date()
-    record['tenor'] = (maturity_date - today).days / 365.0
+    record['tenor'] = calc_tenor(record['maturityDate'])
 
     return record
 
@@ -75,12 +84,13 @@ def get_tips_prices_wsj():
     if cfg.IS_PROD in os.environ:
         options.binary_location = os.environ[cfg.GOOGLE_CHROME_BIN]
 
-    app.logger.info('Environ = ' + str(os.environ))
     driver = webdriver.Chrome(executable_path=os.environ[cfg.CHROMEDRIVER_PATH],
                             options=options)
 
     # get page
-    driver.get('https://www.wsj.com/market-data/bonds/tips')
+    url = 'https://www.wsj.com/market-data/bonds/tips'
+    app.logger.info(f'GET {url}')
+    driver.get(url)
 
     # find table data elements
     table_data = driver.find_elements(By.TAG_NAME, 'td')
@@ -116,6 +126,7 @@ def get_tips_prices_wsj():
     # post processing
     for row in row_data:
         row['MATURITY'] = str(datetime.datetime.strptime(row['MATURITY'], '%Y %b %d').date())
+        row['TENOR'] = calc_tenor(row['MATURITY'])
         row['CHANGE'] = 0.0 if row['CHANGE'] == 'unch.' else float(row['CHANGE'])
         
         for col in ['COUPON', 'BID', 'ASK', 'YIELD', 'ACCRUED PRINCIPAL']:
