@@ -91,8 +91,8 @@ class TipsData extends React.Component {
     }
 
     componentDidMount() {
-        this.getTipsCusips();
         this.getTipsPrices();
+        this.getTipsCusips();
     }
 
     componentDidUpdate() {

@@ -1288,8 +1288,8 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   componentDidMount() {
-    this.getTipsCusips();
     this.getTipsPrices();
+    this.getTipsCusips();
   }
 
   componentDidUpdate() {

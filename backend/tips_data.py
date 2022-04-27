@@ -89,7 +89,7 @@ def get_tips_prices_wsj():
 
     # get page
     url = 'https://www.wsj.com/market-data/bonds/tips'
-    app.logger.info(f'GET {url}')
+    app.logger.info(f'get_tips_prices_wsj() making request GET {url}')
     driver.get(url)
 
     # find table data elements
