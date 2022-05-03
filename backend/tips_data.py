@@ -130,7 +130,10 @@ def get_tips_prices_wsj():
         row['CHANGE'] = 0.0 if row['CHANGE'] == 'unch.' else float(row['CHANGE'])
         
         for col in ['COUPON', 'BID', 'ASK', 'YIELD', 'ACCRUED PRINCIPAL']:
-            row[col] = float(row[col])
+            try:
+                row[col] = float(row[col])
+            except ValueError as e:
+                pass
 
     return row_data
 
