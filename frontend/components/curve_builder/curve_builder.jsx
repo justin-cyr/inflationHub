@@ -10,6 +10,8 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
 
+import { List, arrayMove } from 'react-movable';
+
 class CurveBuilder extends React.Component {
 
     constructor(props) {
