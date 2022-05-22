@@ -1,4 +1,4 @@
-from ..utils import Date
+from ..utils import Date, Tenor
 
 def supported_curve_data_point_types():
     """Return the names of curve data point sub-classes that can be used by the front end."""
@@ -91,7 +91,7 @@ class YoYDataPoint(CurveDataPoint):
         super().__init__(value, label)
 
         self.start_date = Date(start_date)
-        self.tenor = str(tenor)
+        self.tenor = Tenor(tenor)
 
     def serialize(self):
         d = self.__dict__
