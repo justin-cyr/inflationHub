@@ -14,7 +14,7 @@ class CurveDataPoint(object):
         try:
             float_value = float(value)
         except:
-            raise(TypeError, 'CurveDataPoint: value must be float.')
+            raise TypeError('CurveDataPoint: value must be float.')
         self.value = float_value
 
         self.label = str(label)
@@ -34,7 +34,7 @@ class CurveDataPoint(object):
     def deserialize(cls, d):
         for key in ['value', 'label']:
             if key not in d:
-                raise(KeyError, f'CurveDataPoint.deserialize: dict must contain key {key}.')
+                raise KeyError(f'CurveDataPoint.deserialize: dict must contain key {key}.')
 
         return CurveDataPoint(d['value'], d['label'])
 
@@ -45,10 +45,10 @@ class CurveDataPointFactory(object):
     def deserialize(cls, d):
         """Determine the type and delegate."""
         if not isinstance(d, dict):
-            raise(TypeError, 'CurveDataPointFactory.deserialize: argument must be a dict.')
+            raise TypeError('CurveDataPointFactory.deserialize: argument must be a dict.')
 
         if 'type' not in d:
-            raise(KeyError, 'CurveDataPointFactory.deserialize: dict must contain key type.')
+            raise KeyError('CurveDataPointFactory.deserialize: dict must contain key type.')
 
         t = d['type']
         # Call constructor based on type
@@ -59,7 +59,7 @@ class CurveDataPointFactory(object):
         elif t == 'YoYDataPoint':
             return YoYDataPoint.deserialize(d)
         else:
-            raise(NotImplementedError, f'CurveDataPointFactory.deserialize: type {t} is not supported.')
+            raise NotImplementedError(f'CurveDataPointFactory.deserialize: type {t} is not supported.')
 
 
 class CpiLevelDataPoint(CurveDataPoint):
@@ -79,7 +79,7 @@ class CpiLevelDataPoint(CurveDataPoint):
     def deserialize(cls, d):
         for key in ['value', 'date']:
             if key not in d:
-                raise(KeyError, f'CpiLevelDataPoint.deserialize: dict must contain key {key}.')
+                raise KeyError(f'CpiLevelDataPoint.deserialize: dict must contain key {key}.')
 
         return CpiLevelDataPoint(d['value'], d['date'], d.get('label'))
 
@@ -102,6 +102,6 @@ class YoYDataPoint(CurveDataPoint):
     def deserialize(cls, d):
         for key in ['value', 'start_date', 'tenor']:
             if key not in d:
-                raise(KeyError, f'YoYDataPoint.deserialize: dict must contain key {key}.')
+                raise KeyError(f'YoYDataPoint.deserialize: dict must contain key {key}.')
 
         return YoYDataPoint(d['value'], d['start_date'], d['tenor'], d.get('label'))
