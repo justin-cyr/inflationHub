@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
+import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
@@ -19,12 +20,27 @@ class CurveBuilder extends React.Component {
 
         this.state = {
             curveDataPoints: [],
+            numCurveDataPointsToAdd: 1,
+            curveDataTypeToAdd: 'Curve Data',
             // selection choices
             supportedCurveDataPointTypes: []
         }
 
         // bind methods
+        this.handleInput = this.handleInput.bind(this);
+        this.addDataPoints = this.addDataPoints.bind(this);
         this.buildCurve = this.buildCurve.bind(this);
+    }
+
+    handleInput(type) {
+        return (e) => {
+            this.setState({ [type]: e.target.value });
+        };
+    }
+
+    addDataPoints() {
+        // display more blank data points
+        console.log('Add ' + this.state.numCurveDataPointsToAdd.toString() + ' data points')
     }
 
     buildCurve() {
@@ -47,10 +63,58 @@ class CurveBuilder extends React.Component {
 
     render() {
 
+        const curveDataTypeChoices = this.state.supportedCurveDataPointTypes.map(s => <option key={s}>{s}</option>);
+
         return (
             <Container fluid>
-                <Row>
-                    <div>
+                <Row
+                    style={{padding: "3px"}}
+                >
+                    <Col lg="auto">
+                        <Row>
+                            <Col lg="auto">
+                                <Button
+                                    id="add-curve-data-point-button"
+                                    size="lg"
+                                    variant="secondary"
+                                    onClick={this.addDataPoints}
+                                >Add</Button>
+                            </Col>
+                            <Col
+                                style={{width: "137px"}}
+                            >
+                                <FloatingLabel
+                                    controlId="numCurveDataPointsToAdd-Input"
+                                    label="How many"
+                                >
+                                    <Form.Control
+                                        type="number"
+                                        step="1"
+                                        min="1"
+                                        max="30"
+                                        value={this.state.numCurveDataPointsToAdd}
+                                        isInvalid={this.state.numCurveDataPointsToAdd < 1 || this.state.numCurveDataPointsToAdd > 30}
+                                        onChange={this.handleInput('numCurveDataPointsToAdd')}
+                                    />
+                                </FloatingLabel>
+                            </Col>
+                            <Col lg="auto">
+                                <FloatingLabel
+                                    controlId="curveDataTypeToAdd-Input"
+                                    label="Data type"
+                                    as={Col}
+                                >
+                                    <Form.Select
+                                        value={this.state.curveDataTypeToAdd}
+                                        onChange={this.handleInput('curveDataTypeToAdd')}
+                                    >
+                                        {curveDataTypeChoices}
+                                    </Form.Select>
+                                </FloatingLabel>  
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col>
                         <Button
                             id="build-button"
                             size="lg"
@@ -58,8 +122,7 @@ class CurveBuilder extends React.Component {
                             variant="primary"
                             onClick={this.buildCurve}
                         >Build</Button>
-                    </div>
-                   
+                    </Col>
                 </Row>
                 <Row>
                     <Tab.Container id="curve-builder-tabs" defaultActiveKey="#/curve_builder/curveData">
