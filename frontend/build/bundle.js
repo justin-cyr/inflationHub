@@ -651,12 +651,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
 /* harmony import */ var _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nav_bar/nav_bar_container */ "./components/nav_bar/nav_bar_container.js");
 /* harmony import */ var _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data_viewer/data_viewer_container */ "./components/data_viewer/data_viewer_container.js");
 /* harmony import */ var _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tips_data/tips_data_container */ "./components/tips_data/tips_data_container.js");
-/* harmony import */ var _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./knowledge_center/knowledge_center_container */ "./components/knowledge_center/knowledge_center_container.js");
-/* harmony import */ var _footer_footer_container__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./footer/footer_container */ "./components/footer/footer_container.js");
+/* harmony import */ var _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./curve_builder/curve_builder_container */ "./components/curve_builder/curve_builder_container.jsx");
+/* harmony import */ var _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./knowledge_center/knowledge_center_container */ "./components/knowledge_center/knowledge_center_container.js");
+/* harmony import */ var _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./footer/footer_container */ "./components/footer/footer_container.js");
 
 
 
@@ -664,29 +665,109 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
   path: "/",
   component: _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
   exact: true,
   path: "/",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
   exact: true,
   path: "/data_viewer",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
   exact: true,
   path: "/tips_data",
   component: _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+  exact: true,
+  path: "/curve_builder",
+  component: _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__["default"]
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
   exact: true,
   path: "/knowledge_center",
-  component: _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_4__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_6__.Route, {
+  component: _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__["default"]
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
   path: "/",
-  component: _footer_footer_container__WEBPACK_IMPORTED_MODULE_5__["default"]
+  component: _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__["default"]
 })));
+
+/***/ }),
+
+/***/ "./components/curve_builder/curve_builder.jsx":
+/*!****************************************************!*\
+  !*** ./components/curve_builder/curve_builder.jsx ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+
+
+
+
+
+
+
+
+class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      curveDataPoints: [],
+      // selection choices
+      supportedCurveDataPointTypes: []
+    }; // bind methods
+  }
+
+  componentDidMount() {
+    // Request selection list choices
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/supported_curve_data_point_types',
+      method: 'GET',
+      success: response => {
+        this.setState({
+          supportedCurveDataPointTypes: response.choices
+        });
+      }
+    });
+  }
+
+  render() {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      fluid: true
+    }, 'content');
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CurveBuilder);
+
+/***/ }),
+
+/***/ "./components/curve_builder/curve_builder_container.jsx":
+/*!**************************************************************!*\
+  !*** ./components/curve_builder/curve_builder_container.jsx ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _curve_builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./curve_builder */ "./components/curve_builder/curve_builder.jsx");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_curve_builder__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -1126,6 +1207,10 @@ __webpack_require__.r(__webpack_exports__);
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/tips_data"
   }, "TIPS Data")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    className: "nav-link"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
+    to: "/curve_builder"
+  }, "Curve Builder")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], {
     className: "nav-link"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/knowledge_center"
