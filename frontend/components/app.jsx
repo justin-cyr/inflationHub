@@ -14,7 +14,7 @@ export default () => (
         <Route exact path="/" component={DataViewer} />
         <Route exact path="/data_viewer" component={DataViewer} />
         <Route exact path="/tips_data" component={TipsData} />
-        <Route exact path="/curve_builder" component={CurveBuilder} />
+        <Route path="/curve_builder" component={CurveBuilder} />
         <Route exact path="/knowledge_center" component={KnowledgeCenter} />
         <Route path="/" component={Footer} />
     </div>
