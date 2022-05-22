@@ -1,4 +1,4 @@
-import datetime
+from ..utils import Date
 
 def supported_curve_data_point_types():
     """Return the names of curve data point sub-classes that can be used by the front end."""
@@ -68,12 +68,7 @@ class CpiLevelDataPoint(CurveDataPoint):
             label = '_'.join([self.__class__.__name__, str(date)])
         super().__init__(value, label)
 
-        # allow date to be a string in yyyy-mm-dd format
-        if isinstance(date, str):
-            date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-        if not isinstance(date, datetime.date):
-            raise (TypeError, 'CpiLevelDataPoint: date must be a datetime.date or yyyy-mm-dd string.')
-        self.date = date
+        self.date = Date(date)
 
     def serialize(self):
         d = self.__dict__
@@ -95,13 +90,7 @@ class YoYDataPoint(CurveDataPoint):
             label = '_'.join([self.__class__.__name__, str(start_date), str(tenor)])
         super().__init__(value, label)
 
-        # allow start_date to be a string in yyyy-mm-dd format
-        if isinstance(start_date, str):
-            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
-        if not isinstance(start_date, datetime.date):
-            raise (TypeError, 'YoYDataPoint: start_date must be a datetime.date or yyyy-mm-dd string.')
-        self.start_date = start_date
-
+        self.start_date = Date(start_date)
         self.tenor = str(tenor)
 
     def serialize(self):

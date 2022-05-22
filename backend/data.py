@@ -7,6 +7,8 @@ from xml.etree import ElementTree
 # get logger from current_app instance
 from flask import current_app as app
 
+from .utils import Date
+
 # Read DataConfig.csv
 DATA_CONFIG = pd.read_csv(
                 os.path.join(os.getcwd(), 'backend/DataConfig.csv'),
@@ -136,27 +138,14 @@ class Parser(object):
                     if content_type_format[:4] != fmt:
                         raise Exception('Parser.validate_response - expected Content-Type json but got ' + content_type_format)
 
-    def parse_date(self, date_str, fmt):
-        """Try to parse a date to yyyy-mm-dd format based on a format string fmt."""
-        try:
-            return str(datetime.datetime.strptime(date_str, fmt).date())
-        except ValueError as e:
-            return ''
-
     def standard_date_str(self, date_str):
         """Return the yyyy-mm-dd format of this state string if it can be inferred.
             Use 1st of the month if day is not provided.
         """
-        supported_formats = [
-            '%Y-%m-%d', # 2022-04-01
-            '%Y%m%d',   # 20220401
-            '%Y-%m',    # 2022-04
-            '%Y %b'     # 2022 Apr
-        ]
-        for fmt in supported_formats:
-            s = self.parse_date(date_str, fmt)
-            if s:
-                return s
+        try:
+            return str(Date(date_str))
+        except TypeError:
+            return None
 
     def chop_quotes(self, s):
         """Return s without quotes if it has any leading or trailing quotes."""
