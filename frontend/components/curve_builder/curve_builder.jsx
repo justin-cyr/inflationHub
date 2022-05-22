@@ -21,8 +21,10 @@ class CurveBuilder extends React.Component {
         this.state = {
             curveDataPoints: [],
             numCurveDataPointsToAdd: 1,
-            curveDataTypeToAdd: 'Curve Data',
+            curveDataTypeToAdd: '',
+            selectedCurveType: '',
             // selection choices
+            supportedCurveTypes: ['None supported'],
             supportedCurveDataPointTypes: []
         }
 
@@ -63,7 +65,6 @@ class CurveBuilder extends React.Component {
 
     render() {
 
-        const curveDataTypeChoices = this.state.supportedCurveDataPointTypes.map(s => <option key={s}>{s}</option>);
 
         return (
             <Container fluid>
@@ -102,26 +103,44 @@ class CurveBuilder extends React.Component {
                                 <FloatingLabel
                                     controlId="curveDataTypeToAdd-Input"
                                     label="Data type"
-                                    as={Col}
                                 >
                                     <Form.Select
                                         value={this.state.curveDataTypeToAdd}
                                         onChange={this.handleInput('curveDataTypeToAdd')}
                                     >
-                                        {curveDataTypeChoices}
+                                        {this.state.supportedCurveDataPointTypes.map(s => <option key={s}>{s}</option>)}
                                     </Form.Select>
                                 </FloatingLabel>  
                             </Col>
                         </Row>
                     </Col>
-                    <Col>
-                        <Button
-                            id="build-button"
-                            size="lg"
-                            type="submit"
-                            variant="primary"
-                            onClick={this.buildCurve}
-                        >Build</Button>
+                    <Col
+                        style={{textAlign: "center"}}
+                    >
+                        <Row className="justify-content-md-center">
+                            <Col lg="auto">
+                                <FloatingLabel
+                                    controlId="curveType-Input"
+                                    label="Curve type"
+                                >
+                                    <Form.Select
+                                        value={this.state.selectedCurveType}
+                                        onChange={this.handleInput('selectedCurveType')}
+                                    >
+                                        {this.state.supportedCurveTypes.map(s => <option key={s}>{s}</option>)}
+                                    </Form.Select>
+                                </FloatingLabel>  
+                            </Col>
+                            <Col lg="2">
+                                <Button
+                                    id="build-button"
+                                    size="lg"
+                                    type="submit"
+                                    variant="primary"
+                                    onClick={this.buildCurve}
+                                >Build</Button>
+                            </Col>
+                        </Row>
                     </Col>
                 </Row>
                 <Row>
