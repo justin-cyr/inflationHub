@@ -5,47 +5,111 @@ class Date(object):
     # wraps datetime.date but allows conversion from string types in constructor
     def __init__(self, date):
 
-        if isinstance(date, str):
-            supported_formats = [
-                '%Y-%m-%d', # 2022-04-01
-                '%Y%m%d',   # 20220401
-                '%Y-%m',    # 2022-04
-                '%Y %b'     # 2022 Apr
-            ]
-            date_obj = None
-            for fmt in supported_formats:
-                try:
-                    date_obj = datetime.datetime.strptime(date, fmt).date()
-                    break
-                except ValueError as e:
-                    pass
+        date = str(date)
 
-            if date_obj:
-                date = date_obj
-            else:
-                raise TypeError(f'Unsupported date format: {date}')
+        supported_formats = [
+            '%Y-%m-%d', # 2022-04-01
+            '%Y%m%d',   # 20220401
+            '%Y-%m',    # 2022-04
+            '%Y %b'     # 2022 Apr
+        ]
+        date_obj = None
+        for fmt in supported_formats:
+            try:
+                date_obj = datetime.datetime.strptime(date, fmt).date()
+                break
+            except ValueError as e:
+                pass
 
-        if not isinstance(date, datetime.date):
-            raise TypeError('Input to Date is wrong type.')
+        if date_obj:
+            date = date_obj
+        else:
+            raise TypeError(f'Unsupported date format: {date}')
 
         self.date = date
+        # datetime.date API
+        self.year = date.year
+        self.month = date.month
+        self.day = date.day
 
     
     def __repr__(self):
         return str(self.date)
 
-    # datetime.date API
-    def year(self):
-        return self.date.year
-
-    def month(self):
-        return self.date.month
-
-    def day(self):
-        return self.date.day
-
     def datetime_date(self):
         return self.date
+
+    # leap year rules
+    def isLeapYear(self):
+        return Date.class_isLeapYear(self.year)
+
+    @classmethod
+    def class_isLeapYear(cls, year):
+        if year % 100 == 0:
+            return year % 400 == 0
+        else:
+            return year % 4 == 0
+
+    def isLeapDay(self):
+        return (self.isLeapYear() and self.month == 2 and self.day == 29)
+
+    def isBeforeLeapDay(self):
+        return (self.isLeapYear() and self.month == 1 or (self.month == 2 and self.day < 29))
+
+    # days in month
+    def daysInMonth(self):
+        return Date.class_daysInMonth(self.month, self.year)
+
+    @classmethod
+    def class_daysInMonth(cls, month, year):
+        """Return the number of days in this month."""
+        daysInMonth = {
+            1: 31,
+            2: 28,
+            3: 31,
+            4: 30,
+            5: 31,
+            6: 30,
+            7: 31,
+            8: 31,
+            9: 30,
+            10: 31,
+            11: 30,
+            12: 31
+        }
+        if month == 2 and Date.class_isLeapYear(year):
+            return 29
+        else:
+            return daysInMonth[month]
+
+    # bump functions
+    def addOneYear(self):
+        """Return a new Date that is 1Y ahead of this date."""
+        # adjust for leap day
+        day = self.day if not self.isLeapDay() else 28
+        return Date(datetime.date(self.year + 1, self.month, day))
+
+    def addTenor(self, tenor):
+        """Return a new Date that is tenor ahead of this date."""
+        tenor = Tenor(tenor)
+
+        # Handle each tenor unit separately
+        if tenor.unit == 'Y':
+            num_years = tenor.size
+            date = self
+            while num_years > 0:
+                date = self.addOneYear()
+                num_years -= 1
+            return date
+
+        elif tenor.unit == 'M':
+            raise NotImplementedError('Date.addTenor: monthly tenors not yet supported.')
+
+        elif tenor.unit == 'D':
+            Date(self.datetime_date + datetime.timedelta(days=tenor.size))
+        else:
+            raise ValueError(f'Date.addTenor: unsupported tenor unit it {tenor}')
+
 
 
 class Tenor(object):
