@@ -13,11 +13,16 @@ class FittingMethod(object):
     
 
     def validate(self, xs, ys):
-        if not (isinstance(xs, list) and isinstance(ys, list)):
-            raise TypeError('FittingMethod.fit: xs and ys must be lists.')
+        try:
+            xs = list(xs)
+            ys = list(ys)
+            
+            if len(xs) != len(ys):
+                raise ValueError('FittingMethod.fit: xs and ys must have the same length')
 
-        if len(xs) != len(ys):
-            raise ValueError('FittingMethod.fit: xs and ys must have the same length')
+        except:
+            raise TypeError('FittingMethod.fit: xs and ys must be list-like.')
+
 
     # decorator
     def set_is_fit(fit):

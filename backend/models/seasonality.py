@@ -3,7 +3,7 @@ from .model import Model
 from ..utils import Date
 
 class SeasonalityModel(Model):
-    def __init__(self, base_date, training_data=[], build_settings={}):
+    def __init__(self, base_date, training_data=[], build_settings=None):
         # no reference model is needed
         super().__init__(base_date, training_data, build_settings)
 

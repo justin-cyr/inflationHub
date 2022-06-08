@@ -39,6 +39,38 @@ class Date(object):
     def datetime_date(self):
         return self.date
 
+    def start_of_month(self):
+        return Date(self.__repr__()[:-3] + '-01')
+
+    # Overload binary operators
+    def __lt__(self, rhs):
+        rhs = Date(rhs)
+        return self.datetime_date() < rhs.datetime_date()
+
+    def __le__(self, rhs):
+        rhs = Date(rhs)
+        return self.datetime_date() <= rhs.datetime_date()
+
+    def __gt__(self, rhs):
+        rhs = Date(rhs)
+        return self.datetime_date() > rhs.datetime_date()
+
+    def __gt__(self, rhs):
+        rhs = Date(rhs)
+        return self.datetime_date() >= rhs.datetime_date()
+
+    def __eq__(self, rhs):
+        rhs = Date(rhs)
+        return self.datetime_date() == rhs.datetime_date()
+
+    def __ne__(self, rhs):
+        rhs = Date(rhs)
+        return self.datetime_date() != rhs.datetime_date()
+
+    def __sub__(self, rhs):
+        rhs = Date(rhs)
+        return self.datetime_date() - rhs.datetime_date()
+
     # leap year rules
     def isLeapYear(self):
         return Date.class_isLeapYear(self.year)

@@ -1,4 +1,9 @@
+import math
+from multiprocessing.managers import ValueProxy
+
 from ..utils import Date, Tenor
+from . import convertutils as cu
+from . import domains
 
 def supported_curve_data_point_types():
     """Return the names of curve data point sub-classes that can be used by the front end."""
@@ -9,6 +14,9 @@ def supported_curve_data_point_types():
 
 
 class CurveDataPoint(object):
+
+    __supported_X_domains__ = []
+    __supported_Y_domains__ = []
 
     def __init__(self, value, label):
         try:
@@ -39,6 +47,20 @@ class CurveDataPoint(object):
         return CurveDataPoint(d['value'], d['label'])
 
 
+    # decorator
+    def check_domains(convert):
+        def inner(self, domainX, domainY, *args, **kwargs):
+
+            if domainX not in self.__class__.__supported_X_domains__:
+                raise ValueError(f'{self.__class__.__name__}: unsupported X domain {domainX}')
+
+            if domainY not in self.__class__.__supported_Y_domains__:
+                raise ValueError(f'{self.__class__.__name__}: unsupported Y domain {domainY}')
+
+            return convert(self, domainX, domainY, *args, **kwargs)
+        return inner
+
+
 class CurveDataPointFactory(object):
     
     @classmethod
@@ -63,6 +85,16 @@ class CurveDataPointFactory(object):
 
 
 class CpiLevelDataPoint(CurveDataPoint):
+
+    __supported_X_domains__ = [
+        domains.TIME_ACT_365
+        ]
+    __supported_Y_domains__ = [
+        domains.CPI_LEVEL,
+        domains.TIME_WEIGHTED_ZERO_RATE,
+        domains.ZERO_RATE
+    ]
+
     def __init__(self, value, date, label=None):
         if not label:
             label = '_'.join([self.__class__.__name__, str(date)])
@@ -83,8 +115,37 @@ class CpiLevelDataPoint(CurveDataPoint):
 
         return CpiLevelDataPoint(d['value'], d['date'], d.get('label'))
 
+    
+    @CurveDataPoint.check_domains
+    def convert(self, domainX, domainY, base_date=None, base_cpi=None):
+        t, y = None, None
+
+        if base_date:
+            t = cu.time_difference(base_date, self.date, domainX)
+
+        if domainY == domains.CPI_LEVEL:
+            y = self.value
+        
+        else:
+            # base_cpi is required
+            if base_cpi:
+                time_weighted_zero_rate = math.log(self.value / base_cpi)
+
+                if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
+                    y = time_weighted_zero_rate
+                
+                elif domainY == domains.ZERO_RATE:
+                    # base_date is required
+                    if t:
+                        y = time_weighted_zero_rate / t
+
+        return (t, y)
+
 
 class YoYDataPoint(CurveDataPoint):
+
+    # supported domains are same as CpiLevelDataPoint
+
     def __init__(self, value, start_date, tenor, label=None):
         if not label:
             label = '_'.join([self.__class__.__name__, str(start_date), str(tenor)])
@@ -92,6 +153,12 @@ class YoYDataPoint(CurveDataPoint):
 
         self.start_date = Date(start_date)
         self.tenor = Tenor(tenor)
+
+        if self.tenor.unit != 'Y':
+            raise ValueError('YoYDataPoint: tenor must be in years but got {tenor}.')
+
+        self.end_date = self.start_date.addTenor(self.tenor)
+
 
     def serialize(self):
         d = self.__dict__
@@ -105,3 +172,15 @@ class YoYDataPoint(CurveDataPoint):
                 raise KeyError(f'YoYDataPoint.deserialize: dict must contain key {key}.')
 
         return YoYDataPoint(d['value'], d['start_date'], d['tenor'], d.get('label'))
+
+
+    def to_CpiLevelDataPoint(self, start_date_cpi):
+        """Return the equivalent CpiLevelDataPoint."""
+        years = self.tenor.size
+        end_date_cpi = start_date_cpi * (1.0 + self.value)**(years)
+        return CpiLevelDataPoint(end_date_cpi, self.end_date, label=self.label)
+
+
+    def convert(self, domainX, domainY, start_date_cpi, base_date=None, base_cpi=None):
+        cpiLevelDataPoint = self.to_CpiLevelDataPoint(start_date_cpi)
+        return cpiLevelDataPoint.convert(domainX, domainY, base_date, base_cpi)
