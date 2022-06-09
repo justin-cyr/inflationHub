@@ -2,7 +2,6 @@ import React from 'react';
 import $ from 'jquery';
 
 import Button from 'react-bootstrap/Button';
-import CloseButton from 'react-bootstrap/CloseButton';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
@@ -13,13 +12,16 @@ import Tab from 'react-bootstrap/Tab';
 
 import { List, arrayMove } from 'react-movable';
 
+import CpiLevelDataPointForm from './data_points/cpileveldatapoint_container';
+
+
 class CurveBuilder extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            curveDataPoints: [],
+            curveDataPoints: [{ type: 'CpiLevelDataPoint', date: '2022-03-01', value: 287.505 }, { type: 'CpiLevelDataPoint', date: '2022-04-01', value: 289.109 },],
             numCurveDataPointsToAdd: 1,
             curveDataTypeToAdd: '',
             selectedCurveType: '',
@@ -30,6 +32,7 @@ class CurveBuilder extends React.Component {
 
         // bind methods
         this.handleInput = this.handleInput.bind(this);
+        this.handleCurveDataInput = this.handleCurveDataInput.bind(this);
         this.addDataPoints = this.addDataPoints.bind(this);
         this.buildCurve = this.buildCurve.bind(this);
     }
@@ -40,6 +43,18 @@ class CurveBuilder extends React.Component {
         };
     }
 
+    handleCurveDataInput(index, type, value) {
+        let newCurveDataPoints = this.state.curveDataPoints;
+        let point = newCurveDataPoints[index];
+        point[type] = value;
+        
+        this.setState({
+            curveDataPoints: newCurveDataPoints
+        },
+        () => { console.log(newCurveDataPoints) }
+        );
+    }
+
     addDataPoints() {
         // display more blank data points
         console.log('Add ' + this.state.numCurveDataPointsToAdd.toString() + ' data points')
@@ -48,6 +63,23 @@ class CurveBuilder extends React.Component {
     buildCurve() {
         // send curve points, build options to backend
         console.log('Build curve')
+    }
+
+    curveDataPointToForm(curveDataPoint, index) {
+        switch (curveDataPoint.type) {
+
+            case 'CpiLevelDataPoint':
+                return <CpiLevelDataPointForm
+                    key={index.toString()}
+                    date={curveDataPoint.date}
+                    onDateChange={(d) => { this.handleCurveDataInput(index, 'date', d) }}
+                    value={curveDataPoint.value}
+                    onValueChange={(v) => { this.handleCurveDataInput(index, 'value', v) }}
+                        />;
+
+            default:
+                console.log('Unhandled type in ', curveDataPoint)
+        }
     }
 
     componentDidMount() {
@@ -65,6 +97,7 @@ class CurveBuilder extends React.Component {
 
     render() {
 
+        const curveDataPoints = this.state.curveDataPoints.map((point, i) => this.curveDataPointToForm(point, i));
 
         return (
             <Container fluid>
@@ -153,11 +186,14 @@ class CurveBuilder extends React.Component {
                                     <ListGroup.Item action href="#/curve_builder/results">Results</ListGroup.Item>
                                 </ListGroup>
                             </Col>
-                            <Col>
+                            <Col
+                                style={{ textAlign: "center" }}
+                            >
                                 <Tab.Content>
                                     {/* Curve Data Form */}
                                     <Tab.Pane eventKey="#/curve_builder/curveData">
-                                        {'curve data form'}
+                                        <h3>{'Curve data points'}</h3>
+                                        {curveDataPoints}
                                     </Tab.Pane>
 
                                     {/* Build Settings Form */}
