@@ -30,8 +30,9 @@ class CpiLevelDataPointForm extends React.Component {
                             <Col>
                                 <Form.Control
                                     type="date"
-                                    value={this.props.date}
+                                    value={this.props.date || ''}
                                     onChange={(e) => this.props.onDateChange(e.target.value)}
+                                    disabled={!this.props.isActive}
                                 >
                                 </Form.Control>
                             </Col>
@@ -45,17 +46,25 @@ class CpiLevelDataPointForm extends React.Component {
                             <Col>
                                 <Form.Control
                                     type="number"
-                                    value={this.props.value}
+                                    value={this.props.value || ''}
                                     onChange={(e) => this.props.onValueChange(e.target.value)}
+                                    disabled={!this.props.isActive}
                                 >
                                 </Form.Control>
                             </Col>
                         </Form.Group>
                     </Col>
                     <Col md="auto">
+                        <Form.Check
+                            type="checkbox"
+                            checked={this.props.isActive}
+                            onChange={() => this.props.onBoxCheck() }
+                        />
+                    </Col>
+                    <Col md="auto">
                         <CloseButton
                             variant="white"
-                            onClick={() => { console.log('clicked date point close') }}
+                            onClick={ () => this.props.onCloseButton() }
                         />
                     </Col>
                 </Row>

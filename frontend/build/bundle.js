@@ -1053,12 +1053,14 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.state = {
       curveDataPoints: [{
         type: 'CpiLevelDataPoint',
-        date: '2022-03-01',
-        value: 287.505
+        date: undefined,
+        value: undefined,
+        isActive: true
       }, {
         type: 'CpiLevelDataPoint',
         date: '2022-04-01',
-        value: 289.109
+        value: 289.109,
+        isActive: true
       }],
       numCurveDataPointsToAdd: 1,
       curveDataTypeToAdd: '',
@@ -1070,7 +1072,9 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     this.handleInput = this.handleInput.bind(this);
     this.handleCurveDataInput = this.handleCurveDataInput.bind(this);
+    this.flipSwitch = this.flipSwitch.bind(this);
     this.addDataPoints = this.addDataPoints.bind(this);
+    this.removeDataPoint = this.removeDataPoint.bind(this);
     this.buildCurve = this.buildCurve.bind(this);
   }
 
@@ -1093,9 +1097,29 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     });
   }
 
+  flipSwitch(index, type) {
+    // Change boolean value this.state.[type] to !this.state.[type]
+    let newCurveDataPoints = this.state.curveDataPoints;
+    let point = newCurveDataPoints[index];
+    point[type] = !point[type];
+    this.setState({
+      curveDataPoints: newCurveDataPoints
+    }, () => {
+      console.log(newCurveDataPoints);
+    });
+  }
+
   addDataPoints() {
     // display more blank data points
     console.log('Add ' + this.state.numCurveDataPointsToAdd.toString() + ' data points');
+  }
+
+  removeDataPoint(index) {
+    let newCurveDataPoints = this.state.curveDataPoints;
+    newCurveDataPoints.splice(index, 1);
+    this.setState({
+      curveDataPoints: newCurveDataPoints
+    });
   }
 
   buildCurve() {
@@ -1109,12 +1133,19 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_data_points_cpileveldatapoint_container__WEBPACK_IMPORTED_MODULE_3__["default"], {
           key: index.toString(),
           date: curveDataPoint.date,
+          isActive: curveDataPoint.isActive,
           onDateChange: d => {
             this.handleCurveDataInput(index, 'date', d);
           },
           value: curveDataPoint.value,
           onValueChange: v => {
             this.handleCurveDataInput(index, 'value', v);
+          },
+          onBoxCheck: () => {
+            this.flipSwitch(index, 'isActive');
+          },
+          onCloseButton: () => {
+            this.removeDataPoint(index);
           }
         });
 
@@ -1292,8 +1323,9 @@ class CpiLevelDataPointForm extends react__WEBPACK_IMPORTED_MODULE_0__.Component
       md: "auto"
     }, "Date:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Control, {
       type: "date",
-      value: this.props.date,
-      onChange: e => this.props.onDateChange(e.target.value)
+      value: this.props.date || '',
+      onChange: e => this.props.onDateChange(e.target.value),
+      disabled: !this.props.isActive
     })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Group, {
       as: react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"]
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Label, {
@@ -1301,15 +1333,20 @@ class CpiLevelDataPointForm extends react__WEBPACK_IMPORTED_MODULE_0__.Component
       md: "auto"
     }, "CPI Level:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Control, {
       type: "number",
-      value: this.props.value,
-      onChange: e => this.props.onValueChange(e.target.value)
+      value: this.props.value || '',
+      onChange: e => this.props.onValueChange(e.target.value),
+      disabled: !this.props.isActive
     })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      md: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Check, {
+      type: "checkbox",
+      checked: this.props.isActive,
+      onChange: () => this.props.onBoxCheck()
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], {
       md: "auto"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_CloseButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
       variant: "white",
-      onClick: () => {
-        console.log('clicked date point close');
-      }
+      onClick: () => this.props.onCloseButton()
     }))));
   }
 
