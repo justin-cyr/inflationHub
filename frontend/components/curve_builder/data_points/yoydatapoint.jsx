@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
-class CpiLevelDataPointForm extends React.Component {
+class YoYDataPointForm extends React.Component {
 
     constructor(props) {
         super(props);
@@ -23,12 +23,14 @@ class CpiLevelDataPointForm extends React.Component {
                         <Form.Group
                             as={Row}
                         >
-                            <Form.Label column md="auto">Date:</Form.Label>
-                            <Col>
+                            <Form.Label column md="auto">Start Date:</Form.Label>
+                            <Col
+                                style={{ textAlign: "center" }}
+                            >
                                 <Form.Control
-                                    style={{width: "150px"}}
+                                    style={{ width: "150px" }}
                                     type="date"
-                                    value={this.props.date || ''}
+                                    value={this.props.start_date || ''}
                                     onChange={(e) => this.props.onDateChange(e.target.value)}
                                     disabled={!this.props.isActive}
                                 >
@@ -40,13 +42,31 @@ class CpiLevelDataPointForm extends React.Component {
                         <Form.Group
                             as={Row}
                         >
-                            <Form.Label column md="auto">CPI Level:</Form.Label>
+                            <Form.Label column md="auto">Tenor:</Form.Label>
                             <Col>
                                 <Form.Control
-                                    style={{ width: "150px" }}
+                                    style={{ width: "60px" }}
+                                    type="text"
+                                    value={this.props.tenor || ''}
+                                    onChange={(e) => this.props.onTenorChange(e.target.value)}
+                                    disabled={!this.props.isActive}
+                                >
+                                </Form.Control>
+                            </Col>
+                        </Form.Group>
+                    </Col>
+                    <Col md="auto">
+                        <Form.Group
+                            as={Row}
+                        >
+                            <Form.Label column md="auto">YoY %:</Form.Label>
+                            <Col>
+                                <Form.Control
+                                    style={{ width: "125px" }}
                                     type="number"
                                     value={this.props.value || ''}
                                     onChange={(e) => this.props.onValueChange(e.target.value)}
+                                    step="0.01"
                                     disabled={!this.props.isActive}
                                 >
                                 </Form.Control>
@@ -57,13 +77,13 @@ class CpiLevelDataPointForm extends React.Component {
                         <Form.Check
                             type="checkbox"
                             checked={this.props.isActive}
-                            onChange={() => this.props.onBoxCheck() }
+                            onChange={() => this.props.onBoxCheck()}
                         />
                     </Col>
                     <Col md="auto">
                         <CloseButton
                             variant="white"
-                            onClick={ () => this.props.onCloseButton() }
+                            onClick={() => this.props.onCloseButton()}
                         />
                     </Col>
                 </Row>
@@ -73,4 +93,4 @@ class CpiLevelDataPointForm extends React.Component {
 
 }
 
-export default CpiLevelDataPointForm;
+export default YoYDataPointForm;

@@ -35,3 +35,19 @@ body {
     background-color: #91ABBD;
     opacity: .5;
 }
+
+/* CurveBuilder */
+.curve-data-form {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    
+    border-color: #0d6efd;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+}

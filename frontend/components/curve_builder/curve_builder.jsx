@@ -12,7 +12,9 @@ import Tab from 'react-bootstrap/Tab';
 
 import { List, arrayMove } from 'react-movable';
 
-import CpiLevelDataPointForm from './data_points/cpileveldatapoint_container';
+import { defaultDataPoint } from './data_points/data_points';
+import CpiLevelDataPointForm from './data_points/cpileveldatapoint';
+import YoYDataPointForm from './data_points/yoydatapoint';
 
 
 class CurveBuilder extends React.Component {
@@ -21,9 +23,9 @@ class CurveBuilder extends React.Component {
         super(props);
 
         this.state = {
-            curveDataPoints: [{ type: 'CpiLevelDataPoint', date: undefined, value: undefined, isActive:true }, { type: 'CpiLevelDataPoint', date: '2022-04-01', value: 289.109, isActive:true },],
+            curveDataPoints: [{ type: 'CpiLevelDataPoint', date: undefined, value: undefined, isActive:true }],
             numCurveDataPointsToAdd: 1,
-            curveDataTypeToAdd: '',
+            curveDataTypeToAdd: 'CpiLevelDataPoint',
             selectedCurveType: '',
             // selection choices
             supportedCurveTypes: ['None supported'],
@@ -41,7 +43,9 @@ class CurveBuilder extends React.Component {
 
     handleInput(type) {
         return (e) => {
-            this.setState({ [type]: e.target.value });
+            this.setState({ [type]: e.target.value },
+                () => {console.log(type + ": " + e.target.value.toString())}
+                );
         };
     }
 
@@ -52,9 +56,7 @@ class CurveBuilder extends React.Component {
         
         this.setState({
             curveDataPoints: newCurveDataPoints
-        },
-        () => { console.log(newCurveDataPoints) }
-        );
+        });
     }
 
     flipSwitch(index, type) {
@@ -65,14 +67,24 @@ class CurveBuilder extends React.Component {
 
         this.setState({
             curveDataPoints: newCurveDataPoints
-        },
-            () => { console.log(newCurveDataPoints) }
-        );
+        });
     }
 
     addDataPoints() {
         // display more blank data points
-        console.log('Add ' + this.state.numCurveDataPointsToAdd.toString() + ' data points')
+        let newCurveDataPoints = this.state.curveDataPoints;
+        for (let i = 0; i < this.state.numCurveDataPointsToAdd; ++i) {
+            newCurveDataPoints.push(
+                defaultDataPoint(this.state.curveDataTypeToAdd)
+            );
+        }
+        
+        this.setState({
+            curveDataPoints: newCurveDataPoints
+        },
+            () => { console.log('Added ' + this.state.numCurveDataPointsToAdd.toString() 
+                                + ' ' + this.state.curveDataTypeToAdd + ' data points')}
+        );
     }
 
     removeDataPoint(index) {
@@ -101,7 +113,21 @@ class CurveBuilder extends React.Component {
                     onValueChange={(v) => { this.handleCurveDataInput(index, 'value', v) }}
                     onBoxCheck={() => { this.flipSwitch(index, 'isActive') }}
                     onCloseButton={() => { this.removeDataPoint(index) }}
-                        />;
+                />;
+
+            case 'YoYDataPoint':
+                return <YoYDataPointForm 
+                    key={index.toString()}
+                    start_date={curveDataPoint.start_date}
+                    isActive={curveDataPoint.isActive}
+                    onDateChange={(d) => { this.handleCurveDataInput(index, 'start_date', d) }}
+                    tenor={curveDataPoint.tenor}
+                    onTenorChange={(t) => { this.handleCurveDataInput(index, 'tenor', t) }}
+                    value={curveDataPoint.value}
+                    onValueChange={(v) => { this.handleCurveDataInput(index, 'value', v) }}
+                    onBoxCheck={() => { this.flipSwitch(index, 'isActive') }}
+                    onCloseButton={() => { this.removeDataPoint(index) }}
+                />;
 
             default:
                 console.log('Unhandled type in ', curveDataPoint)
@@ -205,7 +231,9 @@ class CurveBuilder extends React.Component {
                 <Row>
                     <Tab.Container id="curve-builder-tabs" defaultActiveKey="#/curve_builder/curveData">
                         <Row>
-                            <Col>
+                            <Col
+                                md="auto"
+                            >
                                 <ListGroup>
                                     <ListGroup.Item action href="#/curve_builder/curveData">Curve Data</ListGroup.Item>
                                     <ListGroup.Item action href="#/curve_builder/buildSettings">Build Settings</ListGroup.Item>
