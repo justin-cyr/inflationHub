@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
 
@@ -23,16 +24,18 @@ class CurveBuilder extends React.Component {
         super(props);
 
         this.state = {
-            curveDataPoints: [{ type: 'CpiLevelDataPoint', date: undefined, value: undefined, isActive:true }],
+            curveDataPoints: [],
             numCurveDataPointsToAdd: 1,
             curveDataTypeToAdd: 'CpiLevelDataPoint',
-            selectedCurveType: '',
+            selectedCurveType: undefined,
+            showModal: true,
             // selection choices
-            supportedCurveTypes: ['None supported'],
+            supportedCurveTypes: ['CPI', 'Seasonality'],
             supportedCurveDataPointTypes: []
         }
 
         // bind methods
+        this.handleCurveType = this.handleCurveType.bind(this);
         this.handleInput = this.handleInput.bind(this);
         this.handleCurveDataInput = this.handleCurveDataInput.bind(this);
         this.flipSwitch = this.flipSwitch.bind(this);
@@ -56,6 +59,40 @@ class CurveBuilder extends React.Component {
         
         this.setState({
             curveDataPoints: newCurveDataPoints
+        });
+    }
+
+    handleCurveType(curveType) {
+        // Special input handler for curve type, which triggers async requests for supported options.
+        this.setState({
+            selectedCurveType: curveType,
+            showModal: false
+        },
+        // callback
+        () => {
+            // clear curve data points
+            this.setState({
+                curveDataPoints: []
+            });
+
+            // get supported data tyes
+            this.getCurveDataPointTypes(curveType);
+
+            // get supported build methods
+            console.log('get build methods');
+        }
+        );
+    }
+
+    getCurveDataPointTypes(curveType) {
+        $.ajax({
+            url: '/supported_curve_data_point_types/' + curveType,
+            method: 'GET',
+            success: (response) => {
+                this.setState({
+                    supportedCurveDataPointTypes: response.choices
+                })
+            }
         });
     }
 
@@ -136,15 +173,7 @@ class CurveBuilder extends React.Component {
 
     componentDidMount() {
         // Request selection list choices
-        $.ajax({
-            url: '/supported_curve_data_point_types',
-            method: 'GET',
-            success: (response) => {
-                this.setState({
-                    supportedCurveDataPointTypes: response.choices
-                })
-            }
-        });
+
     }
 
     render() {
@@ -190,7 +219,7 @@ class CurveBuilder extends React.Component {
                                     label="Data type"
                                 >
                                     <Form.Select
-                                        value={this.state.curveDataTypeToAdd}
+                                        value={this.state.curveDataTypeToAdd || ''}
                                         onChange={this.handleInput('curveDataTypeToAdd')}
                                     >
                                         {this.state.supportedCurveDataPointTypes.map(s => <option key={s}>{s}</option>)}
@@ -210,7 +239,7 @@ class CurveBuilder extends React.Component {
                                 >
                                     <Form.Select
                                         value={this.state.selectedCurveType}
-                                        onChange={this.handleInput('selectedCurveType')}
+                                        onChange={(e) => { this.handleCurveType(e.target.value) }}
                                     >
                                         {this.state.supportedCurveTypes.map(s => <option key={s}>{s}</option>)}
                                     </Form.Select>
@@ -229,6 +258,40 @@ class CurveBuilder extends React.Component {
                     </Col>
                 </Row>
                 <Row>
+                    <Modal
+                        show={this.state.showModal}
+                        centered={true}
+                    >
+                        <Modal.Title
+                            style={{
+                                paddingTop: "10px",
+                                paddingLeft: "10px",
+                                color: "white",
+                                backgroundColor: "#0d6efd"
+                            }}
+                        >Select Curve Type</Modal.Title>
+                        <Modal.Body
+                            style={{
+                                backgroundColor: "#91ABBD"
+                            }}
+                        >
+                            <Row className="justify-content-md-center">
+                                <Col lg="auto">
+                                    <FloatingLabel
+                                        controlId="curveType-Modal-Input"
+                                        label="Curve type"
+                                    >
+                                        <Form.Select
+                                            value={this.state.selectedCurveType}
+                                            onChange={(e) => { this.handleCurveType(e.target.value) }}
+                                        >
+                                            {['None'].concat(this.state.supportedCurveTypes).map(s => <option key={s}>{s}</option>)}
+                                        </Form.Select>
+                                    </FloatingLabel>
+                                </Col>
+                            </Row>
+                        </Modal.Body>
+                    </Modal>
                     <Tab.Container id="curve-builder-tabs" defaultActiveKey="#/curve_builder/curveData">
                         <Row>
                             <Col

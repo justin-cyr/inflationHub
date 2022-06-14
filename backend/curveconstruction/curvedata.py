@@ -5,12 +5,19 @@ from ..utils import Date, Tenor
 from . import convertutils as cu
 from . import domains
 
-def supported_curve_data_point_types():
+def supported_curve_data_point_types(curve_type):
     """Return the names of curve data point sub-classes that can be used by the front end."""
-    return [
-        CpiLevelDataPoint.__name__,
-        YoYDataPoint.__name__
-    ]
+    data_point_map = dict(
+        CPI=[
+            CpiLevelDataPoint.__name__,
+            YoYDataPoint.__name__
+        ],
+        Seasonality=[
+            CurveDataPoint.__name__
+        ]
+    )
+    
+    return data_point_map[curve_type]
 
 
 class CurveDataPoint(object):

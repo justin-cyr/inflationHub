@@ -66,11 +66,11 @@ def get_tips_prices():
         app.logger.error(str(e))
         return dict(errors=str(e))
 
-@app.route('/supported_curve_data_point_types')
-def get_supproted_curve_data_point_types():
+@app.route('/supported_curve_data_point_types/<curve_type>')
+def get_supproted_curve_data_point_types(curve_type):
     try:
         from backend.curveconstruction.curvedata import supported_curve_data_point_types
-        supported_types = supported_curve_data_point_types()
+        supported_types = supported_curve_data_point_types(curve_type)
         return dict(choices=supported_types)
 
     except Exception as e:
