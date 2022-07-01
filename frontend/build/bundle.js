@@ -1790,9 +1790,18 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       curveDataTypeToAdd: 'CpiLevelDataPoint',
       selectedCurveType: undefined,
       showModal: true,
+      // build settings
+      selectedDomainX: undefined,
+      selectedDomainY: undefined,
+      selectedFittingMethod: undefined,
       // selection choices
       supportedCurveTypes: ['CPI', 'Seasonality'],
-      supportedCurveDataPointTypes: []
+      supportedCurveDataPointTypes: [],
+      buildSettingsUsage: {
+        domainX: [],
+        domainY: [],
+        fitting_method_str: []
+      }
     }; // bind methods
 
     this.handleCurveType = this.handleCurveType.bind(this);
@@ -1837,7 +1846,7 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
       this.getCurveDataPointTypes(curveType); // get supported build methods
 
-      console.log('get build methods');
+      this.getBuildSettingsUsage(curveType);
     });
   }
 
@@ -1848,6 +1857,22 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       success: response => {
         this.setState({
           supportedCurveDataPointTypes: response.choices
+        });
+      }
+    });
+  }
+
+  getBuildSettingsUsage(curveType) {
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/get_build_settings_usage/' + curveType,
+      method: 'GET',
+      success: response => {
+        // set initial build settings to defaults
+        this.setState({
+          buildSettingsUsage: response.usage,
+          selectedDomainX: response.usage.domainX[0],
+          selectedDomainY: response.usage.domainY[0],
+          selectedFittingMethod: response.usage.fitting_method_str[0]
         });
       }
     });
@@ -2063,7 +2088,39 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       eventKey: "#/curve_builder/curveData"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Curve data points'), curveDataPoints), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_13__["default"].Pane, {
       eventKey: "#/curve_builder/buildSettings"
-    }, 'build settings form'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_13__["default"].Pane, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Build settings'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_8__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_7__["default"], {
+      className: "justify-content-md-center"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      lg: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      controlId: "domainX-Input",
+      label: "Time domain"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_11__["default"].Select, {
+      value: this.state.selectedDomainX,
+      onChange: this.handleInput('selectedDomainX')
+    }, this.state.buildSettingsUsage.domainX.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
+      key: s
+    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      lg: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      controlId: "domainY-Input",
+      label: "Interpolation domain"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_11__["default"].Select, {
+      value: this.state.selectedDomainY,
+      onChange: this.handleInput('selectedDomainY')
+    }, this.state.buildSettingsUsage.domainY.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
+      key: s
+    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      lg: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      controlId: "fittingMethod-Input",
+      label: "Fitting method"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_11__["default"].Select, {
+      value: this.state.selectedFittingMethod,
+      onChange: this.handleInput('selectedFittingMethod')
+    }, this.state.buildSettingsUsage.fitting_method_str.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
+      key: s
+    }, s)))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_13__["default"].Pane, {
       eventKey: "#/curve_builder/results"
     }, 'results display')))))));
   }

@@ -1,5 +1,16 @@
 
+from .. import config as cfg
 from ..curveconstruction import domains
+
+def get_usage_by_model(model_str):
+    """Return the usage of the build settings for this model string."""
+    if model_str == cfg.CPI:
+        return BuildSettingsCPICurve.get_usage()
+    if model_str == cfg.SEASONALITY:
+        return BuildSettingsSeasonality.get_usage()
+    else:
+        raise ValueError(f'get_usage_by_model: unsupported model type {model_str}.')
+
 
 class BuildSettings(object):
     def __init__(self, domainX, domainY, fitting_method_str=''):
@@ -18,7 +29,7 @@ class BuildSettings(object):
             
     @classmethod
     def get_usage(cls):
-        """Return usage options for these BuildSettings."""
+        """Return usage options for these BuildSettings. First choice is default."""
         return dict(
             domainX=[domains.UNASSIGNED],
             domainY=[domains.UNASSIGNED],
@@ -47,13 +58,13 @@ class BuildSettingsCPICurve(BuildSettings):
                 domains.TIME_30_360
                 ],
             domainY=[
-                domains.CPI_LEVEL,
                 domains.TIME_WEIGHTED_ZERO_RATE,
+                domains.CPI_LEVEL,
                 domains.ZERO_RATE
                 ],
             fitting_method_str=[
-                'BestFitConstant',
                 'PiecewiseLinear',
+                'BestFitConstant',
                 'PiecewiseConstantLeftCts',
                 'PiecewiseConstantRightCts'
                 ]

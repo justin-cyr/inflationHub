@@ -1,21 +1,22 @@
 import math
 from multiprocessing.managers import ValueProxy
 
+from .. import config as cfg
 from ..utils import Date, Tenor
 from . import convertutils as cu
 from . import domains
 
 def supported_curve_data_point_types(curve_type):
     """Return the names of curve data point sub-classes that can be used by the front end."""
-    data_point_map = dict(
-        CPI=[
+    data_point_map = {
+        cfg.CPI: [
             CpiLevelDataPoint.__name__,
             YoYDataPoint.__name__
         ],
-        Seasonality=[
+        cfg.SEASONALITY: [
             CurveDataPoint.__name__
         ]
-    )
+    }
     
     return data_point_map[curve_type]
 

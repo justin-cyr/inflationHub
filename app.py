@@ -77,3 +77,13 @@ def get_supproted_curve_data_point_types(curve_type):
         app.logger.error(str(e))
         return dict(errors=str(e))
 
+@app.route('/get_build_settings_usage/<curve_type>')
+def get_build_settings_usage(curve_type):
+    try:
+        from backend.buildsettings.buildsettings import get_usage_by_model
+        usage = get_usage_by_model(curve_type)
+        return dict(usage=usage)
+
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))

@@ -29,9 +29,14 @@ class CurveBuilder extends React.Component {
             curveDataTypeToAdd: 'CpiLevelDataPoint',
             selectedCurveType: undefined,
             showModal: true,
+            // build settings
+            selectedDomainX: undefined,
+            selectedDomainY: undefined,
+            selectedFittingMethod: undefined,
             // selection choices
             supportedCurveTypes: ['CPI', 'Seasonality'],
-            supportedCurveDataPointTypes: []
+            supportedCurveDataPointTypes: [],
+            buildSettingsUsage: { domainX:[], domainY:[], fitting_method_str:[] }
         }
 
         // bind methods
@@ -79,7 +84,7 @@ class CurveBuilder extends React.Component {
             this.getCurveDataPointTypes(curveType);
 
             // get supported build methods
-            console.log('get build methods');
+            this.getBuildSettingsUsage(curveType);
         }
         );
     }
@@ -91,6 +96,22 @@ class CurveBuilder extends React.Component {
             success: (response) => {
                 this.setState({
                     supportedCurveDataPointTypes: response.choices
+                })
+            }
+        });
+    }
+
+    getBuildSettingsUsage(curveType) {
+        $.ajax({
+            url: '/get_build_settings_usage/' + curveType,
+            method: 'GET',
+            success: (response) => {
+                // set initial build settings to defaults
+                this.setState({
+                    buildSettingsUsage: response.usage,
+                    selectedDomainX: response.usage.domainX[0],
+                    selectedDomainY: response.usage.domainY[0],
+                    selectedFittingMethod: response.usage.fitting_method_str[0]
                 })
             }
         });
@@ -315,7 +336,51 @@ class CurveBuilder extends React.Component {
 
                                     {/* Build Settings Form */}
                                     <Tab.Pane eventKey="#/curve_builder/buildSettings">
-                                        {'build settings form'}
+                                        <h3>{'Build settings'}</h3>
+                                        {/* Build settings selection inputs */}
+                                        <Col>
+                                            <Row className="justify-content-md-center">
+                                                <Col lg="auto">
+                                                    <FloatingLabel
+                                                        controlId="domainX-Input"
+                                                        label="Time domain"
+                                                    >
+                                                        <Form.Select
+                                                            value={this.state.selectedDomainX}
+                                                            onChange={this.handleInput('selectedDomainX')}
+                                                        >
+                                                            {this.state.buildSettingsUsage.domainX.map(s => <option key={s}>{s}</option>)}
+                                                        </Form.Select>
+                                                    </FloatingLabel>
+                                                </Col>
+                                                <Col lg="auto">
+                                                    <FloatingLabel
+                                                        controlId="domainY-Input"
+                                                        label="Interpolation domain"
+                                                    >
+                                                        <Form.Select
+                                                            value={this.state.selectedDomainY}
+                                                            onChange={this.handleInput('selectedDomainY') }
+                                                        >
+                                                            {this.state.buildSettingsUsage.domainY.map(s => <option key={s}>{s}</option>)}
+                                                        </Form.Select>
+                                                    </FloatingLabel>
+                                                </Col>
+                                                <Col lg="auto">
+                                                    <FloatingLabel
+                                                        controlId="fittingMethod-Input"
+                                                        label="Fitting method"
+                                                    >
+                                                        <Form.Select
+                                                            value={this.state.selectedFittingMethod}
+                                                            onChange={this.handleInput('selectedFittingMethod')}
+                                                        >
+                                                            {this.state.buildSettingsUsage.fitting_method_str.map(s => <option key={s}>{s}</option>)}
+                                                        </Form.Select>
+                                                    </FloatingLabel>
+                                                </Col>
+                                            </Row>
+                                        </Col>
                                     </Tab.Pane>
 
                                     {/* Results */}

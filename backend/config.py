@@ -10,6 +10,10 @@ IS_PROD = 'IS_PROD'
 CHROMEDRIVER_PATH = 'CHROMEDRIVER_PATH'
 GOOGLE_CHROME_BIN = 'GOOGLE_CHROME_BIN'
 
+# Model names
+CPI = 'CPI'
+SEASONALITY = 'Seasonality'
+
 # get logger from current_app instance
 from flask import current_app as app
 
