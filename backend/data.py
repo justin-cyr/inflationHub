@@ -194,8 +194,12 @@ class TimeSeriesCsvParser(Parser):
             date_str = self.standard_date_str(d)
             if not date_str:
                 continue
-            dates.append(date_str)
-            values.append(float(v))
+            try:
+                values.append(float(v))
+                dates.append(date_str)
+            except:
+                # continue if value cannot be parsed as a float
+                pass
 
         return {self.date_col_name: dates,
                 self.value_col_name: values}
