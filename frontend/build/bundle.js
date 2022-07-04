@@ -1784,10 +1784,16 @@ __webpack_require__.r(__webpack_exports__);
 class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
+    const today = new Date();
+    const year = today.getFullYear().toString();
+    const month = (1 + today.getMonth()).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    const todayStr = year + '-' + month + '-' + day;
     this.state = {
       curveDataPoints: [],
       numCurveDataPointsToAdd: 1,
       curveDataTypeToAdd: 'CpiLevelDataPoint',
+      modelBaseDate: todayStr,
       selectedCurveType: undefined,
       showModal: true,
       // build settings
@@ -2031,6 +2037,18 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     }, this.state.supportedCurveTypes.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: s
     }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      lg: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_10__["default"], {
+      controlId: "modelBaseDate-Input",
+      label: "Base date"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_11__["default"].Control, {
+      style: {
+        width: "150px"
+      },
+      type: "date",
+      value: this.state.modelBaseDate || '',
+      onChange: this.handleInput('modelBaseDate')
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_8__["default"], {
       lg: "2"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_9__["default"], {
       id: "build-button",

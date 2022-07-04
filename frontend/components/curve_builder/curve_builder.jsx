@@ -23,10 +23,17 @@ class CurveBuilder extends React.Component {
     constructor(props) {
         super(props);
 
+        const today = new Date();
+        const year = today.getFullYear().toString();
+        const month = (1 + today.getMonth()).toString().padStart(2, '0');
+        const day = today.getDate().toString().padStart(2, '0');
+        const todayStr = year + '-' + month + '-' + day;
+
         this.state = {
             curveDataPoints: [],
             numCurveDataPointsToAdd: 1,
             curveDataTypeToAdd: 'CpiLevelDataPoint',
+            modelBaseDate: todayStr,
             selectedCurveType: undefined,
             showModal: true,
             // build settings
@@ -264,6 +271,20 @@ class CurveBuilder extends React.Component {
                                     >
                                         {this.state.supportedCurveTypes.map(s => <option key={s}>{s}</option>)}
                                     </Form.Select>
+                                </FloatingLabel>  
+                            </Col>
+                            <Col lg="auto">
+                                <FloatingLabel
+                                    controlId="modelBaseDate-Input"
+                                    label="Base date"
+                                >
+                                    <Form.Control
+                                        style={{ width: "150px"}}
+                                        type="date"
+                                        value={this.state.modelBaseDate || ''}
+                                        onChange={ this.handleInput('modelBaseDate') }
+                                    >
+                                    </Form.Control>
                                 </FloatingLabel>  
                             </Col>
                             <Col lg="2">
