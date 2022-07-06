@@ -84,6 +84,15 @@ class CpiModel(Model):
         self.fitting_method.fit(*zip(*self.training_data))
 
 
+    @classmethod
+    def build(cls, base_date, curve_data, domainX, domainY, fitting_method_str, t0_date=None):
+        # default t0_date to base_date
+        if not t0_date:
+            t0_date = base_date
+
+        build_settings = BuildSettingsCPICurve(domainX, domainY, fitting_method_str, t0_date)
+        return CpiModel(base_date, curve_data, build_settings)
+
     def clamped_date(self, date, clamp_date=False):
         date = Date(date)
         return date.start_of_month() if clamp_date else date

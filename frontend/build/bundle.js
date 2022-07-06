@@ -1919,7 +1919,21 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   buildCurve() {
     // send curve points, build options to backend
-    console.log('Build curve');
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: 'build_model',
+      method: 'POST',
+      data: {
+        model_type: this.state.selectedCurveType,
+        base_date: this.state.modelBaseDate,
+        model_data: JSON.stringify(this.state.curveDataPoints.filter(p => p.isActive)),
+        domainX: this.state.selectedDomainX,
+        domainY: this.state.selectedDomainY,
+        fitting_method_str: this.state.selectedFittingMethod
+      },
+      success: response => {
+        console.log('Build curve');
+      }
+    });
   }
 
   curveDataPointToForm(curveDataPoint, index) {

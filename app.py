@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request
 import logging
 
 # Backend API
@@ -9,6 +9,15 @@ app = Flask(__name__, static_url_path='', static_folder='frontend/build')
 
 # configure logger
 app.logger.setLevel(logging.DEBUG)
+
+def process_form_data(form, json_str_keys):
+    """Convert the Flask request.form to a dict and convert keys in json_str_keys to dicts."""
+    from json import loads
+    form_data = form.to_dict()
+    for key in json_str_keys:
+        if key in form_data:
+            form_data[key] = loads(form_data[key])
+    return form_data
 
 @app.route('/')
 def serve():
@@ -65,6 +74,31 @@ def get_tips_prices():
     except Exception as e:
         app.logger.error(str(e))
         return dict(errors=str(e))
+
+@app.route('/build_model', methods=['POST'])
+def build_model():
+    try:
+        from backend.models.modelfactory import ModelFactory
+        params = process_form_data(request.form, ['model_data'])
+        model = ModelFactory.build(params)
+        app.logger.info(f'Built model {model}')
+
+        # gather results
+        # temp: assume it's a CpiModel and return CPI levels
+        dates = [
+            '2022-07-01', '2022-07-15', '2022-07-31',
+            '2022-08-01', '2022-08-15', '2022-08-31',
+            '2023-07-01', '2023-07-15', '2023-07-31',
+            '2023-08-01', '2023-08-15', '2023-08-31',
+        ]
+        results = dict(
+            cpi={d: model.cpi(d) for d in dates}
+        )
+        return dict(results=results)
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))
+
 
 @app.route('/supported_curve_data_point_types/<curve_type>')
 def get_supproted_curve_data_point_types(curve_type):
