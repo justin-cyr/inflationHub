@@ -129,6 +129,8 @@ class PiecewiseLinear(Spline):
     @FittingMethod.set_is_fit
     def fit(self, xs, ys):
         super().fit(xs, ys)
+        if len(xs) < 2:
+            raise ValueError(f'PiecewiseLinear.fit: requires at least 2 points but got xs={xs}, ys={ys}.')
         self.slopes = [(ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]) for i in range(len(ys) - 1)]
 
 

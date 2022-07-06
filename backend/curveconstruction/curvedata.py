@@ -146,6 +146,8 @@ class CpiLevelDataPoint(CurveDataPoint):
                     # base_date is required
                     if t:
                         y = time_weighted_zero_rate / t
+                    elif t == 0.0:
+                        y = 0.0
 
         return (t, y)
 

@@ -126,7 +126,7 @@ class CpiModel(Model):
                 return self.t0_cpi * math.exp(y)
 
             elif domainY == domains.ZERO_RATE:
-                time = self.clamped_time()
+                time = self.clamped_time(date, clamp_date)
                 return self.t0_cpi * math.exp(time * y)
 
             else:
