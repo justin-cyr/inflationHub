@@ -55,6 +55,16 @@ def get_tips_reference_data(cusip):
         app.logger.error(str(e))
         return dict(errors=str(e))
 
+@app.route('/tips_yield_data/<cusip>')
+def get_tips_yield_data(cusip):
+    try:
+        from backend.tips_data import get_tips_yield_data_by_cusip
+        return get_tips_yield_data_by_cusip(cusip)
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))
+
+
 @app.route('/tips_prices')
 def get_tips_prices():
     try:

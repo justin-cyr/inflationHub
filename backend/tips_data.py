@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from backend.data import DataGetter
+from backend.data import DataGetter, get_fred_data
 from backend import config as cfg
 
 # get logger from current_app instance
@@ -55,6 +55,44 @@ def get_treasury_reference_data(cusip):
     record['tenor'] = calc_tenor(record['maturityDate'])
 
     return record
+
+
+def get_tips_fred_key(term, maturity_date):
+    """Return FRED time series key for TIPS yield data."""
+    maturity_datetime = datetime.datetime.strptime(maturity_date, '%Y-%m-%d')
+    maturity_month = maturity_datetime.strftime("%b")
+    maturity_month_letter = 'L' if maturity_month == 'Jul' else maturity_month[0]
+    maturity_year = str(maturity_datetime.date().year)
+
+    return 'DTP' + term + maturity_month_letter + maturity_year[-2:]
+
+
+def get_tips_yield_data(term, maturity_date, name=None):
+    """Get daily yield-to-maturity time series from St. Louis Fed."""
+    key = get_tips_fred_key(term, maturity_date)
+    return get_fred_data(key, name)
+
+
+def get_term_from_tsy_record(record):
+    """Return original term of bond from TreasuryDirect reference data record."""
+    term = ''
+    if 'term' in record:
+        term_str = str(record['term'])
+        term = term_str.split('-')[0]
+    return term
+        
+
+def get_maturity_date_from_tsy_record(record):
+    """Return maturityDate of bond from TreasuryDirect reference data record."""
+    return str(record.get('maturityDate'))
+
+
+def get_tips_yield_data_by_cusip(cusip):
+    """Return yield to maturity daily time series for a given TIPS cusip."""
+    record = get_treasury_reference_data(cusip)
+    term = get_term_from_tsy_record(record)
+    maturity_date = get_maturity_date_from_tsy_record(record)
+    return get_tips_yield_data(term, maturity_date, name=cusip)
 
 
 def get_tips_prices_wsj():

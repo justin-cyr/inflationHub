@@ -20,6 +20,7 @@ class TipsData extends React.Component {
         // bind methods
         this.getTipsCusips = this.getTipsCusips.bind(this);
         this.getTipsData = this.getTipsData.bind(this);
+        this.getTipsYields = this.getTipsYields.bind(this);
         this.getTipsPrices = this.getTipsPrices.bind(this);
     }
 
@@ -33,7 +34,11 @@ class TipsData extends React.Component {
                     cusips: response.cusips
                 },
                 // get reference data for each cusip in callback 
-                () => { this.state.cusips.map((cusip) => this.getTipsData(cusip)); });
+                () => { this.state.cusips.map((cusip) => {
+                            this.getTipsData(cusip);
+                            this.getTipsYields(cusip)
+                        }); 
+                    });
             }
         });
     }
@@ -59,6 +64,16 @@ class TipsData extends React.Component {
                 this.setState({
                     referenceData: newReferenceData
                 });
+            }
+        });
+    }
+
+    getTipsYields(cusip) {
+        $.ajax({
+            url: '/tips_yield_data/' + cusip,
+            method: 'GET',
+            success: (response) => {
+                console.log(response);
             }
         });
     }

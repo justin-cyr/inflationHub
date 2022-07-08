@@ -1220,6 +1220,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     this.getTipsCusips = this.getTipsCusips.bind(this);
     this.getTipsData = this.getTipsData.bind(this);
+    this.getTipsYields = this.getTipsYields.bind(this);
     this.getTipsPrices = this.getTipsPrices.bind(this);
   }
 
@@ -1233,7 +1234,10 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           cusips: response.cusips
         }, // get reference data for each cusip in callback 
         () => {
-          this.state.cusips.map(cusip => this.getTipsData(cusip));
+          this.state.cusips.map(cusip => {
+            this.getTipsData(cusip);
+            this.getTipsYields(cusip);
+          });
         });
       }
     });
@@ -1259,6 +1263,16 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         this.setState({
           referenceData: newReferenceData
         });
+      }
+    });
+  }
+
+  getTipsYields(cusip) {
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/tips_yield_data/' + cusip,
+      method: 'GET',
+      success: response => {
+        console.log(response);
       }
     });
   }
