@@ -20,14 +20,25 @@ DATA_CONFIG = pd.read_csv(
 FLAG_FOLDER = os.path.join(os.getcwd(), 'backend/flag_icons')
 
 class DataAPI(object):
-    def __init__(self, name):
+    def __init__(self, name=None, data_config=None):
 
-        if name not in DATA_CONFIG:
-            raise Exception('DataAPI - Unrecognized data name ' + name)
+        if not (name or data_config):
+            raise Exception('DataAPI - requires name or data_config dict.')
+
+        # look up data_config if name is present
+        if not data_config:
+            if name not in DATA_CONFIG:
+                raise Exception('DataAPI - Unrecognized data name ' + name)
+            else:
+                data_config = DATA_CONFIG[name]
+
+        if not name:
+            if 'Name' not in data_config:
+                raise Exception('DataAPI - construction from data_config must include Name key.')
+            else:
+                name = data_config['Name']
 
         self.name = name
-        # look up parameters from DataConfig
-        data_config = DATA_CONFIG[name]
         self.label = data_config.get('Label')
         self.type = data_config.get('Type')
         self.url = data_config.get('URL')
@@ -254,3 +265,21 @@ class TimeSeriesStatCanXmlParser(Parser):
 
         return {self.date_col_name: dates,
                 self.value_col_name: values}
+
+
+def get_fred_data(key, name=None):
+    """Get time series from St. Louis FRED data based on time series key."""
+    if not name:
+        name = 'FRED data ' + key
+    data_config = dict(
+        Name=name,
+        Label=key,
+        Type='Time series',
+        URL='https://fred.stlouisfed.org/graph/fredgraph.csv',
+        Description='FRED time series ' + key,
+        Parser='TimeSeriesCsvParser',
+        Source='https://fred.stlouisfed.org/series/' + key,
+        QueryParam1='id=' + key
+    )
+    data_api = DataAPI(data_config=data_config)
+    return data_api.get_and_parse_data()

@@ -2939,11 +2939,20 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.state = {
       chartData: [],
       cusips: [],
-      referenceData: []
+      priceData: [],
+      referenceData: [],
+      // styles
+      upColor: '#198754',
+      // green
+      downColor: '#dc3545',
+      // red
+      bbgColor: '#ff6600' // orange
+
     }; // bind methods
 
     this.getTipsCusips = this.getTipsCusips.bind(this);
     this.getTipsData = this.getTipsData.bind(this);
+    this.getTipsYields = this.getTipsYields.bind(this);
     this.getTipsPrices = this.getTipsPrices.bind(this);
   }
 
@@ -2957,7 +2966,10 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           cusips: response.cusips
         }, // get reference data for each cusip in callback 
         () => {
-          this.state.cusips.map(cusip => this.getTipsData(cusip));
+          this.state.cusips.map(cusip => {
+            this.getTipsData(cusip);
+            this.getTipsYields(cusip);
+          });
         });
       }
     });
@@ -2969,7 +2981,9 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       url: '/tips_reference_data/' + cusip,
       method: 'GET',
       success: response => {
-        const responseData = response.referenceData; // insert into list in order of increasing maturity date
+        let responseData = response.referenceData; // merge prices
+
+        responseData = this.mergePriceToReferenceData(this.state.priceData, responseData); // insert into list in order of increasing maturity date
 
         const insertIndex = this.state.referenceData.findIndex(record => record['tenor'] > responseData['tenor']);
         let newReferenceData = this.state.referenceData;
@@ -2983,6 +2997,15 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         this.setState({
           referenceData: newReferenceData
         });
+      }
+    });
+  }
+
+  getTipsYields(cusip) {
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/tips_yield_data/' + cusip,
+      method: 'GET',
+      success: response => {// console.log(response);
       }
     });
   }
@@ -3004,11 +3027,37 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           name: 'Real Yields'
         };
         this.setState({
-          chartData: [series]
+          chartData: [series],
+          priceData: priceData
         });
-        console.log(priceData);
+        this.mapPricesToBonds(priceData);
       }
     });
+  }
+
+  mergePriceToReferenceData(priceData, record) {
+    const i = priceData.findIndex(priceRecord => record['maturityDate'] === priceRecord['MATURITY'] && Number(record['interestRate']) === priceRecord['COUPON']);
+
+    if (i >= 0) {
+      record = { ...record,
+        ...priceData[i]
+      };
+    }
+
+    return record;
+  }
+
+  mapPricesToBonds(priceData) {
+    let newReferenceData = this.state.referenceData;
+
+    for (let i = 0; i < newReferenceData.length; ++i) {
+      newReferenceData[i] = this.mergePriceToReferenceData(priceData, newReferenceData[i]);
+    }
+
+    this.setState({
+      referenceData: newReferenceData
+    } // () => console.log(this.state.referenceData)
+    );
   }
 
   componentDidMount() {
@@ -3068,6 +3117,10 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   render() {
     // Reference data table
     let data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...');
+    const numberStyle = {
+      textAlign: 'center',
+      color: this.state.bbgColor
+    };
 
     if (this.state.referenceData) {
       const table_rows = this.state.referenceData.length === 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
@@ -3080,39 +3133,37 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         style: {
           textAlign: 'center'
         }
-      }, record['cusip']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'left'
-        }
-      }, Number(record['interestRate']).toFixed(3) + '%'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'left'
-        }
       }, record['maturityDate']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'left'
-        }
-      }, record['tenor'].toFixed(2) + "Y"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'left'
-        }
-      }, record['issueDate']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'left'
-        }
-      }, record['datedDate']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
-      }, Number(record['refCpiOnDatedDate']).toFixed(5)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, Number(record['interestRate']).toFixed(3) + '%'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'left'
+          textAlign: 'center'
         }
-      }, record['securityTerm']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, record['cusip']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'left'
+          textAlign: 'center'
         }
-      }, record['series'])));
+      }, Number(record['tenor']).toFixed(2) + "Y"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record['term']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: record['CHANGE'] >= 0 ? this.state.upColor : this.state.downColor
+        }
+      }, 'YIELD' in record ? Number(record['YIELD']).toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: numberStyle
+      }, 'BID' in record ? Number(record['BID']).toFixed(2) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: numberStyle
+      }, 'ASK' in record ? Number(record['ASK']).toFixed(2) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          fontWeight: Math.min(900, Math.max(100, -200 * (Number(record['BID_ASK_SPREAD']) - 2) + 900)) || 400
+        }
+      }, 'BID_ASK_SPREAD' in record ? Number(record['BID_ASK_SPREAD']).toFixed(0) : '')));
       data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
         id: "tips-data-table",
         responsive: "true"
@@ -3124,39 +3175,39 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         style: {
           textAlign: 'center'
         }
-      }, "CUSIP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'left'
-        }
-      }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'left'
-        }
       }, "Maturity Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'left'
-        }
-      }, "Tenor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'left'
-        }
-      }, "Issue Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'left'
-        }
-      }, "Dated Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
         style: {
           textAlign: 'center'
         }
-      }, "Ref CPI on Dated Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
         style: {
-          textAlign: 'left'
+          textAlign: 'center'
         }
-      }, "Security Term"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      }, "CUSIP"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
         style: {
-          textAlign: 'left'
+          textAlign: 'center'
         }
-      }, "Series"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+      }, "Tenor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Term"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "YTM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Bid"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Ask"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Spread"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
         style: {
           color: '#bdbdbd'
         }
