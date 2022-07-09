@@ -1,5 +1,5 @@
 import React from 'react';
-import $ from 'jquery';
+import $, { merge } from 'jquery';
 
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -14,6 +14,7 @@ class TipsData extends React.Component {
         this.state = {
             chartData: [],
             cusips: [],
+            priceData: [],
             referenceData: [],
             // styles
             upColor:    '#198754',  // green
@@ -53,7 +54,10 @@ class TipsData extends React.Component {
             url: '/tips_reference_data/' + cusip,
             method: 'GET',
             success: (response) => {
-                const responseData = response.referenceData;
+                let responseData = response.referenceData;
+
+                // merge prices
+                responseData = this.mergePriceToReferenceData(this.state.priceData, responseData);
 
                 // insert into list in order of increasing maturity date
                 const insertIndex = this.state.referenceData.findIndex((record) => record['tenor'] > responseData['tenor']);
@@ -101,7 +105,8 @@ class TipsData extends React.Component {
                 }
 
                 this.setState({
-                    chartData: [series]
+                    chartData: [series],
+                    priceData: priceData
                 });
 
                 this.mapPricesToBonds(priceData);
@@ -109,13 +114,21 @@ class TipsData extends React.Component {
         });
     }
 
+    mergePriceToReferenceData(priceData, record) {
+        const i = priceData.findIndex((priceRecord) => (
+                    (record['maturityDate'] === priceRecord['MATURITY']) &&
+                    (Number(record['interestRate']) === priceRecord['COUPON']))
+        );
+        if (i >= 0) {
+            record = {...record, ...priceData[i]};
+        }
+        return record;
+    }
+
     mapPricesToBonds(priceData) {
         let newReferenceData = this.state.referenceData;
-        for (const priceRecord of priceData) {
-            const refDataIndex = newReferenceData.findIndex((record) => record['maturityDate'] === priceRecord['MATURITY']);
-            if (refDataIndex >= 0) {
-                newReferenceData[refDataIndex] = { ...newReferenceData[refDataIndex], ...priceRecord };
-            }
+        for (let i = 0; i < newReferenceData.length; ++i) {
+            newReferenceData[i] = this.mergePriceToReferenceData(priceData, newReferenceData[i]);
         }
         
         this.setState({
