@@ -173,5 +173,14 @@ def get_tips_prices_wsj():
             except ValueError as e:
                 pass
 
+        # Mid price and spread
+        if 'ASK'in row and 'BID' in row:
+            row['MID'] = (row['ASK'] + row['BID']) / 2.0
+
+            # spread in 32nds of a point
+            ask_int_part, bid_int_part = int(row['ASK']), int(row['BID'])
+            ask_frac_part, bid_frac_part = row['ASK'] - ask_int_part, row['BID'] - bid_int_part
+            row['BID_ASK_SPREAD'] = 32 * (ask_int_part - bid_int_part) + 100 * (ask_frac_part - bid_frac_part)
+
     return row_data
 

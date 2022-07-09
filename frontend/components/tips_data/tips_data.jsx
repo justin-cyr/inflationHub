@@ -14,7 +14,11 @@ class TipsData extends React.Component {
         this.state = {
             chartData: [],
             cusips: [],
-            referenceData: []
+            referenceData: [],
+            // styles
+            upColor:    '#198754',  // green
+            downColor:  '#dc3545',  // red
+            bbgColor:   '#ff6600',  // orange
         }
 
         // bind methods
@@ -73,7 +77,7 @@ class TipsData extends React.Component {
             url: '/tips_yield_data/' + cusip,
             method: 'GET',
             success: (response) => {
-                console.log(response);
+                // console.log(response);
             }
         });
     }
@@ -100,9 +104,25 @@ class TipsData extends React.Component {
                     chartData: [series]
                 });
 
-                console.log(priceData);
+                this.mapPricesToBonds(priceData);
             }
         });
+    }
+
+    mapPricesToBonds(priceData) {
+        let newReferenceData = this.state.referenceData;
+        for (const priceRecord of priceData) {
+            const refDataIndex = newReferenceData.findIndex((record) => record['maturityDate'] === priceRecord['MATURITY']);
+            if (refDataIndex >= 0) {
+                newReferenceData[refDataIndex] = { ...newReferenceData[refDataIndex], ...priceRecord };
+            }
+        }
+        
+        this.setState({
+            referenceData: newReferenceData
+        },
+            // () => console.log(this.state.referenceData)
+        );
     }
 
     componentDidMount() {
@@ -161,21 +181,28 @@ class TipsData extends React.Component {
 
         // Reference data table
         let data_table = <center>{'... Loading data ...'}</center>;
+        const numberStyle = {
+            textAlign: 'center',
+            color: this.state.bbgColor
+        };
+
         if (this.state.referenceData) {
 
             const table_rows = this.state.referenceData.length === 0
                 ? <tr key={'empty'}><td colSpan="7"><center>{'... Loading data ...'}</center></td></tr>
                 : this.state.referenceData.map(record => 
                     <tr key={record['cusip']}>
+                        <td style={{ textAlign: 'center' }}>{record['maturityDate']}</td>
+                        <td style={{ textAlign: 'center' }}>{Number(record['interestRate']).toFixed(3) + '%'}</td>
                         <td style={{ textAlign: 'center' }}>{record['cusip']}</td>
-                        <td style={{ textAlign: 'left' }}>{Number(record['interestRate']).toFixed(3) +'%'}</td>
-                        <td style={{ textAlign: 'left' }}>{record['maturityDate']}</td>
-                        <td style={{ textAlign: 'left' }}>{record['tenor'].toFixed(2) + "Y"}</td>
-                        <td style={{ textAlign: 'left' }}>{record['issueDate']}</td>
-                        <td style={{ textAlign: 'left' }}>{record['datedDate']}</td>
-                        <td style={{ textAlign: 'center' }}>{Number(record['refCpiOnDatedDate']).toFixed(5)}</td>
-                        <td style={{ textAlign: 'left' }}>{record['securityTerm']}</td>
-                        <td style={{ textAlign: 'left' }}>{record['series']}</td>
+                        <td style={{ textAlign: 'center' }}>{Number(record['tenor']).toFixed(2) + "Y"}</td>
+                        <td style={{ textAlign: 'center' }}>{record['term']}</td>
+                        <td style={{ textAlign: 'center',
+                                     color: record['CHANGE'] >= 0 ? this.state.upColor : this.state.downColor
+                                                         }}>{'YIELD' in record ? Number(record['YIELD']).toFixed(3) + '%' : ''}</td>
+                        <td style={ numberStyle }>{'BID' in record ? Number(record['BID']).toFixed(2) : ''}</td>
+                        <td style={ numberStyle }>{'ASK' in record ? Number(record['ASK']).toFixed(2) : ''}</td>
+                        <td style={{ textAlign: 'center' }}>{'BID_ASK_SPREAD' in record ? Number(record['BID_ASK_SPREAD']).toFixed(0) : ''}</td>
                     </tr>    
                 );
 
@@ -185,15 +212,15 @@ class TipsData extends React.Component {
             >
                 <thead>
                     <tr style={{ color: '#bdbdbd'}}>
+                        <th style={{ textAlign: 'center' }}>Maturity Date</th>
+                        <th style={{ textAlign: 'center' }}>Coupon</th>
                         <th style={{ textAlign: 'center' }}>CUSIP</th>
-                        <th style={{ textAlign: 'left' }}>Coupon</th>
-                        <th style={{ textAlign: 'left' }}>Maturity Date</th>
-                        <th style={{ textAlign: 'left' }}>Tenor</th>
-                        <th style={{ textAlign: 'left' }}>Issue Date</th>
-                        <th style={{ textAlign: 'left' }}>Dated Date</th>
-                        <th style={{ textAlign: 'center' }}>Ref CPI on Dated Date</th>
-                        <th style={{ textAlign: 'left' }}>Security Term</th>
-                        <th style={{ textAlign: 'left' }}>Series</th>
+                        <th style={{ textAlign: 'center' }}>Tenor</th>
+                        <th style={{ textAlign: 'center' }}>Term</th>
+                        <th style={{ textAlign: 'center' }}>YTM</th>
+                        <th style={{ textAlign: 'center' }}>Bid</th>
+                        <th style={{ textAlign: 'center' }}>Ask</th>
+                        <th style={{ textAlign: 'center' }}>Spread</th>
                     </tr>
                 </thead>
                 <tbody
