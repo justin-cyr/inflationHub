@@ -1426,7 +1426,8 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         style: numberStyle
       }, 'ASK' in record ? Number(record['ASK']).toFixed(2) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'center'
+          textAlign: 'center',
+          fontWeight: Math.min(900, Math.max(100, -200 * (Number(record['BID_ASK_SPREAD']) - 2) + 900)) || 400
         }
       }, 'BID_ASK_SPREAD' in record ? Number(record['BID_ASK_SPREAD']).toFixed(0) : '')));
       data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {

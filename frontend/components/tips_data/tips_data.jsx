@@ -202,7 +202,9 @@ class TipsData extends React.Component {
                                                          }}>{'YIELD' in record ? Number(record['YIELD']).toFixed(3) + '%' : ''}</td>
                         <td style={ numberStyle }>{'BID' in record ? Number(record['BID']).toFixed(2) : ''}</td>
                         <td style={ numberStyle }>{'ASK' in record ? Number(record['ASK']).toFixed(2) : ''}</td>
-                        <td style={{ textAlign: 'center' }}>{'BID_ASK_SPREAD' in record ? Number(record['BID_ASK_SPREAD']).toFixed(0) : ''}</td>
+                        <td style={{ textAlign: 'center', 
+                            fontWeight: Math.min(900, Math.max(100, -200 * (Number(record['BID_ASK_SPREAD']) - 2) + 900)) || 400
+                                                         }}>{'BID_ASK_SPREAD' in record ? Number(record['BID_ASK_SPREAD']).toFixed(0) : ''}</td>
                     </tr>    
                 );
 
