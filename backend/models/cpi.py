@@ -137,16 +137,16 @@ class CpiModel(Model):
                 raise ValueError(f'CpiModel.cpi_trend: unsupported domain {domainY}.')
 
 
-    def cpi(self, date, clamp_date=False):
+    def cpi(self, date, clamp_date=False, trend=False):
         """Return the CPI level with seasonality on a specific date."""
         date = self.clamped_date(date, clamp_date) 
         cpi_sa = self.cpi_trend(date, clamp_date)
-        return self.seasonality_model.apply(self.t0_date, date, cpi_sa)
+        return cpi_sa if trend else self.seasonality_model.apply(self.t0_date, date, cpi_sa)
 
 
-    def time_weighted_zero_rate(self, date, clamp_date=False):
+    def time_weighted_zero_rate(self, date, clamp_date=False, trend=True):
         """Return the time-weighted zero inflation rate on a specific date."""
-        cpi = self.cpi(date, clamp_date)
+        cpi = self.cpi(date, clamp_date, trend)
         if cpi < 0.0:
             raise ValueError(f'CpiModel.time_weighted_forward_rate: cannot calculate due to CPI projection {cpi} < 0 on {date}.')
         if self.t0_cpi <= 0.0:
@@ -155,9 +155,20 @@ class CpiModel(Model):
         return math.log(cpi / self.t0_cpi)
 
 
-    def zero_rate(self, date, clamp_date=False):
+    def zero_rate(self, date, clamp_date=False, trend=True):
         """Return the zero rate of the forward CPI on a specific date."""
         time = self.clamped_time(date, clamp_date)
         if time == 0.0:
             return 0.0
-        return self.time_weighted_zero_rate(date, clamp_date) / time
+        return self.time_weighted_zero_rate(date, clamp_date, trend) / time
+
+
+    def one_day_forward_rate(self, date, clamp_date=False, trend=True):
+        """Return the 1D forward rate of inflation on a specific date."""
+        d0 = Date(date)
+        d1 = d0.addTenor('1D')
+        time = cu.time_difference(d0, d1, self.build_settings.domainX)
+
+        f0 = self.time_weighted_zero_rate(d0, clamp_date, trend)
+        f1 = self.time_weighted_zero_rate(d1, clamp_date, trend)
+        return (f1 - f0) / time
