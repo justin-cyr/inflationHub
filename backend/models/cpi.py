@@ -83,6 +83,10 @@ class CpiModel(Model):
         # Fit training data
         self.fitting_method.fit(*zip(*self.training_data))
 
+        # Set t0_cpi if necessary
+        if not self.t0_cpi:
+            self.t0_cpi = self.cpi(self.t0_date)
+        
 
     @classmethod
     def build(cls, base_date, curve_data, domainX, domainY, fitting_method_str, t0_date=None):
@@ -138,3 +142,22 @@ class CpiModel(Model):
         date = self.clamped_date(date, clamp_date) 
         cpi_sa = self.cpi_trend(date, clamp_date)
         return self.seasonality_model.apply(self.t0_date, date, cpi_sa)
+
+
+    def time_weighted_zero_rate(self, date, clamp_date=False):
+        """Return the time-weighted zero inflation rate on a specific date."""
+        cpi = self.cpi(date, clamp_date)
+        if cpi < 0.0:
+            raise ValueError(f'CpiModel.time_weighted_forward_rate: cannot calculate due to CPI projection {cpi} < 0 on {date}.')
+        if self.t0_cpi <= 0.0:
+            raise ValueError(f'CpiModel.time_weighted_forward_rate: cannot calculate due to CPI {self.t0_cpi} <= 0 at t0_date {self.t0_date}.')
+
+        return math.log(cpi / self.t0_cpi)
+
+
+    def zero_rate(self, date, clamp_date=False):
+        """Return the zero rate of the forward CPI on a specific date."""
+        time = self.clamped_time(date, clamp_date)
+        if time == 0.0:
+            return 0.0
+        return self.time_weighted_zero_rate(date, clamp_date) / time
