@@ -17,6 +17,9 @@ class FittingMethodFactory(object):
         elif t == 'PiecewiseConstantRightCts':
             return PiecewiseConstantRightCts(domainX, domainY)
 
+        elif t == 'BestFitLinear':
+            return BestFitLinear(domainX, domainY)
+
         elif t == 'BestFitConstant':
             return BestFitConstant(domainX, domainY)
 
