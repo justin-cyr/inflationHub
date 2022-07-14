@@ -49,3 +49,21 @@ class FittingMethod(object):
     def predict(self, x):
         """Predict a y value given an x value."""
         raise NotImplementedError('FittingMethod.predict: not implemented in base class.')
+
+    
+    def difference_quotient(self, x, delta_x=1E-4):
+        """Return the difference quotient (y(x + delta_x) - y(x) / (delta_x)."""
+        if delta_x == 0:
+            raise ValueError('FittingMethod.difference_quotient: delta_x cannot be 0.')
+
+        # Derive class implements predict
+        x0, x1 = x, x + delta_x
+        y0, y1 = self.predict(x0), self.predict(x1)
+
+        return (y1 - y0) / (x1 - x0)
+
+
+    def dydx(self, x):
+        """Return the derivative dy/dx at point x."""
+        # Default implementation is a difference quotient with small step size
+        return self.difference_quotient(x, delta_x=1E-8)

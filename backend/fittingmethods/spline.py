@@ -95,6 +95,8 @@ class PiecewiseConstantLeftCts(Spline):
         _, y = self.pairs[i]
         return y
 
+    def dydx(self, x):
+        return 0.0
 
 class PiecewiseConstantRightCts(Spline):
     def __init__(self, domainX, domainY):
@@ -116,6 +118,8 @@ class PiecewiseConstantRightCts(Spline):
         _, y = self.pairs[i]
         return y
 
+    def dydx(self, x):
+        return 0.0
 
 class PiecewiseLinear(Spline):
     def __init__(self, domainX, domainY):
@@ -150,4 +154,15 @@ class PiecewiseLinear(Spline):
         xi, yi = self.pairs[i]
         return yi + self.slopes[i] * (x - xi)
             
-        
+    
+    def dydx(self, x):
+        # natural extrapolation
+        if x < self.x_min:
+            return self.slopes[0]
+
+        if x >= self.x_max:
+            return self.slopes[-1]
+
+        # linear interpolation
+        i = self.find_node_index_below(x)
+        return self.slopes[i]
