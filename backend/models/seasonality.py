@@ -29,6 +29,10 @@ class SeasonalityModel(Model):
         end_date = start_date.addOneYear()
         return self.apply(start_date, end_date, cpi) == cpi
     
+    def instantaneous_seasonality_rate(self, date):
+        """Return the instantaneous rate of seasonality on a specific date."""
+        # Default implementation for No Seasonality
+        return 0.0
 
 def time_measure(date):
     """Return the seasonality time measure for a given Date."""

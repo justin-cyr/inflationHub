@@ -14,6 +14,9 @@ GOOGLE_CHROME_BIN = 'GOOGLE_CHROME_BIN'
 CPI = 'CPI'
 SEASONALITY = 'Seasonality'
 
+# Numerical constants
+zero_tolerance_ = 1E-12
+
 # get logger from current_app instance
 from flask import current_app as app
 

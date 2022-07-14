@@ -4,6 +4,7 @@ from ..curveconstruction.curvedata import CpiLevelDataPoint, YoYDataPoint
 from ..curveconstruction import domains
 from ..curveconstruction import convertutils as cu
 from ..utils import Date
+from .. import config as cfg
 
 import math
 from .seasonality import SeasonalityModel
@@ -113,6 +114,14 @@ class CpiModel(Model):
         return self.fitting_method.predict(time)
 
 
+    # decorator
+    def ensure_positive(cpi):
+        def inner(self, date, clamp_date=False):
+            return max(cpi(self, date, clamp_date), cfg.zero_tolerance_)
+        return inner
+
+
+    @ensure_positive
     def cpi_trend(self, date, clamp_date=False):
         """Return the CPI level without seasonality on a specific date."""
         y = self.predict_at_date(date, clamp_date)
@@ -137,6 +146,7 @@ class CpiModel(Model):
                 raise ValueError(f'CpiModel.cpi_trend: unsupported domain {domainY}.')
 
 
+    @ensure_positive
     def cpi(self, date, clamp_date=False, trend=False):
         """Return the CPI level with seasonality on a specific date."""
         date = self.clamped_date(date, clamp_date) 
@@ -172,3 +182,26 @@ class CpiModel(Model):
         f0 = self.time_weighted_zero_rate(d0, clamp_date, trend)
         f1 = self.time_weighted_zero_rate(d1, clamp_date, trend)
         return (f1 - f0) / time
+
+
+    def instantaneous_forward_rate(self, date, clamp_date=False, trend=True):
+        """Return the instantaneous forward rate of inflation on a specific date."""
+        time = self.clamped_time(date, clamp_date)
+        dydt = self.fitting_method.dydx(time)
+        domainY = self.build_settings.domainY
+        
+        if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
+            # dy/dt is the time-weighted zero rate time derivative 
+            return dydt
+
+        y = self.predict_at_date(date, clamp_date)
+        if domainY == domains.ZERO_RATE:
+            # dy/dt is the zero rate time derivative
+            return y + time * dydt
+
+        elif domainY == domains.CPI_LEVEL:
+            # dy/dt is the CPI level time derivative
+            date = self.clamped_date(date, clamp_date)
+            instantaneous_seasonality = 0.0 if trend else self.seasonality_model.instantaneous_seasonality_rate(date)
+            y = max(y, cfg.zero_tolerance_)
+            return (dydt / y) - instantaneous_seasonality
