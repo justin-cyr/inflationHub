@@ -130,7 +130,7 @@ class Date(object):
             num_years = tenor.size
             date = self
             while num_years > 0:
-                date = self.addOneYear()
+                date = date.addOneYear()
                 num_years -= 1
             return date
 
@@ -138,7 +138,7 @@ class Date(object):
             raise NotImplementedError('Date.addTenor: monthly tenors not yet supported.')
 
         elif tenor.unit == 'D':
-            Date(self.datetime_date + datetime.timedelta(days=tenor.size))
+            return Date(self.datetime_date() + datetime.timedelta(days=tenor.size))
         else:
             raise ValueError(f'Date.addTenor: unsupported tenor unit it {tenor}')
 
