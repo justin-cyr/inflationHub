@@ -34,6 +34,10 @@ class SeasonalityModel(Model):
         # Default implementation for No Seasonality
         return 0.0
 
+    def get_all_results(self, **kwargs):
+        """Return a dict of all SeasonalityModel output."""
+        raise NotImplementedError('SeasonalityModel.get_all_results: not yet implemented.')
+
 def time_measure(date):
     """Return the seasonality time measure for a given Date."""
     date = Date(date)

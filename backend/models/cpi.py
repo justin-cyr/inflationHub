@@ -6,8 +6,12 @@ from ..curveconstruction import convertutils as cu
 from ..utils import Date
 from .. import config as cfg
 
+from collections import defaultdict
 import math
 from .seasonality import SeasonalityModel
+
+# get logger from current_app instance
+from flask import current_app as app
 
 class CpiModel(Model):
     def __init__(self, base_date, model_data=[], build_settings=None, reference_models=[]):
@@ -116,8 +120,8 @@ class CpiModel(Model):
 
     # decorator
     def ensure_positive(cpi):
-        def inner(self, date, clamp_date=False):
-            return max(cpi(self, date, clamp_date), cfg.zero_tolerance_)
+        def inner(self, date, *args):
+            return max(cpi(self, date, *args), cfg.zero_tolerance_)
         return inner
 
 
@@ -205,3 +209,36 @@ class CpiModel(Model):
             instantaneous_seasonality = 0.0 if trend else self.seasonality_model.instantaneous_seasonality_rate(date)
             y = max(y, cfg.zero_tolerance_)
             return (dydt / y) - instantaneous_seasonality
+
+
+    def get_all_results(self, **kwargs):
+        """Return a dict of all CpiModel output."""
+        # optional arguments
+        tenor = kwargs.get('tenor') or '5Y'
+        start_date = Date(kwargs.get('startDate') or self.t0_date)
+        end_date = kwargs.get('endDate') or start_date.addTenor(tenor)
+        
+        # calculate results
+        res = defaultdict(list)
+        results_key_to_func = {
+            'cpi': self.cpi,
+            'cpi_trend': self.cpi_trend,
+            'time_weighted_zero_rate': self.time_weighted_zero_rate,
+            'zero_rate': self.zero_rate,
+            'one_day_forward_rate': self.one_day_forward_rate,
+            'instantaneous_forward_rate': self.instantaneous_forward_rate
+        }
+
+        d = start_date
+        while d <= end_date:
+
+            for key, func in results_key_to_func.items():
+                try:
+                    value = func(d)
+                    res[key].append((str(d), value))
+                except Exception as e:
+                    app.logger.error(f'CpiModel.get_all_results: failed to calculate {key} on {d} because {e}.')
+            
+            d = d.addTenor('1D')
+
+        return res

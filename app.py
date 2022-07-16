@@ -94,16 +94,8 @@ def build_model():
         app.logger.info(f'Built model {model}')
 
         # gather results
-        # temp: assume it's a CpiModel and return CPI levels
-        dates = [
-            '2022-07-01', '2022-07-15', '2022-07-31',
-            '2022-08-01', '2022-08-15', '2022-08-31',
-            '2023-07-01', '2023-07-15', '2023-07-31',
-            '2023-08-01', '2023-08-15', '2023-08-31',
-        ]
-        results = dict(
-            cpi={d: model.cpi(d) for d in dates}
-        )
+        results_options = params.get('results_options') or {}
+        results = model.get_all_results(**results_options)
         return dict(results=results)
     except Exception as e:
         app.logger.error(str(e))

@@ -29,4 +29,7 @@ class Model(object):
     def __repr__(self):
         return f'{self.__class__.__name__}({self.base_date})'
 
-    
+
+    def get_all_results(self, **kwargs):
+        """Return a dict of all model output."""
+        raise NotImplementedError('Model.get_all_results: not implemented in base class.')
