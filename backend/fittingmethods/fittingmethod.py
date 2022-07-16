@@ -1,6 +1,14 @@
 
 from ..curveconstruction.domains import DomainPair
 
+# String constants for fitting method names
+BestFitConstant = 'BestFitConstant'
+BestFitLinear = 'BestFitLinear'
+PiecewiseLinear = 'PiecewiseLinear'
+PiecewiseConstantLeftCts = 'PiecewiseConstantLeftCts'
+PiecewiseConstantRightCts = 'PiecewiseConstantRightCts'
+
+
 class FittingMethod(object):
     def __init__(self, domainX, domainY):
         self.domain_pair = DomainPair(domainX, domainY)

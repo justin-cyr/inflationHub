@@ -1,6 +1,7 @@
 
 from .. import config as cfg
 from ..curveconstruction import domains
+from ..fittingmethods import fittingmethod as fm
 
 def get_usage_by_model(model_str):
     """Return the usage of the build settings for this model string."""
@@ -63,11 +64,11 @@ class BuildSettingsCPICurve(BuildSettings):
                 domains.ZERO_RATE
                 ],
             fitting_method_str=[
-                'PiecewiseLinear',
-                'BestFitLinear',
-                'BestFitConstant',
-                'PiecewiseConstantLeftCts',
-                'PiecewiseConstantRightCts'
+                fm.PiecewiseLinear,
+                fm.BestFitLinear,
+                fm.BestFitConstant,
+                fm.PiecewiseConstantLeftCts,
+                fm.PiecewiseConstantRightCts
                 ]
             )
 
