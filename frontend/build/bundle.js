@@ -724,6 +724,7 @@ __webpack_require__.r(__webpack_exports__);
 class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       allDataNames: [],
       chartData: []
@@ -778,7 +779,7 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           newChartData.push(newSeries);
         }
 
-        this.setState({
+        this._isMounted && this.setState({
           chartData: newChartData
         });
       }
@@ -803,6 +804,7 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   componentDidMount() {
     // Request default data
+    this._isMounted = true;
     jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
       url: '/all_data_names',
       method: 'GET',
@@ -813,6 +815,10 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       }
     });
     this.getData('US CPI NSA');
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   componentDidUpdate() {
@@ -973,6 +979,7 @@ const APP_VERSION = "APP_VERSION";
 class Footer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       app_author: '',
       app_name: '',
@@ -981,17 +988,22 @@ class Footer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
       url: '/app_info',
       method: 'GET',
       success: response => {
-        this.setState({
+        this._isMounted && this.setState({
           app_author: response.APP_AUTHOR,
           app_name: response.APP_NAME,
           app_version: response.APP_VERSION
         });
       }
     });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
@@ -1212,6 +1224,7 @@ __webpack_require__.r(__webpack_exports__);
 class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
+    this._isMounted = false;
     this.state = {
       chartData: [],
       cusips: [],
@@ -1238,7 +1251,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       url: '/tips_cusips',
       method: 'GET',
       success: response => {
-        this.setState({
+        this._isMounted && this.setState({
           cusips: response.cusips
         }, // get reference data for each cusip in callback 
         () => {
@@ -1270,7 +1283,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           newReferenceData.push(responseData);
         }
 
-        this.setState({
+        this._isMounted && this.setState({
           referenceData: newReferenceData
         });
       }
@@ -1302,7 +1315,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           showlegend: false,
           name: 'Real Yields'
         };
-        this.setState({
+        this._isMounted && this.setState({
           chartData: [series],
           priceData: priceData
         });
@@ -1330,15 +1343,20 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       newReferenceData[i] = this.mergePriceToReferenceData(priceData, newReferenceData[i]);
     }
 
-    this.setState({
+    this._isMounted && this.setState({
       referenceData: newReferenceData
     } // () => console.log(this.state.referenceData)
     );
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.getTipsPrices();
     this.getTipsCusips();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   componentDidUpdate() {

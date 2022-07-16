@@ -14,7 +14,8 @@ class DataViewer extends React.Component {
 
     constructor(props) {
         super(props);
-
+        
+        this._isMounted = false;
         this.state = {
             allDataNames: [],
             chartData: [],
@@ -70,7 +71,7 @@ class DataViewer extends React.Component {
                     newChartData.push(newSeries);
                 }
                 
-                this.setState({
+                this._isMounted && this.setState({
                     chartData: newChartData
                 });
 
@@ -94,6 +95,7 @@ class DataViewer extends React.Component {
 
     componentDidMount() {
         // Request default data
+        this._isMounted = true;
         $.ajax({
             url: '/all_data_names',
             method: 'GET',
@@ -105,6 +107,10 @@ class DataViewer extends React.Component {
         });
 
         this.getData('US CPI NSA');
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidUpdate() {
