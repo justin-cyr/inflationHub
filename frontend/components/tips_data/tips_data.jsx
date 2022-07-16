@@ -11,6 +11,7 @@ class TipsData extends React.Component {
     constructor(props) {
         super(props);
 
+        this._isMounted = false;
         this.state = {
             chartData: [],
             cusips: [],
@@ -35,7 +36,7 @@ class TipsData extends React.Component {
             url: '/tips_cusips',
             method: 'GET',
             success: (response) => {
-                this.setState({
+                this._isMounted && this.setState({
                     cusips: response.cusips
                 },
                 // get reference data for each cusip in callback 
@@ -69,7 +70,7 @@ class TipsData extends React.Component {
                     newReferenceData.push(responseData);
                 }
 
-                this.setState({
+                this._isMounted && this.setState({
                     referenceData: newReferenceData
                 });
             }
@@ -104,7 +105,7 @@ class TipsData extends React.Component {
                     name: 'Real Yields'
                 }
 
-                this.setState({
+                this._isMounted && this.setState({
                     chartData: [series],
                     priceData: priceData
                 });
@@ -131,7 +132,7 @@ class TipsData extends React.Component {
             newReferenceData[i] = this.mergePriceToReferenceData(priceData, newReferenceData[i]);
         }
         
-        this.setState({
+        this._isMounted && this.setState({
             referenceData: newReferenceData
         },
             // () => console.log(this.state.referenceData)
@@ -139,8 +140,13 @@ class TipsData extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.getTipsPrices();
         this.getTipsCusips();
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     componentDidUpdate() {

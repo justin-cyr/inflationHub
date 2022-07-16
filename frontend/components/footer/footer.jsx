@@ -13,6 +13,7 @@ class Footer extends React.Component {
     constructor(props) {
         super(props);
 
+        this._isMounted = false;
         this.state = {
             app_author: '',
             app_name: '',
@@ -21,17 +22,22 @@ class Footer extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         $.ajax({
             url: '/app_info',
             method: 'GET',
             success: (response) => {
-                this.setState({ 
+                this._isMounted && this.setState({ 
                     app_author: response.APP_AUTHOR,
                     app_name: response.APP_NAME,
                     app_version: response.APP_VERSION
                 });
             } 
         })
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render () {
