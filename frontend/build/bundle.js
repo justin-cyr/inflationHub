@@ -2451,15 +2451,51 @@ __webpack_require__.r(__webpack_exports__);
 class CpiModelResults extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
-    let cpiPlotData = [];
-    let instantaneousRatePlotData = [];
-    let twzrPlotData = [];
-    let zeroRatePlotData = [];
+    const chartLayout = {
+      paper_bgcolor: '#0a0e1a',
+      plot_bgcolor: '#14171C',
+      xaxis: {
+        title: 'Date',
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD'
+      },
+      yaxis: {
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        autotypenumbers: 'strict',
+        minexponent: 9,
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD',
+        tickformat: ",.2f",
+        hoverformat: ",.3f"
+      },
+      showLegend: true,
+      legend: {
+        font: {
+          color: '#BDBDBD'
+        }
+      }
+    };
+    const chartConfig = {
+      displayModeBar: true,
+      scrollZoom: true
+    };
     this.state = {
-      cpiPlotData: cpiPlotData,
-      instantaneousRatePlotData: instantaneousRatePlotData,
-      twzrPlotData: twzrPlotData,
-      zeroRatePlotData: zeroRatePlotData
+      cpiPlotData: [],
+      instantaneousRatePlotData: [],
+      twzrPlotData: [],
+      zeroRatePlotData: [],
+      // chart options
+      chartLayout: chartLayout,
+      chartConfig: chartConfig
     };
   }
 
@@ -2472,47 +2508,58 @@ class CpiModelResults extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       const keys = Object.keys(this.props.results);
 
       if (keys.includes('cpi')) {
-        cpiPlotData = [{
+        cpiPlotData.push({
           x: this.props.results.cpi.map(p => p[0]),
           y: this.props.results.cpi.map(p => p[1]),
           type: 'scatter',
           mode: 'lines',
           showlegend: true,
-          name: 'CPI Level'
-        }];
+          name: 'CPI NSA Level'
+        });
+      }
+
+      if (keys.includes('cpi_trend')) {
+        cpiPlotData.push({
+          x: this.props.results.cpi_trend.map(p => p[0]),
+          y: this.props.results.cpi_trend.map(p => p[1]),
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: true,
+          name: 'CPI Trend Level'
+        });
       }
 
       if (keys.includes('instantaneous_forward_rate')) {
-        instantaneousRatePlotData = [{
+        instantaneousRatePlotData.push({
           x: this.props.results.instantaneous_forward_rate.map(p => p[0]),
           y: this.props.results.instantaneous_forward_rate.map(p => p[1]),
           type: 'scatter',
           mode: 'lines',
           showlegend: true,
           name: 'Inst Fwd Rate'
-        }];
+        });
       }
 
       if (keys.includes('time_weighted_zero_rate')) {
-        twzrPlotData = [{
+        twzrPlotData.push({
           x: this.props.results.time_weighted_zero_rate.map(p => p[0]),
           y: this.props.results.time_weighted_zero_rate.map(p => p[1]),
           type: 'scatter',
           mode: 'lines',
           showlegend: true,
           name: 'Time-weighted Zero Rate'
-        }];
+        });
       }
 
       if (keys.includes('zero_rate')) {
-        zeroRatePlotData = [{
+        zeroRatePlotData.push({
           x: this.props.results.zero_rate.map(p => p[0]),
           y: this.props.results.zero_rate.map(p => p[1]),
           type: 'scatter',
           mode: 'lines',
           showlegend: true,
           name: 'Zero Rate'
-        }];
+        });
       }
 
       this.setState({
@@ -2522,10 +2569,10 @@ class CpiModelResults extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         zeroRatePlotData: zeroRatePlotData
       }, () => {
         console.log(this.state);
-        Plotly.react('cpi-plot', this.state.cpiPlotData);
-        Plotly.react('instantaneous-rate-plot', this.state.instantaneousRatePlotData);
-        Plotly.react('twzr-plot', this.state.twzrPlotData);
-        Plotly.react('zero-rate-plot', this.state.zeroRatePlotData);
+        Plotly.react('cpi-plot', this.state.cpiPlotData, this.state.chartLayout, this.state.chartConfig);
+        Plotly.react('instantaneous-rate-plot', this.state.instantaneousRatePlotData, this.state.chartLayout, this.state.chartConfig);
+        Plotly.react('twzr-plot', this.state.twzrPlotData, this.state.chartLayout, this.state.chartConfig);
+        Plotly.react('zero-rate-plot', this.state.zeroRatePlotData, this.state.chartLayout, this.state.chartConfig);
       });
     }
   }

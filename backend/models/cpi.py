@@ -225,7 +225,6 @@ class CpiModel(Model):
             'cpi_trend': self.cpi_trend,
             'time_weighted_zero_rate': self.time_weighted_zero_rate,
             'zero_rate': self.zero_rate,
-            'one_day_forward_rate': self.one_day_forward_rate,
             'instantaneous_forward_rate': self.instantaneous_forward_rate
         }
 
