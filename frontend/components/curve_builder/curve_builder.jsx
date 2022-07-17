@@ -30,6 +30,7 @@ class CurveBuilder extends React.Component {
         const day = today.getDate().toString().padStart(2, '0');
         const todayStr = year + '-' + month + '-' + day;
 
+        this._isMounted = false;
         this.state = {
             curveDataPoints: [],
             numCurveDataPointsToAdd: 1,
@@ -104,7 +105,7 @@ class CurveBuilder extends React.Component {
             url: '/supported_curve_data_point_types/' + curveType,
             method: 'GET',
             success: (response) => {
-                this.setState({
+                this._isMounted && this.setState({
                     supportedCurveDataPointTypes: response.choices
                 })
             }
@@ -117,7 +118,7 @@ class CurveBuilder extends React.Component {
             method: 'GET',
             success: (response) => {
                 // set initial build settings to defaults
-                this.setState({
+                this._isMounted && this.setState({
                     buildSettingsUsage: response.usage,
                     selectedDomainX: response.usage.domainX[0],
                     selectedDomainY: response.usage.domainY[0],
@@ -177,7 +178,7 @@ class CurveBuilder extends React.Component {
                 fitting_method_str: this.state.selectedFittingMethod
             },
             success: (response) => {
-                this.setState({
+                this._isMounted && this.setState({
                     buildResults: response.results
                 },
                     () => console.log('Build curve')
@@ -222,7 +223,11 @@ class CurveBuilder extends React.Component {
 
     componentDidMount() {
         // Request selection list choices
+        this._isMounted = true;
+    }
 
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {
