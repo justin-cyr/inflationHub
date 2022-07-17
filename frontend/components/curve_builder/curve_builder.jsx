@@ -17,6 +17,7 @@ import { defaultDataPoint } from './data_points/data_points';
 import CpiLevelDataPointForm from './data_points/cpileveldatapoint';
 import YoYDataPointForm from './data_points/yoydatapoint';
 
+import CpiModelResults from './results/cpi_model_results';
 
 class CurveBuilder extends React.Component {
 
@@ -43,7 +44,9 @@ class CurveBuilder extends React.Component {
             // selection choices
             supportedCurveTypes: ['CPI', 'Seasonality'],
             supportedCurveDataPointTypes: [],
-            buildSettingsUsage: { domainX:[], domainY:[], fitting_method_str:[] }
+            buildSettingsUsage: { domainX:[], domainY:[], fitting_method_str:[] },
+            // results
+            buildResults: {}
         }
 
         // bind methods
@@ -174,7 +177,11 @@ class CurveBuilder extends React.Component {
                 fitting_method_str: this.state.selectedFittingMethod
             },
             success: (response) => {
-                console.log('Build curve')
+                this.setState({
+                    buildResults: response.results
+                },
+                    () => console.log('Build curve')
+                );
             }
         });
     }
@@ -221,6 +228,18 @@ class CurveBuilder extends React.Component {
     render() {
 
         const curveDataPoints = this.state.curveDataPoints.map((point, i) => this.curveDataPointToForm(point, i));
+
+        let resultsComponent = <div></div>;
+        switch (this.state.selectedCurveType) {
+
+            case 'CPI':
+                resultsComponent = <CpiModelResults results={this.state.buildResults} />
+                break;
+
+            default:
+                // unexpected
+                console.log('Unexpected curve type: ' + this.state.selectedCurveType);
+        }
 
         return (
             <Container fluid>
@@ -420,7 +439,7 @@ class CurveBuilder extends React.Component {
 
                                     {/* Results */}
                                     <Tab.Pane eventKey="#/curve_builder/results">
-                                        {'results display'}
+                                        {resultsComponent}
                                     </Tab.Pane>
 
                                 </Tab.Content>
