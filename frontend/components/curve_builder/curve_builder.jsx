@@ -1,6 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -38,6 +39,7 @@ class CurveBuilder extends React.Component {
             modelBaseDate: todayStr,
             selectedCurveType: undefined,
             showModal: true,
+            showAlert: false,
             // build settings
             selectedDomainX: undefined,
             selectedDomainY: undefined,
@@ -47,7 +49,8 @@ class CurveBuilder extends React.Component {
             supportedCurveDataPointTypes: [],
             buildSettingsUsage: { domainX:[], domainY:[], fitting_method_str:[] },
             // results
-            buildResults: {}
+            buildResults: {},
+            buildErrors: undefined
         }
 
         // bind methods
@@ -179,7 +182,9 @@ class CurveBuilder extends React.Component {
             },
             success: (response) => {
                 this._isMounted && this.setState({
-                    buildResults: response.results
+                    buildResults: response.results || {},
+                    buildErrors: response.errors,
+                    showAlert: !!(response.errors)
                 },
                     () => console.log('Build curve')
                 );
@@ -261,6 +266,24 @@ class CurveBuilder extends React.Component {
 
         return (
             <Container fluid>
+                <Row
+                    className="justify-content-md-center"
+                    style={{padding: "3px"}}
+                >
+                    <Alert
+                        style={{ width: "50%" }}
+                        variant="danger"
+                        dismissible="true"
+                        onClose={() => { this.setState({ showAlert: false }); }}
+                        show={this.state.showAlert}
+                    >
+                        <Alert.Heading>Failed to Build</Alert.Heading>
+                        <hr/>
+                        <p>
+                            {this.state.buildErrors || 'Unknown error.'}
+                        </p>
+                    </Alert>
+                </Row>
                 <Row
                     style={{padding: "3px"}}
                 >
