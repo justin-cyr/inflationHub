@@ -2926,6 +2926,7 @@ class CpiLevelDataPointForm extends react__WEBPACK_IMPORTED_MODULE_0__.Component
         width: "150px"
       },
       type: "number",
+      min: "0",
       value: this.props.value || '',
       onChange: e => this.props.onValueChange(e.target.value),
       disabled: !this.props.isActive

@@ -45,6 +45,7 @@ class CpiLevelDataPointForm extends React.Component {
                                 <Form.Control
                                     style={{ width: "150px" }}
                                     type="number"
+                                    min="0"
                                     value={this.props.value || ''}
                                     onChange={(e) => this.props.onValueChange(e.target.value)}
                                     disabled={!this.props.isActive}

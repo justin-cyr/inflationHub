@@ -107,7 +107,8 @@ class CpiLevelDataPoint(CurveDataPoint):
         if not label:
             label = '_'.join([self.__class__.__name__, str(date)])
         super().__init__(value, label)
-
+        if self.value <= 0.0:
+            raise ValueError(f'CpiLevelDataPoint: level must be positive but got {value}.')
         self.date = Date(date)
 
     def serialize(self):
