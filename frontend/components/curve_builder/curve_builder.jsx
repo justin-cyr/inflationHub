@@ -232,7 +232,20 @@ class CurveBuilder extends React.Component {
 
     render() {
 
-        const curveDataPoints = this.state.curveDataPoints.map((point, i) => this.curveDataPointToForm(point, i));
+        //const curveDataPoints = this.state.curveDataPoints.map((point, i) => this.curveDataPointToForm(point, i));
+        const curveDataPoints = (
+            <List
+                values={ [...Array(this.state.curveDataPoints.length).keys()] }
+                onChange={ ({ oldIndex, newIndex }) => { this.setState({ curveDataPoints: arrayMove(this.state.curveDataPoints, oldIndex, newIndex)}) } }
+                transitionDuration={0}
+                renderList={ ({ children, props }) => <ul {...props} style={{ listStyleType: "none", margin: 0, padding: 0 }}>{children}</ul> }
+                renderItem={({ index, props }) => 
+                    <li {...props} style={{ ...props.style, listStyleType: "none" }}>
+                        { this.curveDataPointToForm(this.state.curveDataPoints[index], index) }
+                    </li>
+                }
+            />
+        );
 
         let resultsComponent = <div></div>;
         switch (this.state.selectedCurveType) {

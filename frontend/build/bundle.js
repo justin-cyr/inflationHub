@@ -1766,6 +1766,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _data_points_cpileveldatapoint__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./data_points/cpileveldatapoint */ "./components/curve_builder/data_points/cpileveldatapoint.jsx");
 /* harmony import */ var _data_points_yoydatapoint__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./data_points/yoydatapoint */ "./components/curve_builder/data_points/yoydatapoint.jsx");
 /* harmony import */ var _results_cpi_model_results__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./results/cpi_model_results */ "./components/curve_builder/results/cpi_model_results.jsx");
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
 
 
 
@@ -2004,7 +2006,37 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   render() {
-    const curveDataPoints = this.state.curveDataPoints.map((point, i) => this.curveDataPointToForm(point, i));
+    //const curveDataPoints = this.state.curveDataPoints.map((point, i) => this.curveDataPointToForm(point, i));
+    const curveDataPoints = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_movable__WEBPACK_IMPORTED_MODULE_2__.List, {
+      values: [...Array(this.state.curveDataPoints.length).keys()],
+      onChange: ({
+        oldIndex,
+        newIndex
+      }) => {
+        this.setState({
+          curveDataPoints: (0,react_movable__WEBPACK_IMPORTED_MODULE_2__.arrayMove)(this.state.curveDataPoints, oldIndex, newIndex)
+        });
+      },
+      transitionDuration: 0,
+      renderList: ({
+        children,
+        props
+      }) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", _extends({}, props, {
+        style: {
+          listStyleType: "none",
+          margin: 0,
+          padding: 0
+        }
+      }), children),
+      renderItem: ({
+        index,
+        props
+      }) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", _extends({}, props, {
+        style: { ...props.style,
+          listStyleType: "none"
+        }
+      }), this.curveDataPointToForm(this.state.curveDataPoints[index], index))
+    });
     let resultsComponent = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null);
 
     switch (this.state.selectedCurveType) {
