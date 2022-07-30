@@ -36,6 +36,11 @@ body {
     opacity: .5;
 }
 
+#tips-data-table {
+    --bs-table-hover-color: #6bcbff;
+    --bs-table-hover-bg: #121729;
+}
+
 /* CurveBuilder */
 .curve-data-form {
     padding-top: 3px;

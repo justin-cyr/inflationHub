@@ -227,9 +227,13 @@ class TipsData extends React.Component {
                     </tr>    
                 );
 
-            data_table = <Table
+            data_table = <div
+                style={{ height: '500px', overflow: 'auto' }}
+            >
+            <Table
                 id="tips-data-table"
-                responsive="true"
+                responsive
+                hover
             >
                 <thead>
                     <tr style={{ color: '#bdbdbd'}}>
@@ -249,7 +253,8 @@ class TipsData extends React.Component {
                 >
                     {table_rows}
                 </tbody>
-            </Table>;
+            </Table>
+            </div>;
         }
 
         return (
