@@ -253,26 +253,13 @@ class DataViewer extends React.Component {
         return (
             <Container fluid>
                 <Row>
-                    <Col
-                        style = {{ maxWidth: "1500px" }}
-                    >
+                    <Col>
                     {/* Chart */}
                     <div id="data-viewer-chart"></div>
                     </Col>
-                    <Col lg="auto">
-                    {/* Latest values */}
-                        Values up to
-                        <Form.Control
-                            style={{ width: "150px" }}
-                            type="date"
-                            value={this.state.marketDataDate || ''}
-                            onChange={this.handleInput('marketDataDate')}
-                        />
-                        {latest_data_table}
-                    </Col>
                 </Row>
                 <Row>
-                    <Col>
+                    <Col lg="auto">
                         <Row>
                             <FuzzySearch
                                 className="data-series-search"
@@ -300,6 +287,20 @@ class DataViewer extends React.Component {
                                 </ListGroup>
                             </Form.Group>
                         </Row>
+                    </Col>
+                    <Col lg="auto">
+                        {/* Latest values */}
+                        Values up to
+                        <Form.Control
+                            style={{ width: "150px" }}
+                            type="date"
+                            value={this.state.marketDataDate || ''}
+                            onChange={this.handleInput('marketDataDate')}
+                        />
+                        {latest_data_table}
+                    </Col>
+                    <Col>
+                        {/* blank column to fill space to the right */}
                     </Col>
                 </Row>
             </Container>
