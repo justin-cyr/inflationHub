@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
 
 import FuzzySearch from 'react-fuzzy';
 
@@ -15,15 +16,29 @@ class DataViewer extends React.Component {
     constructor(props) {
         super(props);
         
+        const today = new Date();
+        const year = today.getFullYear().toString();
+        const month = (1 + today.getMonth()).toString().padStart(2, '0');
+        const day = today.getDate().toString().padStart(2, '0');
+        const todayStr = year + '-' + month + '-' + day;
+
         this._isMounted = false;
         this.state = {
             allDataNames: [],
             chartData: [],
+            marketDataDate: todayStr,
         };
 
         // bind methods
         this.getData = this.getData.bind(this);
+        this.handleInput = this.handleInput.bind(this);
         this.removeData = this.removeData.bind(this);
+    }
+
+    handleInput(type) {
+        return (e) => {
+            this.setState({ [type]: e.target.value });
+        };
     }
 
     getData(name) {
@@ -91,6 +106,21 @@ class DataViewer extends React.Component {
         this.setState({
             chartData: newChartData
         });
+    }
+
+    latestDataPointToDate(chartData, cutoffDate) {
+        const dates = chartData.x;
+        const values = chartData.y;
+
+        if (cutoffDate < dates[0]) {
+            return { date: undefined, value: undefined };
+        }
+
+        let i = dates.length - 1;
+        while (i >= 0 && dates[i] > cutoffDate) { --i; }
+
+        // dates[i] is max such that dates[i] <= cutoffDate
+        return { date: dates[i], value: values[i] };
     }
 
     componentDidMount() {
@@ -193,11 +223,53 @@ class DataViewer extends React.Component {
         const fsListWrapperStyle = {};
         const fsSelectedListItemStyle = { ...fsInputStyle, ...{ backgroundColor: "#36A0C9" } };
 
+        // Define latest data point table rows
+        let latest_data_table = <center>{'No series selected'}</center>;
+        if (this.state.chartData.length > 0) {
+
+            const points = this.state.chartData.map(chartData => 
+                this.latestDataPointToDate(chartData, this.state.marketDataDate)
+            );
+
+            const latest_data_rows = this.state.chartData.map((chartData, i) => 
+                <tr key={chartData.name}>
+                    <td>{chartData.name}</td>
+                    <td>{points[i].value || ''}</td>
+                    <td>{points[i].date || ''}</td>
+                </tr>
+            );
+
+            latest_data_table = <Table
+                id="latest-data-table"
+                responsive
+                hover
+            >
+                <tbody>
+                    {latest_data_rows}
+                </tbody>
+            </Table>
+        }
+
         return (
             <Container fluid>
                 <Row>
+                    <Col
+                        style = {{ maxWidth: "1500px" }}
+                    >
                     {/* Chart */}
                     <div id="data-viewer-chart"></div>
+                    </Col>
+                    <Col lg="auto">
+                    {/* Latest values */}
+                        Values up to
+                        <Form.Control
+                            style={{ width: "150px" }}
+                            type="date"
+                            value={this.state.marketDataDate || ''}
+                            onChange={this.handleInput('marketDataDate')}
+                        />
+                        {latest_data_table}
+                    </Col>
                 </Row>
                 <Row>
                     <Col>

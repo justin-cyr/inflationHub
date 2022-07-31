@@ -36,6 +36,14 @@ body {
     opacity: .5;
 }
 
+#latest-data-table {
+    color: #bdbdbd;
+    --bs-table-hover-color: #6bcbff;
+    --bs-table-hover-bg: #121729;
+}
+
+/* TIPS Data */
+
 #tips-data-table {
     --bs-table-hover-color: #6bcbff;
     --bs-table-hover-bg: #121729;
