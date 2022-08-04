@@ -92,7 +92,7 @@ def get_tips_yield_data_by_cusip(cusip):
     record = get_treasury_reference_data(cusip)
     term = get_term_from_tsy_record(record)
     maturity_date = get_maturity_date_from_tsy_record(record)
-    return get_tips_yield_data(term, maturity_date, name=cusip)
+    return get_tips_yield_data(term, maturity_date, name='Real Yield')
 
 
 def get_tips_prices_wsj():

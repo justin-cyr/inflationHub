@@ -3,6 +3,8 @@ import $, { merge } from 'jquery';
 
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
+import Modal from 'react-bootstrap/Modal';
+import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
@@ -17,6 +19,13 @@ class TipsData extends React.Component {
             cusips: [],
             priceData: [],
             referenceData: [],
+            yieldData: [],
+            showModal: false,
+            // selected for display in modal
+            selectedCUSIP: '',
+            selectedReferenceData: {},
+            selectedYieldData: {},
+            selectedYieldChartData: {},
             // styles
             upColor:    '#198754',  // green
             downColor:  '#dc3545',  // red
@@ -28,6 +37,7 @@ class TipsData extends React.Component {
         this.getTipsData = this.getTipsData.bind(this);
         this.getTipsYields = this.getTipsYields.bind(this);
         this.getTipsPrices = this.getTipsPrices.bind(this);
+        this.handleCusipSelect = this.handleCusipSelect.bind(this);
     }
 
     getTipsCusips() {
@@ -82,7 +92,12 @@ class TipsData extends React.Component {
             url: '/tips_yield_data/' + cusip,
             method: 'GET',
             success: (response) => {
-                // console.log(response);
+
+                if (response.data) {
+                    this._isMounted && this.setState({
+                        yieldData: { ...this.state.yieldData, ...{ [cusip]: response.data } }
+                    });
+                }
             }
         });
     }
@@ -136,6 +151,85 @@ class TipsData extends React.Component {
             referenceData: newReferenceData
         },
             // () => console.log(this.state.referenceData)
+        );
+    }
+
+    getReferenceDataForCusip(cusip) {
+        const i = this.state.referenceData.findIndex((record) => record['cusip'] === cusip);
+        if (i >= 0) {
+            return this.state.referenceData[i];
+        } else {
+            return {};
+        }
+    }
+
+    handleCusipSelect(cusip) {
+
+        let yieldData = {};
+        yieldData = this.state.yieldData[cusip];
+        
+        let chartData = {};
+        if (yieldData && yieldData.Date && yieldData['Real Yield']) {
+            chartData = {
+                x: yieldData['Date'],
+                y: yieldData['Real Yield'],
+                type: 'scatter',
+                mode: 'lines',
+                showlegend: false,
+                name: 'Real Yield'
+            };
+        }
+
+        this.setState({
+            showModal: true,
+            selectedCUSIP: cusip,
+            selectedReferenceData: this.getReferenceDataForCusip(cusip),
+            selectedYieldData: yieldData,
+            selectedYieldChartData: chartData
+        },
+        () => {
+            const chartLayout = {
+                paper_bgcolor: '#0a0e1a',
+                plot_bgcolor: '#14171C',
+                title: 'Real Yield to Maturity',
+                titlefont: {
+                    color: '#BDBDBD'
+                },
+                xaxis: {
+                    title: 'Date',
+                    titlefont: {
+                        color: '#BDBDBD'
+                    },
+                    tickfont: { color: '#BDBDBD' },
+                    tickcolor: '#BDBDBD',
+                },
+                yaxis: {
+                    title: 'Real Yield (%)',
+                    titlefont: {
+                        color: '#BDBDBD'
+                    },
+                    autotypenumbers: 'strict',
+                    minexponent: 9,
+                    tickfont: { color: '#BDBDBD' },
+                    tickcolor: '#BDBDBD',
+                    tickformat: ",.1",
+                    hoverformat: ",.3"
+                },
+                showLegend: false,
+                legend: {
+                    font: {
+                        color: '#BDBDBD',
+                    }
+                }
+            };
+
+            const chartConfig = {
+                displayModeBar: true,
+                scrollZoom: true,
+            };
+
+            Plotly.react('cusip-yield-time-series-chart', [this.state.selectedYieldChartData], chartLayout, chartConfig);
+        }
         );
     }
 
@@ -194,6 +288,7 @@ class TipsData extends React.Component {
         };
 
         Plotly.react('real-yield-chart', this.state.chartData, chartLayout, chartConfig);
+        
     }
 
     render() {
@@ -213,7 +308,20 @@ class TipsData extends React.Component {
                     <tr key={record['cusip']}>
                         <td style={{ textAlign: 'center' }}>{record['maturityDate']}</td>
                         <td style={{ textAlign: 'center' }}>{Number(record['interestRate']).toFixed(3) + '%'}</td>
-                        <td style={{ textAlign: 'center' }}>{record['cusip']}</td>
+                        <td style={{ textAlign: 'center' }}>{
+                            <Nav
+                                onSelect={this.handleCusipSelect}
+                                fill="true"
+                            >
+                                <Nav.Item>
+                                    <Nav.Link
+                                        eventKey={record['cusip']}
+                                    >
+                                        {record['cusip']}
+                                    </Nav.Link>
+                                </Nav.Item>
+                            </Nav>
+                        }</td>
                         <td style={{ textAlign: 'center' }}>{Number(record['tenor']).toFixed(2) + "Y"}</td>
                         <td style={{ textAlign: 'center' }}>{record['term']}</td>
                         <td style={{ textAlign: 'center',
@@ -267,6 +375,36 @@ class TipsData extends React.Component {
                 <Row>
                     {/* Chart */}
                     <div id="real-yield-chart"></div>
+                </Row>
+                <Row>
+                    <Modal
+                        show={this.state.showModal}
+                        centered={true}
+                        size="lg"
+                        onHide={() => this.setState({ showModal: false })}
+                    >
+                        <Modal.Title
+                            style={{
+                                paddingTop: "10px",
+                                paddingLeft: "10px",
+                                backgroundColor: "#1c243b",
+                            }}
+                        >
+                        {
+                            this.state.selectedReferenceData['term'] + ' '
+                            + Number(this.state.selectedReferenceData['interestRate']).toFixed(3) + '% TIPS due '
+                            + this.state.selectedReferenceData['maturityDate'] + ' '
+                            + '(' + this.state.selectedCUSIP + ')'
+                        }
+                        </Modal.Title>
+                        <Modal.Body
+                            style={{
+                                backgroundColor: "#1c243b"
+                            }}
+                        >
+                            <div id="cusip-yield-time-series-chart"></div>
+                        </Modal.Body>
+                    </Modal>
                 </Row>
                 <Row>
                     {/* Table */}

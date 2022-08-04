@@ -3855,9 +3855,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-bootstrap/Modal */ "./node_modules/react-bootstrap/esm/Modal.js");
+/* harmony import */ var react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Nav */ "./node_modules/react-bootstrap/esm/Nav.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+
+
 
 
 
@@ -3874,6 +3878,13 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       cusips: [],
       priceData: [],
       referenceData: [],
+      yieldData: [],
+      showModal: false,
+      // selected for display in modal
+      selectedCUSIP: '',
+      selectedReferenceData: {},
+      selectedYieldData: {},
+      selectedYieldChartData: {},
       // styles
       upColor: '#198754',
       // green
@@ -3887,6 +3898,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.getTipsData = this.getTipsData.bind(this);
     this.getTipsYields = this.getTipsYields.bind(this);
     this.getTipsPrices = this.getTipsPrices.bind(this);
+    this.handleCusipSelect = this.handleCusipSelect.bind(this);
   }
 
   getTipsCusips() {
@@ -3938,7 +3950,16 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
       url: '/tips_yield_data/' + cusip,
       method: 'GET',
-      success: response => {// console.log(response);
+      success: response => {
+        if (response.data) {
+          this._isMounted && this.setState({
+            yieldData: { ...this.state.yieldData,
+              ...{
+                [cusip]: response.data
+              }
+            }
+          });
+        }
       }
     });
   }
@@ -3991,6 +4012,85 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       referenceData: newReferenceData
     } // () => console.log(this.state.referenceData)
     );
+  }
+
+  getReferenceDataForCusip(cusip) {
+    const i = this.state.referenceData.findIndex(record => record['cusip'] === cusip);
+
+    if (i >= 0) {
+      return this.state.referenceData[i];
+    } else {
+      return {};
+    }
+  }
+
+  handleCusipSelect(cusip) {
+    let yieldData = {};
+    yieldData = this.state.yieldData[cusip];
+    let chartData = {};
+
+    if (yieldData && yieldData.Date && yieldData['Real Yield']) {
+      chartData = {
+        x: yieldData['Date'],
+        y: yieldData['Real Yield'],
+        type: 'scatter',
+        mode: 'lines',
+        showlegend: false,
+        name: 'Real Yield'
+      };
+    }
+
+    this.setState({
+      showModal: true,
+      selectedCUSIP: cusip,
+      selectedReferenceData: this.getReferenceDataForCusip(cusip),
+      selectedYieldData: yieldData,
+      selectedYieldChartData: chartData
+    }, () => {
+      const chartLayout = {
+        paper_bgcolor: '#0a0e1a',
+        plot_bgcolor: '#14171C',
+        title: 'Real Yield to Maturity',
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        xaxis: {
+          title: 'Date',
+          titlefont: {
+            color: '#BDBDBD'
+          },
+          tickfont: {
+            color: '#BDBDBD'
+          },
+          tickcolor: '#BDBDBD'
+        },
+        yaxis: {
+          title: 'Real Yield (%)',
+          titlefont: {
+            color: '#BDBDBD'
+          },
+          autotypenumbers: 'strict',
+          minexponent: 9,
+          tickfont: {
+            color: '#BDBDBD'
+          },
+          tickcolor: '#BDBDBD',
+          tickformat: ",.1",
+          hoverformat: ",.3"
+        },
+        showLegend: false,
+        legend: {
+          font: {
+            color: '#BDBDBD'
+          }
+        }
+      };
+      const chartConfig = {
+        displayModeBar: true,
+        scrollZoom: true
+      };
+      Plotly.react('cusip-yield-time-series-chart', [this.state.selectedYieldChartData], chartLayout, chartConfig);
+    });
   }
 
   componentDidMount() {
@@ -4079,7 +4179,12 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         style: {
           textAlign: 'center'
         }
-      }, record['cusip']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        onSelect: this.handleCusipSelect,
+        fill: "true"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__["default"].Item, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__["default"].Link, {
+        eventKey: record['cusip']
+      }, record['cusip'])))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
@@ -4107,7 +4212,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           height: '500px',
           overflow: 'auto'
         }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_3__["default"], {
         id: "tips-data-table",
         responsive: true,
         hover: true
@@ -4158,11 +4263,30 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       }, table_rows)));
     }
 
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_4__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "US Treasury Inflation-Protected Securities"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "US Treasury Inflation-Protected Securities"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       id: "real-yield-chart"
-    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, data_table));
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      show: this.state.showModal,
+      centered: true,
+      size: "lg",
+      onHide: () => this.setState({
+        showModal: false
+      })
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__["default"].Title, {
+      style: {
+        paddingTop: "10px",
+        paddingLeft: "10px",
+        backgroundColor: "#1c243b"
+      }
+    }, this.state.selectedReferenceData['term'] + ' ' + Number(this.state.selectedReferenceData['interestRate']).toFixed(3) + '% TIPS due ' + this.state.selectedReferenceData['maturityDate'] + ' ' + '(' + this.state.selectedCUSIP + ')'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__["default"].Body, {
+      style: {
+        backgroundColor: "#1c243b"
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "cusip-yield-time-series-chart"
+    })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, data_table));
   }
 
 }
@@ -20315,6 +20439,111 @@ function pathToRegexp (path, keys, options) {
 
 /***/ }),
 
+/***/ "./node_modules/prop-types-extra/lib/all.js":
+/*!**************************************************!*\
+  !*** ./node_modules/prop-types-extra/lib/all.js ***!
+  \**************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = all;
+
+var _createChainableTypeChecker = __webpack_require__(/*! ./utils/createChainableTypeChecker */ "./node_modules/prop-types-extra/lib/utils/createChainableTypeChecker.js");
+
+var _createChainableTypeChecker2 = _interopRequireDefault(_createChainableTypeChecker);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function all() {
+  for (var _len = arguments.length, validators = Array(_len), _key = 0; _key < _len; _key++) {
+    validators[_key] = arguments[_key];
+  }
+
+  function allPropTypes() {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    var error = null;
+
+    validators.forEach(function (validator) {
+      if (error != null) {
+        return;
+      }
+
+      var result = validator.apply(undefined, args);
+      if (result != null) {
+        error = result;
+      }
+    });
+
+    return error;
+  }
+
+  return (0, _createChainableTypeChecker2.default)(allPropTypes);
+}
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "./node_modules/prop-types-extra/lib/utils/createChainableTypeChecker.js":
+/*!*******************************************************************************!*\
+  !*** ./node_modules/prop-types-extra/lib/utils/createChainableTypeChecker.js ***!
+  \*******************************************************************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = createChainableTypeChecker;
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+// Mostly taken from ReactPropTypes.
+
+function createChainableTypeChecker(validate) {
+  function checkType(isRequired, props, propName, componentName, location, propFullName) {
+    var componentNameSafe = componentName || '<<anonymous>>';
+    var propFullNameSafe = propFullName || propName;
+
+    if (props[propName] == null) {
+      if (isRequired) {
+        return new Error('Required ' + location + ' `' + propFullNameSafe + '` was not specified ' + ('in `' + componentNameSafe + '`.'));
+      }
+
+      return null;
+    }
+
+    for (var _len = arguments.length, args = Array(_len > 6 ? _len - 6 : 0), _key = 6; _key < _len; _key++) {
+      args[_key - 6] = arguments[_key];
+    }
+
+    return validate.apply(undefined, [props, propName, componentNameSafe, location, propFullNameSafe].concat(args));
+  }
+
+  var chainedCheckType = checkType.bind(null, false);
+  chainedCheckType.isRequired = checkType.bind(null, true);
+
+  return chainedCheckType;
+}
+module.exports = exports['default'];
+
+/***/ }),
+
 /***/ "./node_modules/prop-types/checkPropTypes.js":
 /*!***************************************************!*\
   !*** ./node_modules/prop-types/checkPropTypes.js ***!
@@ -21612,6 +21841,25 @@ const Button = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.forwardRef(({
 Button.displayName = 'Button';
 Button.defaultProps = defaultProps;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Button);
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/esm/CardHeaderContext.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/react-bootstrap/esm/CardHeaderContext.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const context = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createContext(null);
+context.displayName = 'CardHeaderContext';
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (context);
 
 /***/ }),
 
@@ -23267,6 +23515,194 @@ const DivStyledAsH4 = (0,_divWithClassName__WEBPACK_IMPORTED_MODULE_0__["default
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createWithBsPrefix__WEBPACK_IMPORTED_MODULE_1__["default"])('modal-title', {
   Component: DivStyledAsH4
 }));
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/esm/Nav.js":
+/*!*************************************************!*\
+  !*** ./node_modules/react-bootstrap/esm/Nav.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types_extra_lib_all__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types-extra/lib/all */ "./node_modules/prop-types-extra/lib/all.js");
+/* harmony import */ var prop_types_extra_lib_all__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types_extra_lib_all__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var uncontrollable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+/* harmony import */ var _restart_ui_Nav__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @restart/ui/Nav */ "./node_modules/@restart/ui/esm/Nav.js");
+/* harmony import */ var _ThemeProvider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ThemeProvider */ "./node_modules/react-bootstrap/esm/ThemeProvider.js");
+/* harmony import */ var _NavbarContext__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./NavbarContext */ "./node_modules/react-bootstrap/esm/NavbarContext.js");
+/* harmony import */ var _CardHeaderContext__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./CardHeaderContext */ "./node_modules/react-bootstrap/esm/CardHeaderContext.js");
+/* harmony import */ var _NavItem__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./NavItem */ "./node_modules/react-bootstrap/esm/NavItem.js");
+/* harmony import */ var _NavLink__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./NavLink */ "./node_modules/react-bootstrap/esm/NavLink.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+
+
+
+
+
+
+
+const defaultProps = {
+  justify: false,
+  fill: false
+};
+const Nav = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.forwardRef((uncontrolledProps, ref) => {
+  const {
+    as = 'div',
+    bsPrefix: initialBsPrefix,
+    variant,
+    fill,
+    justify,
+    navbar,
+    navbarScroll,
+    className,
+    activeKey,
+    ...props
+  } = (0,uncontrollable__WEBPACK_IMPORTED_MODULE_3__.useUncontrolled)(uncontrolledProps, {
+    activeKey: 'onSelect'
+  });
+  const bsPrefix = (0,_ThemeProvider__WEBPACK_IMPORTED_MODULE_5__.useBootstrapPrefix)(initialBsPrefix, 'nav');
+  let navbarBsPrefix;
+  let cardHeaderBsPrefix;
+  let isNavbar = false;
+  const navbarContext = (0,react__WEBPACK_IMPORTED_MODULE_2__.useContext)(_NavbarContext__WEBPACK_IMPORTED_MODULE_6__["default"]);
+  const cardHeaderContext = (0,react__WEBPACK_IMPORTED_MODULE_2__.useContext)(_CardHeaderContext__WEBPACK_IMPORTED_MODULE_7__["default"]);
+
+  if (navbarContext) {
+    navbarBsPrefix = navbarContext.bsPrefix;
+    isNavbar = navbar == null ? true : navbar;
+  } else if (cardHeaderContext) {
+    ({
+      cardHeaderBsPrefix
+    } = cardHeaderContext);
+  }
+
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_restart_ui_Nav__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    as: as,
+    ref: ref,
+    activeKey: activeKey,
+    className: classnames__WEBPACK_IMPORTED_MODULE_0___default()(className, {
+      [bsPrefix]: !isNavbar,
+      [`${navbarBsPrefix}-nav`]: isNavbar,
+      [`${navbarBsPrefix}-nav-scroll`]: isNavbar && navbarScroll,
+      [`${cardHeaderBsPrefix}-${variant}`]: !!cardHeaderBsPrefix,
+      [`${bsPrefix}-${variant}`]: !!variant,
+      [`${bsPrefix}-fill`]: fill,
+      [`${bsPrefix}-justified`]: justify
+    }),
+    ...props
+  });
+});
+Nav.displayName = 'Nav';
+Nav.defaultProps = defaultProps;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.assign(Nav, {
+  Item: _NavItem__WEBPACK_IMPORTED_MODULE_9__["default"],
+  Link: _NavLink__WEBPACK_IMPORTED_MODULE_10__["default"]
+}));
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/esm/NavItem.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-bootstrap/esm/NavItem.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _createWithBsPrefix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./createWithBsPrefix */ "./node_modules/react-bootstrap/esm/createWithBsPrefix.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createWithBsPrefix__WEBPACK_IMPORTED_MODULE_0__["default"])('nav-item'));
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/esm/NavLink.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-bootstrap/esm/NavLink.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _restart_ui_Anchor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @restart/ui/Anchor */ "./node_modules/@restart/ui/esm/Anchor.js");
+/* harmony import */ var _restart_ui_NavItem__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @restart/ui/NavItem */ "./node_modules/@restart/ui/esm/NavItem.js");
+/* harmony import */ var _restart_ui_SelectableContext__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @restart/ui/SelectableContext */ "./node_modules/@restart/ui/esm/SelectableContext.js");
+/* harmony import */ var _ThemeProvider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ThemeProvider */ "./node_modules/react-bootstrap/esm/ThemeProvider.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+
+
+const defaultProps = {
+  disabled: false
+};
+const NavLink = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.forwardRef(({
+  bsPrefix,
+  className,
+  as: Component = _restart_ui_Anchor__WEBPACK_IMPORTED_MODULE_3__["default"],
+  active,
+  eventKey,
+  ...props
+}, ref) => {
+  bsPrefix = (0,_ThemeProvider__WEBPACK_IMPORTED_MODULE_4__.useBootstrapPrefix)(bsPrefix, 'nav-link');
+  const [navItemProps, meta] = (0,_restart_ui_NavItem__WEBPACK_IMPORTED_MODULE_5__.useNavItem)({
+    key: (0,_restart_ui_SelectableContext__WEBPACK_IMPORTED_MODULE_6__.makeEventKey)(eventKey, props.href),
+    active,
+    ...props
+  });
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(Component, { ...props,
+    ...navItemProps,
+    ref: ref,
+    className: classnames__WEBPACK_IMPORTED_MODULE_0___default()(className, bsPrefix, props.disabled && 'disabled', meta.isActive && 'active')
+  });
+});
+NavLink.displayName = 'NavLink';
+NavLink.defaultProps = defaultProps;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (NavLink);
+
+/***/ }),
+
+/***/ "./node_modules/react-bootstrap/esm/NavbarContext.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-bootstrap/esm/NavbarContext.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+ // TODO: check
+
+const context = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createContext(null);
+context.displayName = 'NavbarContext';
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (context);
 
 /***/ }),
 
