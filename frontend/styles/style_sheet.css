@@ -49,6 +49,19 @@ body {
     --bs-table-hover-bg: #121729;
 }
 
+.modal-header {
+    border-bottom: 0 none;
+}
+
+.modal-header .btn-close {
+    background-color: #91ABBD;
+    opacity: .5;
+}
+
+.modal-footer {
+    border-top: 0 none;
+}
+
 /* CurveBuilder */
 .curve-data-form {
     padding-top: 3px;

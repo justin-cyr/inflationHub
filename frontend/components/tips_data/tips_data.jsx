@@ -2,7 +2,6 @@ import React from 'react';
 import $, { merge } from 'jquery';
 
 import Container from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
@@ -407,20 +406,27 @@ class TipsData extends React.Component {
                         size="lg"
                         onHide={() => this.setState({ showModal: false })}
                     >
-                        <Modal.Title
+                        <Modal.Header
+                            closeButton
                             style={{
-                                paddingTop: "10px",
-                                paddingLeft: "10px",
                                 backgroundColor: "#1c243b",
                             }}
                         >
-                        {
-                            this.state.selectedReferenceData['term'] + ' '
-                            + Number(this.state.selectedReferenceData['interestRate']).toFixed(3) + '% TIPS due '
-                            + this.state.selectedReferenceData['maturityDate'] + ' '
-                            + '(' + this.state.selectedCUSIP + ')'
-                        }
-                        </Modal.Title>
+                            <Modal.Title
+                                style={{
+                                    paddingTop: "5px",
+                                    paddingLeft: "5px",
+                                    backgroundColor: "#1c243b",
+                                }}
+                            >
+                                {
+                                    this.state.selectedReferenceData['term'] + ' '
+                                    + Number(this.state.selectedReferenceData['interestRate']).toFixed(3) + '% TIPS due '
+                                    + this.state.selectedReferenceData['maturityDate'] + ' '
+                                    + '(' + this.state.selectedCUSIP + ')'
+                                }
+                            </Modal.Title>
+                        </Modal.Header>
                         <Modal.Body
                             style={{
                                 backgroundColor: "#1c243b"
