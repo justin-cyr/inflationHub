@@ -13,6 +13,12 @@ class TipsData extends React.Component {
     constructor(props) {
         super(props);
 
+        const today = new Date();
+        const year = today.getFullYear().toString();
+        const month = (1 + today.getMonth()).toString().padStart(2, '0');
+        const day = today.getDate().toString().padStart(2, '0');
+        const todayStr = year + '-' + month + '-' + day;
+
         this._isMounted = false;
         this.state = {
             chartData: [],
@@ -20,6 +26,7 @@ class TipsData extends React.Component {
             priceData: [],
             referenceData: [],
             yieldData: [],
+            todayStr: todayStr,
             showModal: false,
             // selected for display in modal
             selectedCUSIP: '',
@@ -168,13 +175,30 @@ class TipsData extends React.Component {
         let yieldData = {};
         yieldData = this.state.yieldData[cusip];
         
+        const referenceDataForCusip = this.getReferenceDataForCusip(cusip);
+
+        // Append YTM from price data
+        if (yieldData && yieldData.Date && yieldData['Real Yield'] && referenceDataForCusip.YIELD) {
+            // TODO: use the last market close date instead of today
+            yieldData.Date.push(this.state.todayStr);
+            yieldData['Real Yield'].push(referenceDataForCusip.YIELD);
+        }
+        else if (referenceDataForCusip.YIELD) {
+            // use as yield data
+            yieldData = {
+                'Date': [this.state.todayStr],
+                'Real Yield': [referenceDataForCusip.YIELD]
+            };
+        }
+
         let chartData = {};
         if (yieldData && yieldData.Date && yieldData['Real Yield']) {
+            const mode = yieldData.Date.length > 1 ? 'lines' : 'markers';
             chartData = {
                 x: yieldData['Date'],
                 y: yieldData['Real Yield'],
                 type: 'scatter',
-                mode: 'lines',
+                mode: mode,
                 showlegend: false,
                 name: 'Real Yield'
             };
@@ -183,7 +207,7 @@ class TipsData extends React.Component {
         this.setState({
             showModal: true,
             selectedCUSIP: cusip,
-            selectedReferenceData: this.getReferenceDataForCusip(cusip),
+            selectedReferenceData: referenceDataForCusip,
             selectedYieldData: yieldData,
             selectedYieldChartData: chartData
         },
@@ -204,7 +228,7 @@ class TipsData extends React.Component {
                     tickcolor: '#BDBDBD',
                 },
                 yaxis: {
-                    title: 'Real Yield (%)',
+                    title: 'YTM (%)',
                     titlefont: {
                         color: '#BDBDBD'
                     },
