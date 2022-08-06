@@ -143,6 +143,54 @@ class Date(object):
             raise ValueError(f'Date.addTenor: unsupported tenor unit it {tenor}')
 
 
+class DateTime(object):
+    # wraps datetime.datetime but allows conversion from string types in constructor
+    def __init__(self, dt):
+
+        dt = str(dt)
+
+        supported_formats = [
+            '%Y%m%d%H%M%S',         # 20220401170435
+            '%Y-%m-%d %H:%M:%S',    # 2022-04-01 17:04:35
+            '%Y-%m-%d %H:%M:%S.%f', # 2022-04-01 17:04:35.987654
+            # Date formats
+            '%Y-%m-%d', # 2022-04-01
+            '%Y%m%d',   # 20220401
+            '%Y-%m',    # 2022-04
+            '%Y %b'     # 2022 Apr
+        ]
+        date_obj = None
+        for fmt in supported_formats:
+            try:
+                date_obj = datetime.datetime.strptime(dt, fmt)
+                break
+            except ValueError:
+                pass
+
+        if date_obj:
+            dt = date_obj
+        else:
+            raise TypeError(f'Unsupported date format: {dt}')
+
+        self.datetime = dt
+        # datetime.datetime API
+        self.year = dt.year
+        self.month = dt.month
+        self.day = dt.day
+        self.hour = dt.hour
+        self.minute = dt.minute
+        self.second = dt.second
+        self.microsecond = dt.microsecond
+
+    
+    def __repr__(self):
+        return self.datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+    # use self.datetime to access the underlying datetime.datetime
+
+    def get_date(self):
+        return Date(self.datetime.strftime('%Y-%m-%d'))
+
 
 class Tenor(object):
     def __init__(self, tenor_str):

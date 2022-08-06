@@ -7,7 +7,7 @@ from xml.etree import ElementTree
 # get logger from current_app instance
 from flask import current_app as app
 
-from .utils import Date
+from .utils import Date, DateTime
 
 # Read DataConfig.csv
 DATA_CONFIG = pd.read_csv(
@@ -71,6 +71,8 @@ class DataAPI(object):
             self.data_parser = TimeSeriesCsvParser(self.name)
         elif data_parser == 'TimeSeriesCnbcJsonParser':
             self.data_parser = TimeSeriesCnbcJsonParser(self.name)
+        elif data_parser == 'TimeSeriesCnbcIntradayCloseParser':
+            self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
         elif data_parser == 'TimeSeriesStatCanXmlParser':
             self.data_parser = TimeSeriesStatCanXmlParser(self.name)
         else:
@@ -158,6 +160,13 @@ class Parser(object):
         except TypeError:
             return None
 
+    def standard_datetime_str(self, datetime_str):
+        """Return the yyyy-mm-dd HH:MM:SS format of this datetime string if it can be inferred."""
+        try:
+            return str(DateTime(datetime_str))
+        except TypeError:
+            return None
+
     def chop_quotes(self, s):
         """Return s without quotes if it has any leading or trailing quotes."""
         quote_chars = ['"', "'"]
@@ -228,6 +237,37 @@ class TimeSeriesCnbcJsonParser(Parser):
             d = record['tradeTime'][:8]
             v = record['close']
             date_str = self.standard_date_str(d)
+            if not date_str:
+                continue
+            dates.append(date_str)
+            values.append(float(v))
+
+        return {self.date_col_name: dates,
+                self.value_col_name: values}
+
+class TimeSeriesCnbcIntradayCloseParser(Parser):
+    """Parser for CNBC quotes intraday close JSON data."""
+    def __init__(self, value_col_name='Value', date_col_name='Date'):
+        self.value_col_name = value_col_name
+        self.date_col_name = date_col_name
+
+    def __repr__(self):
+        return 'TimeSeriesCnbcIntradayCloseParser(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
+            dates: yyyy-mm-dd HH:MM:SS format
+            values: float
+        """
+        self.validate_response(response, fmt='json')
+        response_data = response.json()
+        time_series = response_data['barData']['priceBars']
+        dates = []
+        values = []
+        for record in time_series:
+            d = record['tradeTime']
+            v = record['close']
+            date_str = self.standard_datetime_str(d)
             if not date_str:
                 continue
             dates.append(date_str)
