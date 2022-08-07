@@ -29,7 +29,7 @@ def get_app_info():
 
 @app.route('/all_data_names')
 def get_all_data_names():
-    return dict(names=sorted(data.DATA_CONFIG.keys()))
+    return dict(names=sorted([k for k in data.DATA_CONFIG.keys() if data.DATA_CONFIG[k]['DataViewer']]))
 
 @app.route('/data/<name>')
 def get_data(name):

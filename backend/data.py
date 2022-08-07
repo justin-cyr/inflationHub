@@ -57,6 +57,18 @@ class DataAPI(object):
 
         self.query_params = query_params
         
+        headers = {}
+        i = 1
+        header_str = 'Header'
+        header_col = header_str + str(i)
+        while (header_col in data_config and data_config[header_col]):
+            k, v = data_config[header_col].split(':')
+            headers[k] = v
+            i += 1
+            header_col = header_str + str(i)
+
+        self.headers = headers
+
         # set DataGetter and Parser
         data_getter = data_config.get('Getter')
         if not data_getter:
@@ -73,6 +85,8 @@ class DataAPI(object):
             self.data_parser = TimeSeriesCnbcJsonParser(self.name)
         elif data_parser == 'TimeSeriesCnbcIntradayCloseParser':
             self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
+        elif data_parser == 'IntradayUSTQuoteWsjParser':
+            self.data_parser = IntradayUSTQuoteWsjParser()
         elif data_parser == 'TimeSeriesStatCanXmlParser':
             self.data_parser = TimeSeriesStatCanXmlParser(self.name)
         else:
@@ -92,7 +106,7 @@ class DataAPI(object):
     
     def get_and_parse_data(self):
         try:
-            response = self.data_getter.get(self.url_query())
+            response = self.data_getter.get(self.url_query(), headers=self.headers)
         except Exception as e:
             app.logger.error('DataAPI(\'' + self.name + '\').get_and_parse_data failed to get data: ' + str(e))
             return dict(errors=str(e))
@@ -113,10 +127,10 @@ class DataGetter(object):
     def __repr__(self):
         return 'DataGetter(\'' + self.name + '\')'
 
-    def get(self, url):
+    def get(self, url, headers={}):
         """Default implementation: make GET request to url and return response as text."""
         app.logger.info('DataAPI(\'' + self.name + '\') making request GET ' + url)
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         return response
 
 
@@ -305,6 +319,33 @@ class TimeSeriesStatCanXmlParser(Parser):
 
         return {self.date_col_name: dates,
                 self.value_col_name: values}
+
+
+class IntradayUSTQuoteWsjParser(Parser):
+    """Parser for intraday quotes from Wall Street Journal bonds page."""
+    def __repr__(self):
+        return 'IntradayUSTQuoteWsjParser(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        """Hande response as JSON data and return data as a list quotes."""
+        self.validate_response(response, fmt='json')
+        response_data = response.json()
+        res = []
+        if 'data' in response_data and 'instruments' in response_data['data']:
+            for inst in response_data['data']['instruments']:
+                if 'bond' in inst:
+                    res.append(
+                        {
+                            'name': inst.get('formattedName'),
+                            'coupon': inst['bond'].get('couponRate'),
+                            'price': inst['bond'].get('tradePrice'),
+                            'priceChange': inst['bond'].get('formattedTradePriceChange'),
+                            'yield': inst['bond'].get('yield'),
+                            'yieldChange': inst['bond'].get('yieldChange'),
+                            'timestamp': inst.get('timestamp')[:19]
+                        }
+                    )
+        return res
 
 
 def get_fred_data(key, name=None):
