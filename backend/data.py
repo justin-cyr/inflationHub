@@ -87,6 +87,8 @@ class DataAPI(object):
             self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
         elif data_parser == 'IntradayUSTQuoteWsjParser':
             self.data_parser = IntradayUSTQuoteWsjParser()
+        elif data_parser == 'GasPricesExcelParser':
+            self.data_parser = GasPricesExcelParser()
         elif data_parser == 'TimeSeriesStatCanXmlParser':
             self.data_parser = TimeSeriesStatCanXmlParser(self.name)
         else:
@@ -327,7 +329,7 @@ class IntradayUSTQuoteWsjParser(Parser):
         return 'IntradayUSTQuoteWsjParser(' + str(self.__dict__) + ')'
 
     def parse(self, response):
-        """Hande response as JSON data and return data as a list quotes."""
+        """Handle response as JSON data and return data as a list quotes."""
         self.validate_response(response, fmt='json')
         response_data = response.json()
         res = []
@@ -345,6 +347,66 @@ class IntradayUSTQuoteWsjParser(Parser):
                             'timestamp': inst.get('timestamp')[:19]
                         }
                     )
+        return res
+
+
+class ExcelParser(Parser):
+    """Parser for Excel data (xlsx, xls, and any format supported by pandas.read_excel)."""
+    def __init__(self, file_name='temp', extension='xlsx', dropna=True, sheet_name=0, header=0, usecols=None):
+        self.io = file_name + '.' + extension
+        self.dropna = dropna
+        self.sheet_name = sheet_name
+        self.header = header
+        self.usecols=usecols
+
+    def __repr__(self):
+        return 'ExcelParser(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        """Save *.xls response as a temporary file, parse and return data series."""
+        # response content is binary data
+        with open(self.io, 'wb') as f:
+            f.write(response.content)
+
+        df = pd.read_excel(
+                self.io,
+                sheet_name=self.sheet_name,
+                header=self.header,
+                usecols=self.usecols
+            )
+        if self.dropna:
+            df = df.dropna()
+        res = df.to_dict(orient='list')
+
+        # delte file
+        if os.path.exists(self.io):
+            os.remove(self.io)
+
+        return res
+
+
+class GasPricesExcelParser(ExcelParser):
+    """Parse weekly gas prices from US Energy Information Administration."""
+    def __init__(self):
+        super().__init__(
+            sheet_name='Data 3',
+            header=2,
+            usecols='A:B'
+        )
+
+    def __repr__(self):
+        return 'GasPricesExcelParser(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        res = super().parse(response)
+        dates = res.get('Date')
+        res['Date'] = [str(Date(str(d)[:10])) for d in dates]
+
+        # replace key with series name
+        old_key = [k for k in res.keys() if k != 'Date'][0]
+        res['US Gas Prices'] = res[old_key]
+        del res[old_key] 
+
         return res
 
 
