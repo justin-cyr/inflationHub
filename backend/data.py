@@ -1,5 +1,6 @@
 import datetime
 import os
+from io import BytesIO
 import requests
 import pandas as pd
 from xml.etree import ElementTree
@@ -352,8 +353,7 @@ class IntradayUSTQuoteWsjParser(Parser):
 
 class ExcelParser(Parser):
     """Parser for Excel data (xlsx, xls, and any format supported by pandas.read_excel)."""
-    def __init__(self, file_name='temp', extension='xlsx', dropna=True, sheet_name=0, header=0, usecols=None):
-        self.io = file_name + '.' + extension
+    def __init__(self, dropna=True, sheet_name=0, header=0, usecols=None):
         self.dropna = dropna
         self.sheet_name = sheet_name
         self.header = header
@@ -365,22 +365,18 @@ class ExcelParser(Parser):
     def parse(self, response):
         """Save *.xls response as a temporary file, parse and return data series."""
         # response content is binary data
-        with open(self.io, 'wb') as f:
-            f.write(response.content)
-
+        io = BytesIO()
+        io.write(response.content)
         df = pd.read_excel(
-                self.io,
+                io,
                 sheet_name=self.sheet_name,
                 header=self.header,
                 usecols=self.usecols
             )
+        io.close()
         if self.dropna:
             df = df.dropna()
         res = df.to_dict(orient='list')
-
-        # delte file
-        if os.path.exists(self.io):
-            os.remove(self.io)
 
         return res
 
