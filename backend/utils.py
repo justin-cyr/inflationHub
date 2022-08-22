@@ -1,5 +1,6 @@
 
 import datetime
+from enum import Enum, auto
 
 class Date(object):
     # wraps datetime.date but allows conversion from string types in constructor
@@ -70,6 +71,10 @@ class Date(object):
     def __sub__(self, rhs):
         rhs = Date(rhs)
         return self.datetime_date() - rhs.datetime_date()
+
+    @classmethod
+    def today(cls):
+        return Date(datetime.date.today())
 
     # leap year rules
     def isLeapYear(self):
@@ -208,3 +213,18 @@ class Tenor(object):
     def __repr__(self):
         return self.tenor
 
+
+class DayCount(Enum):
+    ACT_365 = auto()
+    ACT_360 = auto()
+    THIRTY_360 = auto()
+
+
+def day_count_fraction(start_date, end_date, day_count):
+    start_date = Date(start_date)
+    end_date = Date(end_date)
+
+    if day_count == DayCount.ACT_365:
+        return (end_date - start_date).days / 365.0
+    else:
+        raise NotImplementedError(f'day_count_fraction for {day_count} is not implemented.')
