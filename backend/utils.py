@@ -37,6 +37,9 @@ class Date(object):
     def __repr__(self):
         return str(self.date)
 
+    def __hash__(self):
+        return self.__repr__().__hash__()
+
     def datetime_date(self):
         return self.date
 

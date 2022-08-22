@@ -1,5 +1,5 @@
 
-from ..utils import Date
+from ..utils import Date, day_count_fraction
 
 class Cashflows(object):
     def __init__(self, payment_dates, amounts):
@@ -20,18 +20,120 @@ class Cashflows(object):
 
         sorted_cashflows = sorted(zip(payment_date_objs, amounts), key=lambda pair: pair[0])
         self.payment_dates = [pair[0] for pair in sorted_cashflows]
-        self.amount_map = {str(d): a for d, a in sorted_cashflows}
+        self.amount_map = {d: a for d, a in sorted_cashflows}
 
     def __repr__(self):
-        cashflows = [(str(d), self.amount_map[str(d)]) for d in self.payment_dates]
-        return f'Cashflows({cashflows})'
+        return f'Cashflows({self.schedule()})'
+
+    def schedule(self):
+        """Return a list of dicts with contractual cashflow info."""
+        this_schedule = []
+        for d in self.payment_dates:
+            record = {'payment_date': str(d)}
+            if 'amount_map' in self.__dict__:
+                record['amount'] = self.amount_map[d]
+            this_schedule.append(record)
+        return this_schedule
+
+    # decorator
+    def check_payment_dates(init):
+        def inner(self, payment_dates, *args, **kwargs):
+            try:
+                payment_dates = list(payment_dates)
+            except Exception as e:
+                raise ValueError(f'Cashflows: payment_dates must be list-like types, {e}')
+            return init(self, list(payment_dates), *args, **kwargs)
+        return inner
 
     def amount_calc(self, d):
         # override in inherited classes
-        return self.amount_map[str(Date(d))]
+        return self.amount_map.get(Date(d), 0.0)
 
     def amount(self, d):
         return self.amount_calc(d)
 
 
+class CouponCashflows(Cashflows):
+    @Cashflows.check_payment_dates
+    def __init__(self, payment_dates, notional, dcfs=None, period_dates=None, day_count=None):
+        if not dcfs:
+            # calculate day count fractions from period start and end dates
+            if not (period_dates and day_count):
+                raise ValueError('CouponCashflow: period start/end dates and day count must be provided if day count fractions are not provided.')
 
+            # expect period_dates to be a list of pairs [(start_date, end_date)]
+            if not isinstance(period_dates, list):
+                raise ValueError('CouponCashflows: period_dates must be list type.')
+
+            dcfs = []
+            for start_date, end_date in period_dates:
+                dcf = day_count_fraction(start_date, end_date, day_count)
+                if dcf < 0.0:
+                    raise ValueError(f'CouponCashflows: invalid period_dates, start date={start_date} exceeds end date={end_date}.')
+                dcfs.append(dcf)
+
+            self.day_count = day_count
+
+        if len(dcfs) != len(payment_dates):
+            raise ValueError(f'CouponCashflows: len(dcfs)={len(dcfs) } must equal len(payment_dates)={len(payment_dates)}.')
+        
+        try:
+            payment_date_objs = [Date(d) for d in payment_dates]
+        except Exception as e:
+            raise ValueError(f'CouponCashflows: payment_dates cannot be converted to Date type, {e}')
+
+        if period_dates:
+            sorted_schedule = sorted(zip(payment_date_objs, dcfs, period_dates), key=lambda pair: pair[0])
+            period_dates = [pair[2] for pair in sorted_schedule]
+            self.period_dates = [(Date(s), Date(e)) for s, e in period_dates]
+        else:
+            sorted_schedule = sorted(zip(payment_date_objs, dcfs), key=lambda pair: pair[0])
+        self.payment_dates = [pair[0] for pair in sorted_schedule]
+        self.dcf_map = {pair[0]: pair[1] for pair in sorted_schedule}
+        self.notional = notional
+
+    def __repr__(self):
+        return f'CouponCashflows({self.schedule()})'
+
+    def schedule(self):
+        base_schedule = super().schedule()
+        this_schedule = []
+        for i, record in enumerate(base_schedule):
+            record['notional'] = self.notional
+            record['day_count_fraction'] = self.dcf_map[record['payment_date']]
+            if 'day_count' in self.__dict__:
+                record['day_count'] = str(self.day_count)
+            if 'period_dates' in self.__dict__:
+                record['start_date'] = str(self.period_dates[i][0])
+                record['end_date'] = str(self.period_dates[i][1])
+            this_schedule.append(record)
+        return this_schedule
+
+    def amount_calc(self, dcf, rate):
+        return rate * dcf * self.notional
+
+    def amount(self, d, rate):
+        if d not in self.dcf_map:
+            return 0.0
+        else:
+            return self.amount_calc(self.dcf_map[d], rate)
+
+
+class FixedCouponCashflows(CouponCashflows):
+    def __init__(self, payment_dates, notional, rate, dcfs=None, period_dates=None, day_count=None):
+        super().__init__(payment_dates, notional, dcfs, period_dates, day_count)
+        self.rate = rate
+
+    def __repr__(self):
+        return f'FixedCouponCashflows({self.schedule()})'
+
+    def schedule(self):
+        base_schedule = super().schedule()
+        this_schedule = []
+        for record in base_schedule:
+            record['rate'] = self.rate
+            this_schedule.append(record)
+        return this_schedule
+
+    def amount(self, d):
+        return super().amount(d, self.rate)
