@@ -22,6 +22,16 @@ class ProjectedCashflows(object):
     def __repr__(self):
         return f'ProjectedCashflows({self.__dict__})'
 
+    def schedule(self):
+        contractual_schedule = self.contractual_cashflows.schedule()
+        projected_schedule = []
+        for i, record in enumerate(contractual_schedule):
+            record['type'] = 'Projected' + record['type']
+            record['projected_amount'] = self.projected_amounts[i]
+            record['payment_time'] = self.payment_times[i]
+            projected_schedule.append(record)
+        return projected_schedule
+
     def projected_amount(self, d):
         if Date(d) < self.base_date:
             return 0.0

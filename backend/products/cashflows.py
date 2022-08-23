@@ -29,7 +29,10 @@ class Cashflows(object):
         """Return a list of dicts with contractual cashflow info."""
         this_schedule = []
         for d in self.payment_dates:
-            record = {'payment_date': str(d)}
+            record = {
+                'payment_date': str(d),
+                'type': 'Cashflow'
+            }
             if 'amount_map' in self.__dict__:
                 record['amount'] = self.amount_map[d]
             this_schedule.append(record)
@@ -99,6 +102,7 @@ class CouponCashflows(Cashflows):
         base_schedule = super().schedule()
         this_schedule = []
         for i, record in enumerate(base_schedule):
+            record['type'] = 'CouponCashflow'
             record['notional'] = self.notional
             record['day_count_fraction'] = self.dcf_map[record['payment_date']]
             if 'day_count' in self.__dict__:
@@ -131,7 +135,9 @@ class FixedCouponCashflows(CouponCashflows):
         base_schedule = super().schedule()
         this_schedule = []
         for record in base_schedule:
+            record['type'] = 'FixedCouponCashflow'
             record['rate'] = self.rate
+            record['amount'] = self.amount(record['payment_date'])
             this_schedule.append(record)
         return this_schedule
 
