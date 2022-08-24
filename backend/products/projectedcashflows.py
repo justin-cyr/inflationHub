@@ -1,7 +1,6 @@
 
-from tabnanny import check
 from ..utils import Date, DayCount, day_count_fraction
-from .cashflows import Cashflows
+from .cashflows import Cashflows, MultiLegCashflows
 
 class ProjectedCashflows(object):
     def __init__(self, cashflows, projection_function=None, base_date=Date.today(), day_count=DayCount.ACT_365):
@@ -9,14 +8,18 @@ class ProjectedCashflows(object):
         if not isinstance(cashflows, Cashflows):
             raise ValueError('ProjectedCashflows: cashflows must be type Cashflows.')
 
-        if projection_function and not isinstance(projection_function, function):
-            raise ValueError('ProjectedCashflows: projection_function must be a function.')
+        if isinstance(cashflows, MultiLegCashflows):
+            if not (isinstance(projection_function, list) and all([not f or callable(f) for f in projection_function])):
+                raise ValueError('ProjectedCashflows: projection_function must be a list of functions for MultiLegCashflows.')
+        elif projection_function and not callable(projection_function):
+                raise ValueError('ProjectedCashflows: projection_function must be a function.')
         
         self.contractual_cashflows = cashflows
         self.proj = projection_function
         self.base_date = base_date
         self.day_count = day_count
-        self.projected_amounts = [self.projected_amount(d) for d in self.contractual_cashflows.payment_dates]
+        self.projected_leg_amounts = [self.projected_amounts_by_leg(d) for d in self.contractual_cashflows.payment_dates]
+        self.projected_amounts = [sum(amts) for amts in self.projected_leg_amounts]
         self.payment_times = self.cashflow_times(base_date, day_count)
 
     def __repr__(self):
@@ -27,7 +30,7 @@ class ProjectedCashflows(object):
         projected_schedule = []
         for i, record in enumerate(contractual_schedule):
             record['type'] = 'Projected' + record['type']
-            record['projected_amount'] = self.projected_amounts[i]
+            record['projected_amount'] = self.projected_leg_amounts[i][record.get('leg_index', 0)]
             record['payment_time'] = self.payment_times[i]
             projected_schedule.append(record)
         return projected_schedule
@@ -35,14 +38,36 @@ class ProjectedCashflows(object):
     def projected_amount(self, d):
         if Date(d) < self.base_date:
             return 0.0
-        
-        if self.proj:
-            try:
+
+        try:
+            if self.proj:
                 res = self.contractual_cashflows.amount(d, *self.proj(d))
-            except Exception as e:
+            else:
+                res = self.contractual_cashflows.amount(d)
+        except Exception as e:
                 raise Exception(f'ProjectedCashflows: cannot project on date {d}, {e}.')
-        else:
-            res = self.contractual_cashflows.amount(d)
+        
+        return res
+
+    def projected_amounts_by_leg(self, d):
+        # Projected amount for each leg in a MultiLegCashflow
+        if not isinstance(self.contractual_cashflows, MultiLegCashflows):
+            return [self.projected_amount(d)]
+        
+        res = [0.0 for _ in self.contractual_cashflows.legs]
+        if Date(d) < self.base_date:
+            return res
+        
+        for j in self.contractual_cashflows.nonzero_leg_map.get(d, []):
+            # just project the parameters needed on date d
+            proj_j = self.proj[j]
+            try:
+                if proj_j:
+                    res[j] = self.contractual_cashflows.legs[j].amount(d, *proj_j(d))
+                else:
+                    res[j] = self.contractual_cashflows.legs[j].amount(d)
+            except Exception as e:
+                raise Exception(f'ProjectedCashflows: cannot project on date {d} for leg {j}, {e}.')
         
         return res
 

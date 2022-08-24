@@ -1,4 +1,7 @@
 
+import heapq
+from collections import defaultdict
+
 from ..utils import Date, day_count_fraction
 
 class Cashflows(object):
@@ -54,6 +57,60 @@ class Cashflows(object):
 
     def amount(self, d):
         return self.amount_calc(d)
+
+
+class MultiLegCashflows(Cashflows):
+    # Merge multiple cashflow objects together
+    def __init__(self, cashflows_list):
+        self.legs = cashflows_list
+
+        payment_dates, merged_schedule = self.merge_legs()
+        self.payment_dates = payment_dates
+        self.merged_schedule = merged_schedule
+
+        self.nonzero_leg_map = defaultdict(list)
+        for record in self.merged_schedule:
+            self.nonzero_leg_map[record['payment_date']].append(record['leg_index'])
+
+    def __repr__(self):
+        return f'MergedCashflows({self.schedule()})'
+
+    def schedule(self):
+        return self.merged_schedule
+    
+    def merge_legs(self):
+        """Merge schedules and payment dates of legs."""
+        schedules = [cf.schedule() for cf in self.legs]
+        for i, sched in enumerate(schedules):
+            for record in sched:
+                record['leg_index'] = i
+
+        merged_schedule = list(heapq.merge(*schedules, key=lambda r: r['payment_date']))
+        payment_dates = [merged_schedule[0]['payment_date']] if merged_schedule else []
+        for record in merged_schedule[1:]:
+            if record['payment_date'] > payment_dates[-1]:
+                payment_dates.append(record['payment_date'])
+        
+        return payment_dates, merged_schedule
+
+    def amount(self, d):
+        raise NotImplementedError('MultiLegCashflows do not implement an incomplete amount function.')
+
+
+class PrincipalCashflows(Cashflows):
+    def __init__(self, last_payment_date, principal_amount):
+        super().__init__([last_payment_date], [principal_amount])
+    
+    def __repr__(self):
+        return f'PrincipalCashflows({self.schedule()})'
+
+    def schedule(self):
+        base_schedule = super().schedule()
+        this_schedule = []
+        for record in base_schedule:
+            record['type'] = 'PrincipalCashflow'
+            this_schedule.append(record)
+        return this_schedule
 
 
 class CouponCashflows(Cashflows):
