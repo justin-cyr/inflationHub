@@ -146,3 +146,21 @@ class ProjectedCashflows(object):
 
         return res.root
 
+    
+    # Measures of price sensitivity and convexity
+    def yieldDV01(self, y, payment_times=None):
+        """Returns the 1st order NPV sensitivity to changes in yield per 1bp, as a function of yield.
+            Normalized to be positive.
+        """
+        return - self.yieldToPvPrime(y, payment_times=payment_times) / 10000.0
+
+    def modified_duration(self, y, payment_times=None):
+        price = self.yieldToPv(y, payment_times=payment_times)
+        return - self.yieldToPvPrime(y, payment_times=payment_times) / price
+
+    def macauley_duration(self, y, payment_times=None):
+        return (1.0 + y) * self.modified_duration(y, payment_times=payment_times)
+
+    def convexity(self, y, payment_times=None):
+        price = self.yieldToPv(y, payment_times=payment_times)
+        return self.yieldToPvPrime2(y, payment_times=payment_times) / price
