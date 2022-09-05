@@ -79,6 +79,15 @@ class Date(object):
     def today(cls):
         return Date(datetime.date.today())
 
+    def weekday(self):
+        return self.datetime_date().weekday()
+
+    def is_weekday(self):
+        return self.weekday() < 5
+
+    def is_weekend(self):
+        return self.weekday() >= 5
+
     # leap year rules
     def isLeapYear(self):
         return Date.class_isLeapYear(self.year)
@@ -129,6 +138,10 @@ class Date(object):
         day = self.day if not self.isLeapDay() else 28
         return Date(datetime.date(self.year + 1, self.month, day))
 
+    def addDays(self, days):
+        """Return a new Date that is days ahead of this date."""
+        return Date(self.datetime_date() + datetime.timedelta(days=days))
+
     def addTenor(self, tenor):
         """Return a new Date that is tenor ahead of this date."""
         tenor = Tenor(tenor)
@@ -146,7 +159,7 @@ class Date(object):
             raise NotImplementedError('Date.addTenor: monthly tenors not yet supported.')
 
         elif tenor.unit == 'D':
-            return Date(self.datetime_date() + datetime.timedelta(days=tenor.size))
+            return self.addDays(tenor.size)
         else:
             raise ValueError(f'Date.addTenor: unsupported tenor unit it {tenor}')
 
