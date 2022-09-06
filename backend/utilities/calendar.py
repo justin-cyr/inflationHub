@@ -73,44 +73,6 @@ class Calendar(object):
     def __repr__(self):
         return f'Calendar({self.name})'
 
-    def is_business_day(self, date):
-        """Return True if this date is a business day in the holiday calendar, False otherwise."""
-        date = Date(date)
-        return date.is_weekday() and (date not in self.holidays)
-
-    def add_business_days(self, date, bump_days, direction=BumpDirection.FORWARD):
-        """ Return the business day that is bump_days from date.
-            If date is not already a bday, then move to the nearest bday and start counting from there.
-        """
-        if bump_days < 0:
-            raise ValueError('Calendar.add_buisiness_days: bump_days cannot be negative. Use BumpDirection.BACKWARD.')
-        
-        if direction == BumpDirection.FORWARD:
-            inc = 1
-        elif direction == BumpDirection.BACKWARD:
-            inc = -1
-        else:
-            raise ValueError('Calendar.add_buisiness_days: unsupported BumpDirection, must be FORWARD or BACKWARD.')
-        
-        # move to nearest business day
-        date = Date(date)
-        while (not self.is_business_day(date)):
-            date = date.addDays(inc)
-
-        bdays_added = 0
-        while (bdays_added < bump_days):
-            date = date.addDays(inc)
-            while (not self.is_business_day(date)):
-                date = date.addDays(inc)
-            bdays_added += 1
-
-        return date
-
-    def nearest_business_day(self, date, direction=BumpDirection.FORWARD):
-        """Return the nearest bday to date."""
-        return self.add_business_days(date, 0, direction)
-        
-
     @staticmethod
     def generate(name, min_year, max_year):
         """Create a new calendar file for calendar name from min_year to max_year."""
@@ -250,4 +212,63 @@ class Calendar(object):
             Calendar.get_christmas_day(year, rule)
         ]
 
+
+class CalendarManager(object):
+
+    supported_calendars = [
+        'NYB'
+    ]
+
+    def __init__(self):
+        self.calendar_map = { name: Calendar(name) for name in CalendarManager.supported_calendars }
+    
+    def __repr__(self):
+        return f'CalendarManager({CalendarManager.supported_calendars})'
+
+    def check_calendar_names(self, calendar_names):
+        for name in calendar_names:
+            if name not in self.calendar_map:
+                raise ValueError(f'CalendarManager: unsupported calendar name {name}.')
+
+    def is_business_day(self, calendar_names, date):
+        """ Return True if this date is a business day in the holiday calendar, False otherwise.
+            pre-condition: calendar_names is a subset of CalendarManager.supported_calendars
+        """
+        date = Date(date)
+        return date.is_weekday() and (not any([date in self.calendar_map[cal].holidays for cal in calendar_names]))
+
+    def add_business_days(self, calendar_names, date, bump_days, direction=BumpDirection.FORWARD):
+        """ Return the business day that is bump_days from date.
+            If date is not already a bday, then move to the nearest bday and start counting from there.
+        """
+        self.check_calendar_names(calendar_names)
+        if bump_days < 0:
+            raise ValueError('CalendarManager.add_buisiness_days: bump_days cannot be negative. Use BumpDirection.BACKWARD.')
+
+        if direction == BumpDirection.FORWARD:
+            inc = 1
+        elif direction == BumpDirection.BACKWARD:
+            inc = -1
+        else:
+            raise ValueError('CalendarManager.add_business_days: unsupported BumpDirection, must be FORWARD or BACKWARD.')
         
+        # move to nearest business day
+        date = Date(date)
+        while (not self.is_business_day(calendar_names, date)):
+            date = date.addDays(inc)
+
+        bdays_added = 0
+        while (bdays_added < bump_days):
+            date = date.addDays(inc)
+            while (not self.is_business_day(calendar_names, date)):
+                date = date.addDays(inc)
+            bdays_added += 1
+
+        return date
+
+    def nearest_business_day(self, calendar_names, date, direction=BumpDirection.FORWARD):
+        """Return the nearest bday to date."""
+        return self.add_business_days(calendar_names, date, 0, direction)
+
+# export CalendarManager object to app
+CalendarUtil = CalendarManager()
