@@ -12,6 +12,7 @@ class ObservanceRule(Enum):
     XSAT_SUN2MON = auto()          # do not observe holidays on Sat, observe Sun holidays on next Mon
     SAT2FRI_XSUN = auto()          # observe Sat holidays on preceding Fri, do not observe Sun holidays
     NEAREST_WEEKDAY = auto()       # observe Sat holidays on preceding Fri, observe Sun holidays on next Mon
+    SUBSTITUTE_DAY = auto()        # observe next Mon, except if that is also a holiday then observe next Tue
 
     @classmethod
     def apply_rule(cls, holiday, rule):
@@ -39,6 +40,14 @@ class ObservanceRule(Enum):
                 return holiday.addDays(-1)
             else:
                 return holiday.addDays(1)
+
+        elif rule == cls.SUBSTITUTE_DAY:
+            if holiday.month == 12 and holiday.day == 25:
+                # move to next Tue, since Boxing Day is observed on Mon
+                return holiday.addDays(7 - holiday.weekday() + 1)
+            else:
+                # move to next Monday
+                return holiday.addDays(7 - holiday.weekday())
 
         else:
             raise ValueError(f'ObservanceRule: unsupported rule {rule}.')
@@ -185,6 +194,10 @@ class Calendar(object):
     def get_christmas_day(year, rule):
         return Date(f'{year}-12-25')
 
+    @staticmethod
+    @apply_observance_rule
+    def get_boxing_day(year, rule):
+        return Date(f'{year}-12-26')
 
     # Generate specific calendar holidays in a given year
     # decorator
