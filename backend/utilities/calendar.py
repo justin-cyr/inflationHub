@@ -238,6 +238,12 @@ class CalendarManager(object):
     def __repr__(self):
         return f'CalendarManager({CalendarManager.supported_calendars})'
 
+    def split_calendars(self, cal_string):
+        if not cal_string:
+            return []
+        else:
+            return str(cal_string).split(',')
+
     def check_calendar_names(self, calendar_names):
         for name in calendar_names:
             if name not in self.calendar_map:

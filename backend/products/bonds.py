@@ -4,6 +4,16 @@ from backend.products.projectedcashflows import ProjectedCashflows
 from ..utils import Date
 from ..utilities.calendar import CalendarUtil
 
+import os
+import pandas as pd
+
+# Read Bonds.csv
+BOND_CONFIG = pd.read_csv(
+                os.path.join(os.getcwd(), 'backend/products/ProductConventions/Bonds.csv'),
+                index_col='Convention',
+                keep_default_na=False
+            ).to_dict(orient='index')
+
 class Bond(object):
     def __init__(self,
             notional,
@@ -29,6 +39,37 @@ class Bond(object):
         self.cashflows = None
 
     
+    @staticmethod
+    def create_bond(**kwargs):
+        """Construct a Bond object from a data convention and parameters dictionary."""
+        if 'Convention' not in kwargs:
+            raise ValueError('Bond.create_bond: no Convention specified.')
+        
+        name = kwargs['Convention']
+        if name not in BOND_CONFIG:
+            raise KeyError(f'Bond.create_bond: Convention={name} not found in Bonds.csv.')
+        bond_conventions = BOND_CONFIG[name]
+
+        # universal parameters passed in kwargs
+        notional = kwargs.get('notional')
+        maturity_date = kwargs.get('maturity_date')
+
+        # optional parameters in Bonds.csv
+        settlement_days = bond_conventions.get('SettlementDays', 0)
+        settlement_calendars_str = bond_conventions.get('SettlementCalendars')
+        settlement_calendars = CalendarUtil.split_calendars(settlement_calendars_str)
+        payment_days = bond_conventions.get('PaymentDays', 0)
+        payment_calendars_str = bond_conventions.get('PaymentCalendars')
+        payment_calendars = CalendarUtil.split_calendars(payment_calendars_str)
+
+        # Delegate to constructor based on type
+        bond_type = bond_conventions.get('Type')
+        if bond_type == ZeroCouponBond.__name__:
+            return ZeroCouponBond(notional, maturity_date, payment_days, payment_calendars)
+        else:
+            raise NotImplementedError(f'Bond.create_bond: does not support bond type {bond_type}.')
+
+
     def __repr__(self):
         return f'{self.__class__.__name__}({self.__dict__})'
 
@@ -86,9 +127,13 @@ class Bond(object):
         market_value = self.clean_price_to_market_value(clean_price, base_date)
         return self.pv_to_yield(market_value)
 
-    def yield_to_dirty_price(self, y, base_date=Date.today()):
+    def yield_to_pv(self, y, base_date=Date.today()):
         projected_cashflows = self.get_projected_cashflows(base_date)
         pv = projected_cashflows.yieldToPv(y)
+        return pv
+
+    def yield_to_dirty_price(self, y, base_date=Date.today()):
+        pv = self.yield_to_pv(y, base_date)
         dirty_price = self.pv_to_dirty_price(pv)
         return dirty_price
 

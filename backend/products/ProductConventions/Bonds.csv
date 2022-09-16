@@ -1,0 +1,2 @@
+Convention,Type,SettlementDays,SettlementCalendars,PaymentDays,PaymentCalendars
+USTBill,ZeroCouponBond,1,NYB,0,NYB
