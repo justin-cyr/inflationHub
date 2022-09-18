@@ -2,6 +2,57 @@
 import datetime
 from enum import Enum, auto
 
+class StrEnum(Enum):
+
+    def to_str(self):
+        return str(self).split('.')[-1].upper()
+
+    @classmethod
+    def from_str(cls, s):
+        if isinstance(s, cls):
+            return s
+
+        s = str(s).upper()
+        for e in cls:
+            if s == e.to_str():
+                return e
+        raise ValueError(f'{cls}: {s} is not an enum member.')
+
+
+class DayCount(StrEnum):
+    ACT_365 = auto()
+    ACT_360 = auto()
+    THIRTY_360 = auto()
+
+class BumpDirection(StrEnum):
+    FORWARD = auto()
+    BACKWARD = auto()
+
+class DateFrequency(StrEnum):
+    DAILY = auto()
+    WEEKLY = auto()
+    MONTHLY = auto()
+    QUARTERLY = auto() 
+    SEMIANNUALLY = auto()
+    YEARLY = auto()
+
+    def tenor_unit_to_frequency(unit):
+        unit = unit.upper()
+        if unit == 'D':
+            return DateFrequency.DAILY
+        elif unit == 'W':
+            return DateFrequency.WEEKLY
+        elif unit == 'M':
+            return DateFrequency.MONTHLY
+        elif unit == 'Q':
+            return DateFrequency.QUARTERLY
+        elif unit == 'S':
+            return DateFrequency.SEMIANNUALLY
+        elif unit == 'Y':
+            return DateFrequency.YEARLY
+        else:
+            raise ValueError(f'DateFrequency.tenor_unit_to_frequency: unsupported tenor unit {unit}')
+
 class Date(object):
     # wraps datetime.date but allows conversion from string types in constructor
     def __init__(self, date):
@@ -132,11 +183,29 @@ class Date(object):
             return daysInMonth[month]
 
     # bump functions
-    def addOneYear(self):
+    def addOneYear(self, sign=1):
         """Return a new Date that is 1Y ahead of this date."""
         # adjust for leap day
+        if abs(sign) != 1:
+            raise ValueError('Date.addOneYear: sign must be +/-1')
         day = self.day if not self.isLeapDay() else 28
-        return Date(datetime.date(self.year + 1, self.month, day))
+        return Date(datetime.date(self.year + sign, self.month, day))
+
+    def addMonths(self, months):
+        """Return a new Date that is months ahead/behind this date."""
+        year = self.year
+        month = self.month + months
+
+        while month > 12:
+            year += 1
+            month -= 12
+
+        while month < 1:
+            year -= 1
+            month += 12
+        
+        day = min(self.day, Date.class_daysInMonth(month, year))
+        return Date(datetime.date(year, month, day))
 
     def addDays(self, days):
         """Return a new Date that is days ahead of this date."""
@@ -145,23 +214,30 @@ class Date(object):
     def addTenor(self, tenor):
         """Return a new Date that is tenor ahead of this date."""
         tenor = Tenor(tenor)
+        date_frequency = DateFrequency.tenor_unit_to_frequency(tenor.unit)
+        direction = BumpDirection.FORWARD if tenor.size >=0 else BumpDirection.BACKWARD
+        iterations = abs(tenor.size)
+        shifted_date = self
+        for _ in range(iterations):
+            shifted_date = shifted_date.shiftDate(date_frequency, direction)
+        return shifted_date
 
-        # Handle each tenor unit separately
-        if tenor.unit == 'Y':
-            num_years = tenor.size
-            date = self
-            while num_years > 0:
-                date = date.addOneYear()
-                num_years -= 1
-            return date
+    def shiftDate(self, date_frequency, bump_direction):
+        """Return a new Date that is ahead/behind this date by the date_frequency."""
+        sign = 1 if bump_direction == BumpDirection.FORWARD else -1
 
-        elif tenor.unit == 'M':
-            raise NotImplementedError('Date.addTenor: monthly tenors not yet supported.')
-
-        elif tenor.unit == 'D':
-            return self.addDays(tenor.size)
-        else:
-            raise ValueError(f'Date.addTenor: unsupported tenor unit it {tenor}')
+        if date_frequency == DateFrequency.DAILY:
+            return self.addDays(sign)
+        if date_frequency == DateFrequency.WEEKLY:
+            return self.addDays(sign * 7)
+        if date_frequency == DateFrequency.MONTHLY:
+            return self.addMonths(sign)
+        if date_frequency == DateFrequency.QUARTERLY:
+            return self.addMonths(sign * 3)
+        if date_frequency == DateFrequency.SEMIANNUALLY:
+            return self.addMonths(sign * 6)
+        if date_frequency == DateFrequency.YEARLY:
+            return self.addOneYear(sign)
 
 
 class DateTime(object):
@@ -228,12 +304,6 @@ class Tenor(object):
 
     def __repr__(self):
         return self.tenor
-
-
-class DayCount(Enum):
-    ACT_365 = auto()
-    ACT_360 = auto()
-    THIRTY_360 = auto()
 
 
 def day_count_fraction(start_date, end_date, day_count):
