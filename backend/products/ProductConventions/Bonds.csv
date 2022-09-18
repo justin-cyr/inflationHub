@@ -1,2 +1,3 @@
-Convention,Type,SettlementDays,SettlementCalendars,PaymentDays,PaymentCalendars
-USTBill,ZeroCouponBond,1,NYB,0,NYB
+Convention,Type,SettlementDays,SettlementCalendars,PaymentDays,PaymentCalendars,PaymentFrequency,CouponDayCount,CouponConvention,AccruedInterestDayCount
+USTBill,ZeroCouponBond,1,NYB,0,NYB,,,,
+USTBond,FixedRateBond,1,NYB,0,NYB,SemiAnnually,,Uniform,ACT_365

@@ -1,9 +1,11 @@
 
-from backend.products.cashflows import Cashflows, MultiLegCashflows, PrincipalCashflows
+from backend.products.cashflows import Cashflows, FixedCouponCashflows, MultiLegCashflows, PrincipalCashflows
 from backend.products.projectedcashflows import ProjectedCashflows
-from ..utils import Date
+from ..utils import BumpDirection, Date, DateFrequency, DayCount, StrEnum
 from ..utilities.calendar import CalendarUtil
+from ..utilities.couponschedule import CouponSchedule
 
+from enum import auto
 import os
 import pandas as pd
 
@@ -13,6 +15,24 @@ BOND_CONFIG = pd.read_csv(
                 index_col='Convention',
                 keep_default_na=False
             ).to_dict(orient='index')
+
+class CouponConvention(StrEnum):
+        UNIFORM = auto()
+        ADJ_DATE_DCF = auto()
+
+        @classmethod
+        def uniform_weight(cls, date_frequency):
+            uniform_weights = {
+                DateFrequency.YEARLY:       1.0,
+                DateFrequency.SEMIANNUALLY: 0.50,
+                DateFrequency.QUARTERLY:    0.25,
+                DateFrequency.MONTHLY:      1.0 / 12.0,
+                DateFrequency.WEEKLY:       1.0 / 52.0,
+                DateFrequency.DAILY:        1.0 / 365.0
+            }
+            if date_frequency not in uniform_weights:
+                raise ValueError(f'CouponConvention.uniform_weight: unsupported date frequency {date_frequency}.')
+            return uniform_weights[date_frequency]
 
 class Bond(object):
     def __init__(self,
@@ -30,7 +50,9 @@ class Bond(object):
         self.settlement_days = int(settlement_days)
         self.maturity_date = Date(maturity_date)
         self.settlement_calendars = list(settlement_calendars)
-        self.last_payment_date = CalendarUtil.add_business_days(payment_calendars, self.maturity_date, payment_days)
+        self.payment_days = int(payment_days)
+        self.payment_calendars = list(payment_calendars)
+        self.last_payment_date = CalendarUtil.add_business_days(self.payment_calendars, self.maturity_date, self.payment_days)
         self.principal_flows = PrincipalCashflows(self.last_payment_date, self.notional)
 
         # defined in derived classes
@@ -54,6 +76,10 @@ class Bond(object):
         notional = kwargs.get('notional')
         maturity_date = kwargs.get('maturity_date')
 
+        # optional parameters passed in kwargs
+        dated_date = kwargs.get('dated_date')
+        rate = kwargs.get('rate')
+
         # optional parameters in Bonds.csv
         settlement_days = bond_conventions.get('SettlementDays', 0)
         settlement_calendars_str = bond_conventions.get('SettlementCalendars')
@@ -61,11 +87,36 @@ class Bond(object):
         payment_days = bond_conventions.get('PaymentDays', 0)
         payment_calendars_str = bond_conventions.get('PaymentCalendars')
         payment_calendars = CalendarUtil.split_calendars(payment_calendars_str)
+        payment_frequency = bond_conventions.get('PaymentFrequency')
+        day_count = bond_conventions.get('CouponDayCount')
+        coupon_convention = bond_conventions.get('CouponConvention')
+        accrued_interest_day_count = bond_conventions.get('AccruedInterestDayCount')
+
+        # Convert types of optional arguments
+        coupon_convention = CouponConvention.from_str(coupon_convention) if coupon_convention else None
+        payment_frequency = DateFrequency.from_str(payment_frequency) if payment_frequency else None
+        day_count = DayCount.from_str(day_count) if day_count else None
+        accrued_interest_day_count = DayCount.from_str(accrued_interest_day_count) if accrued_interest_day_count else None
 
         # Delegate to constructor based on type
         bond_type = bond_conventions.get('Type')
         if bond_type == ZeroCouponBond.__name__:
             return ZeroCouponBond(notional, maturity_date, payment_days, payment_calendars)
+        elif bond_type == FixedRateBond.__name__:
+            return FixedRateBond(
+                    notional,
+                    maturity_date,
+                    dated_date,
+                    rate,
+                    payment_frequency,
+                    coupon_convention,
+                    accrued_interest_day_count,
+                    settlement_days,
+                    settlement_calendars,
+                    payment_days,
+                    payment_calendars,
+                    day_count
+                    )
         else:
             raise NotImplementedError(f'Bond.create_bond: does not support bond type {bond_type}.')
 
@@ -102,13 +153,16 @@ class Bond(object):
         raise NotImplementedError('Bond.accured_interest - not implemented in base Bond class.')
     
     def accrued_interest(self, base_date=Date.today()):
-        settlement_date = self.get_settlement_date(base_date)
-        ai_per_100 = self.accrued_interest_per_100(settlement_date)
+        ai_per_100 = self.accrued_interest_per_100(base_date)
         ai = self.notional * ai_per_100 / 100.0
         return ai
 
     def pv_to_dirty_price(self, pv):
         return (pv / self.notional) * 100.0
+
+    def pv_to_clean_price(self, pv):
+        dirty_price = self.pv_to_dirty_price(pv)
+        return self.dirty_price_to_clean_price(dirty_price)
 
     def clean_price_to_dirty_price(self, clean_price, base_date=Date.today()):
         ai_per_100 = self.accrued_interest_per_100(base_date)
@@ -186,3 +240,103 @@ class ZeroCouponBond(Bond):
         
     def accrued_interest_per_100(self, base_date=Date.today()):
         return 0.0
+
+
+class FixedRateBond(Bond):
+    def __init__(self,
+            notional,
+            maturity_date,
+            dated_date,
+            rate,
+            payment_frequency,
+            coupon_convention,
+            accrued_interest_day_count,
+            settlement_days=0,
+            settlement_calendars=[],
+            payment_days=0,
+            payment_calendars=[],
+            day_count=None
+        ):
+        super().__init__(
+            notional,
+            maturity_date,
+            settlement_days=settlement_days,
+            settlement_calendars=settlement_calendars,
+            payment_days=payment_days,
+            payment_calendars=payment_calendars
+        )
+
+        required_arguments = {
+            'rate': rate,
+            'dated_date': dated_date,
+            'coupon_convention': coupon_convention,
+            'payment_frequency': payment_frequency,
+            'accrued_interest_day_count': accrued_interest_day_count
+        }
+
+        for name, val in required_arguments.items():
+            if val is None:
+                raise ValueError(f'FixedRateBond: requires argument {name}.')
+
+        self.rate = float(rate)
+        self.dated_date = Date(dated_date)
+        self.coupon_convention = coupon_convention
+        self.payment_frequency = payment_frequency
+        self.accrued_interest_day_count = accrued_interest_day_count
+
+        # day_count is required unless coupon_convention=UNIFORM
+        if day_count is None and self.coupon_convention != CouponConvention.UNIFORM and day_count is None:
+            raise ValueError(f'FixedRateBond: requires day_count when coupon_convention is not uniform.')
+        self.day_count = day_count
+
+        # Create coupon cashflows
+        self.coupon_schedule = CouponSchedule(
+            self.dated_date,
+            self.maturity_date,
+            self.payment_frequency,
+            direction=BumpDirection.BACKWARD,
+            coupon_calendars=self.payment_calendars,
+            payment_days=self.payment_days,
+            payment_calendars=self.payment_calendars,
+            pay_dates_relative_to_adj=False,
+            force_start_and_end=False
+        )
+
+        # Determine coupon day count fractions
+        if self.coupon_convention == CouponConvention.UNIFORM:
+            coupon_dcf = CouponConvention.uniform_weight(self.payment_frequency)
+            dcfs = [coupon_dcf for _ in self.coupon_schedule.adj_start_dates] 
+        elif self.coupon_convention == CouponConvention.ADJ_DATE_DCF:
+            dcfs = self.coupon_schedule.get_dcfs(self.day_count)
+        else:
+            raise ValueError(f'FixedRateBond: unsupported coupon convention {self.coupon_convention}.')
+
+        self.dcfs = dcfs
+        self.is_fixed = True
+        self.coupon_flows = FixedCouponCashflows(
+            self.coupon_schedule.payment_dates,
+            self.notional,
+            self.rate,
+            dcfs,
+            self.coupon_schedule.get_period_dates(),
+            day_count=self.day_count if self.coupon_convention != CouponConvention.UNIFORM else None
+        )
+        self.cashflows = MultiLegCashflows([self.coupon_flows, self.principal_flows])
+
+    def accrued_interest_per_100(self, base_date=Date.today()):
+        # find partial coupon period
+        settlement_date = CalendarUtil.add_business_days(self.settlement_calendars, base_date, self.settlement_days)
+        i = 0
+        unadj_dates = list(zip(self.coupon_schedule.unadj_start_dates, self.coupon_schedule.unadj_end_dates))
+        if (unadj_dates[0][0] > settlement_date) or (unadj_dates[-1][1] < settlement_date):
+            return 0.0
+        
+        while i < len(unadj_dates) and unadj_dates[i][0] <= settlement_date:
+            if settlement_date <= unadj_dates[i][1]:
+                break
+            i += 1
+        
+        s_date, e_date = unadj_dates[i]
+        ai = 100.0 * (self.rate * self.dcfs[i]) * (settlement_date - s_date).days / (e_date - s_date).days
+        
+        return ai
