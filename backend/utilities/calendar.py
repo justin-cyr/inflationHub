@@ -2,7 +2,7 @@
 from enum import Enum, auto
 import json
 import os
-from ..utils import Date
+from ..utils import Date, BumpDirection
 
 # get logger from current_app instance
 from flask import current_app as app
@@ -51,11 +51,6 @@ class ObservanceRule(Enum):
 
         else:
             raise ValueError(f'ObservanceRule: unsupported rule {rule}.')
-
-
-class BumpDirection(Enum):
-    FORWARD = auto()
-    BACKWARD = auto()
 
 
 class Calendar(object):
