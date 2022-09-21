@@ -3782,8 +3782,14 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     const todayStr = year + '-' + month + '-' + day;
     this._isMounted = false;
     this.state = {
-      wsjTreasuryYields: []
+      wsjTreasuryYields: [],
+      // styles
+      upColor: '#198754',
+      // green
+      downColor: '#dc3545' // red
+
     };
+    this.getTreasuryYieldfromWSJ = this.getTreasuryYieldfromWSJ.bind(this);
   }
 
   getTreasuryYieldfromWSJ() {
@@ -3791,6 +3797,13 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
       url: '/data/WSJ US Treasury Yields (intraday)',
       method: 'GET',
+      complete: () => {
+        // schedule the next request only when the current one is complete
+        if (this._isMounted) {
+          console.log('Schdule the next');
+          setTimeout(this.getTreasuryYieldfromWSJ, 10000);
+        }
+      },
       success: response => {
         const wsjTreasuryYields = response.data;
         console.log(response);
@@ -3831,7 +3844,8 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
       }, Number(record['coupon']).toFixed(3) + '%'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'center'
+          textAlign: 'center',
+          color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor
         }
       }, Number(record['price']).toFixed(3)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
@@ -3896,7 +3910,8 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           color: '#bdbdbd'
         }
       }, table_rows)));
-    } //this.getTreasuryYieldfromWSJ();
+    } // if we do not comment off the following line, the table will auto update secondly 
+    //this.getTreasuryYieldfromWSJ();
 
 
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -6824,7 +6839,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#market-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#market-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

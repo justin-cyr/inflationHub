@@ -20,7 +20,12 @@ class MarketData extends React.Component {
         this._isMounted = false;
         this.state = {
             wsjTreasuryYields: [],
+            // styles
+            upColor:    '#198754',  // green
+            downColor:  '#dc3545',  // red
         }
+
+        this.getTreasuryYieldfromWSJ = this.getTreasuryYieldfromWSJ.bind(this);
     }
 
     getTreasuryYieldfromWSJ() {
@@ -28,6 +33,16 @@ class MarketData extends React.Component {
         $.ajax({
             url: '/data/WSJ US Treasury Yields (intraday)',
             method: 'GET',
+
+            complete: () => {
+                // schedule the next request only when the current one is complete
+                if (this._isMounted) {
+                    console.log('Schdule the next');
+                    setTimeout(this.getTreasuryYieldfromWSJ, 10000);
+                }
+            },
+
+
             success: (response) => {
                 const wsjTreasuryYields = response.data;
                 console.log(response);
@@ -63,7 +78,9 @@ class MarketData extends React.Component {
                     <tr key={record['name']}>
                         <td style={{ textAlign: 'center' }}>{record['name']}</td> 
                         <td style={{ textAlign: 'center' }}>{Number(record['coupon']).toFixed(3) + '%'}</td> 
-                        <td style={{ textAlign: 'center' }}>{Number(record['price']).toFixed(3)}</td>    
+                        <td style={{ textAlign: 'center',
+                                     color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor  
+                                                         }}>{Number(record['price']).toFixed(3)}</td>    
                         <td style={{ textAlign: 'center' }}>{record['priceChange']}</td>                
                         <td style={{ textAlign: 'center' }}>{record['yield']}</td>        
                         <td style={{ textAlign: 'center' }}>{record['yieldChange']}</td>  
@@ -99,7 +116,7 @@ class MarketData extends React.Component {
             </Table>
             </div>;
         }
-
+        // if we do not comment off the following line, the table will auto update secondly 
         //this.getTreasuryYieldfromWSJ();
         return (
             <Container fluid>
