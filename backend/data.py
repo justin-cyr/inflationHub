@@ -88,6 +88,8 @@ class DataAPI(object):
             self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
         elif data_parser == 'IntradayUSTQuoteWsjParser':
             self.data_parser = IntradayUSTQuoteWsjParser()
+        elif data_parser == 'TwHtmlUSTYieldParser':
+            self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'GasPricesExcelParser':
             self.data_parser = GasPricesExcelParser()
         elif data_parser == 'TimeSeriesStatCanXmlParser':
@@ -404,6 +406,23 @@ class GasPricesExcelParser(ExcelParser):
         del res[old_key] 
 
         return res
+
+
+class TwHtmlUSTYieldParser(Parser):
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.__dict__})'
+    
+    def parse(self, response):
+        self.validate_response(response)
+
+        # resposne is an HTML document
+        root = ElementTree.fromstring(response.text)
+        script_text = root[1][0][9].text
+        data_str = script_text.split('data:')[1].split('legendIndex')[0].strip()[1:-2]
+        raw_data_pts = [r.split('[')[1].split(',') for r in data_str.split(']')[:-1]]
+        data_pts = [{'month': int(d[0]), 'yield': float(d[1].strip())} for d in raw_data_pts]
+
+        return data_pts
 
 
 def get_fred_data(key, name=None):
