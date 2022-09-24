@@ -1,9 +1,17 @@
 
-from ..utils import Date, DayCount, day_count_fraction
+from ..utils import Date, DayCount, day_count_fraction, YieldConvention
 from .cashflows import Cashflows, MultiLegCashflows
 
 class ProjectedCashflows(object):
-    def __init__(self, cashflows, projection_function=None, base_date=Date.today(), day_count=DayCount.ACT_365):
+    def __init__(self,
+                cashflows,
+                projection_function=None,
+                base_date=Date.today(),
+                day_count=DayCount.ACT_365,
+                yield_convention=YieldConvention.TRUE_YIELD,
+                periods_per_year=1,
+                coupon_frac=0.0
+                ):
         # projection_function can be None for cashflows with no unknown parameters.
         if not isinstance(cashflows, Cashflows):
             raise ValueError('ProjectedCashflows: cashflows must be type Cashflows.')
@@ -18,9 +26,25 @@ class ProjectedCashflows(object):
         self.proj = projection_function
         self.base_date = base_date
         self.day_count = day_count
+        self.yield_convention = yield_convention
+        self.periods_per_year = periods_per_year
+        self.coupon_frac = coupon_frac
         self.projected_leg_amounts = [self.projected_amounts_by_leg(d) for d in self.contractual_cashflows.payment_dates]
         self.projected_amounts = [sum(amts) for amts in self.projected_leg_amounts]
         self.payment_times = self.cashflow_times(base_date, day_count)
+        self.next_payment_index = min([i for i, t in enumerate(self.payment_times) if t >= 0])
+
+        unrealized_amounts = self.projected_amounts[self.next_payment_index:]
+        if self.yield_convention == YieldConvention.TRUE_YIELD:
+            payment_times = self.payment_times[self.next_payment_index:]
+            self.yield_calculator = TrueYieldCalculator(unrealized_amounts, payment_times)
+
+        elif self.yield_convention == YieldConvention.US_STREET: 
+            self.yield_calculator = USStreetYieldCalculator(unrealized_amounts, self.periods_per_year, self.coupon_frac)
+        
+        else:
+            raise ValueError(f'ProjectedCashflows: unsupported YieldConvention: {yield_convention}')
+
 
     def __repr__(self):
         return f'ProjectedCashflows({self.__dict__})'
@@ -76,91 +100,153 @@ class ProjectedCashflows(object):
         return [day_count_fraction(base_date, payment_date, day_count)
                 for payment_date in self.contractual_cashflows.payment_dates]
 
-    # decorator
-    def check_payment_times_override(func):
-        def inner(self, *args, **kwargs):
-            payment_times = kwargs.get('payment_times')
-            if payment_times:
-                len_payment_times_override = len(payment_times)
-                len_payment_dates = len(self.contractual_cashflows.payment_dates)
-                if len_payment_times_override != len_payment_dates:
-                    raise ValueError(f'ProjectedCashflows: len(payment times)={len_payment_times_override} does not match len(payment dates)={len_payment_dates}.')
-            else:
-                kwargs['payment_times'] = self.payment_times
+    def yield_to_pv(self, y):
+       return self.yield_calculator.yield_to_pv(y)
 
-            return func(self, *args, **kwargs)
-        return inner    
-
-    @check_payment_times_override
-    def yieldToPv(self, y, *, payment_times=None):
-        """Returns the PV of a projected cashflow for a given yield to maturity."""
-        pv = sum([
-            a / (1.0 + y)**t
-            for a, t in zip(self.projected_amounts, payment_times)
-            if t >= 0.0
-        ])
-        return pv
-
-    @check_payment_times_override
-    def yieldToPvPrime(self, y, *, payment_times=None):
-        """Returns the 1st-order derivative of the yieldToPv function."""
-        return sum([
-            -t * a / (1.0 + y)**(t  + 1.0)
-            for a, t in zip(self.projected_amounts, payment_times)
-            if t >= 0.0
-        ])
-
-    @check_payment_times_override
-    def yieldToPvPrime2(self, y, *, payment_times=None):
-        """Returns the 2nd-order derivative of the yieldToPv function."""
-        return sum([
-            t * (t + 1.0) * a / (1.0 + y)**(t  + 2.0)
-            for a, t in zip(self.projected_amounts, payment_times)
-            if t >= 0.0
-        ])
-
-
-    def pvToYield(self, pv, *, payment_times=None):
+    def pv_to_yield(self, pv):
         """Returns the yield to maturity of the projected cashflows for a given present value."""
-        from scipy.optimize import root_scalar
-        if pv <= 0.0:
-            raise ValueError('ProjectedCashflows.pvToYield: pv must be positive.')
-        
+        return self.yield_calculator.pv_to_yield(pv)
+
+    # Measures of price sensitivity and convexity
+    def yield_dv01(self, y):
+        """Returns the 1st order NPV sensitivity to changes in yield per 1bp, as a function of yield.
+            Normalized to be positive.
+        """
+        return self.yield_calculator.yield_dv01(y)
+
+    def modified_duration(self, y):
+        return self.yield_calculator.modified_duration(y)
+
+    def macauley_duration(self, y):
+        return self.yield_calculator.macauley_duration(y)
+
+    def convexity(self, y):
+        return self.yield_calculator.convexity(y)
+
+
+class YieldCalculator(object):
+    """An abstract class for yield calculations for various conventions."""
+    def __init__(self, fast_method='halley', bracket_method='toms748'):
+        self.fast_method = fast_method
+        self.bracket_method = bracket_method
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.__dict__})'
+    
+    def yield_to_pv(self, y):
+        raise NotImplementedError('YieldCalculator.yield_to_pv: not implemented in base class.')
+    
+    def yield_to_pv_prime(self, y):
+        raise NotImplementedError('YieldCalculator.yield_to_pv_prime: not implemented in base class.')
+
+    def yield_to_pv_prime2(self, y):
+        raise NotImplementedError('YieldCalculator.yield_to_pv_prime2: not implemented in base class.')
+
+    def pv_to_yield(self, pv):
+        """Returns the yield to maturity of the projected cashflows for a given present value."""
+        from scipy.optimize import root_scalar        
         guess = 0.0
         def target(y):
-            return (self.yieldToPv(y, payment_times=payment_times) - pv,
-                    self.yieldToPvPrime(y, payment_times=payment_times),
-                    self.yieldToPvPrime2(y, payment_times=payment_times)
+            return (self.yield_to_pv(y) - pv,
+                    self.yield_to_pv_prime(y),
+                    self.yield_to_pv_prime2(y)
                     )
 
-        # First, try Halley's method (fast but doesn't guarantee convergence)
-        res = root_scalar(target, fprime=True, fprime2=True, x0=guess, method='halley')
+        # First, try fast method without guaranteed convergence
+        res = root_scalar(target, fprime=True, fprime2=True, x0=guess, method=self.fast_method)
         if not res.converged:
             # Second, try a fast interval method
             bracket_exp = 2
             bracket = (-1.0 + 10 ** (-bracket_exp), 10 ** bracket_exp)
-            res = root_scalar(target, fprime=True, fprime2=True, bracket=bracket, x0=guess, method='toms748')
+            res = root_scalar(target, fprime=True, fprime2=True, bracket=bracket, x0=guess, method=self.bracket_method)
             if not res.converged:
                 print(res)
-                raise Exception(f'ProjectedCashflows.pvToYield: failed to converge.')
+                raise Exception(f'YieldCalculator.pv_to_yield: failed to converge.')
 
         return res.root
 
-    
     # Measures of price sensitivity and convexity
-    def yieldDV01(self, y, payment_times=None):
+    def yield_dv01(self, y, payment_times=None):
         """Returns the 1st order NPV sensitivity to changes in yield per 1bp, as a function of yield.
             Normalized to be positive.
         """
-        return - self.yieldToPvPrime(y, payment_times=payment_times) / 10000.0
+        return - self.yield_to_pv_prime(y) / 10000.0
 
-    def modified_duration(self, y, payment_times=None):
-        price = self.yieldToPv(y, payment_times=payment_times)
-        return - self.yieldToPvPrime(y, payment_times=payment_times) / price
+    def modified_duration(self, y):
+        price = self.yield_to_pv(y)
+        return - self.yield_to_pv_prime(y) / price
 
-    def macauley_duration(self, y, payment_times=None):
-        return (1.0 + y) * self.modified_duration(y, payment_times=payment_times)
+    def macauley_duration(self, y):
+        return (1.0 + y) * self.modified_duration(y)
 
-    def convexity(self, y, payment_times=None):
-        price = self.yieldToPv(y, payment_times=payment_times)
-        return self.yieldToPvPrime2(y, payment_times=payment_times) / price
+    def convexity(self, y):
+        price = self.yield_to_pv(y)
+        return self.yield_to_pv_prime2(y) / price
+    
+
+class USStreetYieldCalculator(YieldCalculator):
+    def __init__(self, projected_amounts, periods_per_year, coupon_frac):
+        super().__init__()
+        self.projected_amounts = projected_amounts
+        self.periods_per_year = periods_per_year
+        self.coupon_frac = coupon_frac
+
+    def yield_to_pv(self, y):
+        pv = 0.0
+        df = 1.0 / (1.0 + y / self.periods_per_year)
+        accum_df = 1.0 / (1.0 + y / self.periods_per_year)**self.coupon_frac
+        for a in self.projected_amounts:
+            pv += a * accum_df
+            accum_df *= df
+        return pv
+    
+    def yield_to_pv_prime(self, y):
+        res = 0.0
+        df = 1.0 / (1.0 + y / self.periods_per_year)
+        accum_df = 1.0 / (1.0 + y / self.periods_per_year)**(self.coupon_frac) / df
+        for i, a in enumerate(self.projected_amounts):
+            res += -(i + self.coupon_frac) * a * accum_df / self.periods_per_year
+            accum_df *= df
+        return res
+
+    def yield_to_pv_prime2(self, y):
+        """Returns the 1st-order derivative of the yieldToPv function."""
+        res = 0.0
+        df = 1.0 / (1.0 + y / self.periods_per_year)
+        periods_sqd = self.periods_per_year * self.periods_per_year
+        accum_df = 1.0 / (1.0 + y / self.periods_per_year)**(self.coupon_frac) / (df * df)
+        for i, a in enumerate(self.projected_amounts):
+            res += (i + self.coupon_frac) * (i + 1.0 + self.coupon_frac) * a * accum_df / periods_sqd
+            accum_df *= df
+        return res
+
+    def macauley_duration(self, y):
+        return (1.0 + y / self.periods_per_year) * self.modified_duration(y)
+
+class TrueYieldCalculator(YieldCalculator):
+    def __init__(self, projected_amounts, payment_times):
+        super().__init__()
+        self.projected_amounts = projected_amounts
+        self.payment_times = payment_times
+
+    def yield_to_pv(self, y):
+        """Returns the PV of a projected cashflow for a given yield to maturity."""
+        pv = sum([
+            a / (1.0 + y)**t
+            for a, t in zip(self.projected_amounts, self.payment_times)
+        ])
+        return pv
+    
+    def yield_to_pv_prime(self, y):
+        """Returns the 1st-order derivative of the yieldToPv function."""
+        return sum([
+            -t * a / (1.0 + y)**(t + 1.0)
+            for a, t in zip(self.projected_amounts, self.payment_times)
+        ])
+
+    def yield_to_pv_prime2(self, y):
+        """Returns the 2nd-order derivative of the yieldToPv function."""
+        return sum([
+            t * (t + 1.0) * a / (1.0 + y)**(t + 2.0)
+            for a, t in zip(self.projected_amounts, self.payment_times)
+        ])

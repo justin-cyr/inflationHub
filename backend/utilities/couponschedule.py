@@ -117,3 +117,21 @@ class CouponSchedule(object):
 
     def get_dcfs(self, day_count):
         return [day_count_fraction(s_date, e_date, day_count) for s_date, e_date in self.get_period_dates()]
+
+    def coupon_period(self, target_date):
+        """Return the index of the coupon period [start, end) that target_date falls in."""
+        i = 0
+        unadj_dates = list(zip(self.unadj_start_dates, self.unadj_end_dates))
+        # settlement date does not fall in a coupon period
+        if unadj_dates[0][0] > target_date:
+            return -1
+        if unadj_dates[-1][1] <= target_date:
+            return len(self.unadj_end_dates)
+
+        # find coupon start and end dates containing settlement date
+        while i < len(unadj_dates) and unadj_dates[i][0] <= target_date:
+            if target_date <= unadj_dates[i][1]:
+                break
+            i += 1
+        
+        return i

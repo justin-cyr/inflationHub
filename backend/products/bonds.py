@@ -1,7 +1,8 @@
 
+from ast import Yield
 from backend.products.cashflows import Cashflows, FixedCouponCashflows, MultiLegCashflows, PrincipalCashflows
 from backend.products.projectedcashflows import ProjectedCashflows
-from ..utils import BumpDirection, Date, DateFrequency, DayCount, StrEnum
+from ..utils import BumpDirection, Date, DateFrequency, DayCount, StrEnum, YieldConvention
 from ..utilities.calendar import CalendarUtil
 from ..utilities.couponschedule import CouponSchedule
 
@@ -91,12 +92,14 @@ class Bond(object):
         day_count = bond_conventions.get('CouponDayCount')
         coupon_convention = bond_conventions.get('CouponConvention')
         accrued_interest_day_count = bond_conventions.get('AccruedInterestDayCount')
+        yield_convention = bond_conventions.get('YieldConvention')
 
         # Convert types of optional arguments
         coupon_convention = CouponConvention.from_str(coupon_convention) if coupon_convention else None
         payment_frequency = DateFrequency.from_str(payment_frequency) if payment_frequency else None
         day_count = DayCount.from_str(day_count) if day_count else None
         accrued_interest_day_count = DayCount.from_str(accrued_interest_day_count) if accrued_interest_day_count else None
+        yield_convention = YieldConvention.from_str(yield_convention)
 
         # Delegate to constructor based on type
         bond_type = bond_conventions.get('Type')
@@ -110,6 +113,7 @@ class Bond(object):
                     rate,
                     payment_frequency,
                     coupon_convention,
+                    yield_convention,
                     accrued_interest_day_count,
                     settlement_days,
                     settlement_calendars,
@@ -141,13 +145,28 @@ class Bond(object):
     def get_projected_cashflows(self, base_date=Date.today()):
         if self.is_fixed and isinstance(self.cashflows, MultiLegCashflows):
             projection_function = [None for _ in self.cashflows.legs]
-            return ProjectedCashflows(self.cashflows, projection_function, base_date)
+            if self.__dict__.get('yield_convention') == YieldConvention.US_STREET and isinstance(self, FixedRateBond):
+                settlement_date = self.get_settlement_date(base_date)
+                return ProjectedCashflows(
+                        self.cashflows,
+                        projection_function,
+                        base_date,
+                        yield_convention=self.yield_convention,
+                        periods_per_year=self.periods_per_year,
+                        coupon_frac=1.0 - self.next_coupon_frac(settlement_date)
+                    )
+            else:
+                return ProjectedCashflows(
+                        self.cashflows,
+                        projection_function,
+                        base_date
+                    )
         else:
             raise NotImplementedError('Bond.get_projected_cashflows - default implementation only for fixed cashflows.')
     
     def pv_to_yield(self, pv, base_date=Date.today()):
         projected_cashflows = self.get_projected_cashflows(base_date)
-        return projected_cashflows.pvToYield(pv)
+        return projected_cashflows.pv_to_yield(pv)
 
     def accrued_interest_per_100(self, base_date=Date.today()):
         raise NotImplementedError('Bond.accured_interest - not implemented in base Bond class.')
@@ -183,7 +202,7 @@ class Bond(object):
 
     def yield_to_pv(self, y, base_date=Date.today()):
         projected_cashflows = self.get_projected_cashflows(base_date)
-        pv = projected_cashflows.yieldToPv(y)
+        pv = projected_cashflows.yield_to_pv(y)
         return pv
 
     def yield_to_dirty_price(self, y, base_date=Date.today()):
@@ -212,6 +231,12 @@ class Bond(object):
         if not ytm:
             ytm = self.clean_price_to_yield(clean_price, base_date)
         return ytm
+
+    @require_yield_or_clean_price
+    def yield_dv01(self, base_date=Date.today(), *, ytm=None, clean_price=None):
+        projected_cashflows = self.get_projected_cashflows(base_date)
+        ytm = self.ytm_for_calc(base_date, ytm, clean_price)
+        return projected_cashflows.yield_dv01(ytm)
 
     @require_yield_or_clean_price
     def modified_duration(self, base_date=Date.today(), *, ytm=None, clean_price=None):
@@ -250,6 +275,7 @@ class FixedRateBond(Bond):
             rate,
             payment_frequency,
             coupon_convention,
+            yield_convention,
             accrued_interest_day_count,
             settlement_days=0,
             settlement_calendars=[],
@@ -271,6 +297,7 @@ class FixedRateBond(Bond):
             'dated_date': dated_date,
             'coupon_convention': coupon_convention,
             'payment_frequency': payment_frequency,
+            'yield_convention': yield_convention,
             'accrued_interest_day_count': accrued_interest_day_count
         }
 
@@ -282,12 +309,18 @@ class FixedRateBond(Bond):
         self.dated_date = Date(dated_date)
         self.coupon_convention = coupon_convention
         self.payment_frequency = payment_frequency
+        self.yield_convention = yield_convention
         self.accrued_interest_day_count = accrued_interest_day_count
 
         # day_count is required unless coupon_convention=UNIFORM
-        if day_count is None and self.coupon_convention != CouponConvention.UNIFORM and day_count is None:
+        if day_count is None and self.coupon_convention != CouponConvention.UNIFORM:
             raise ValueError(f'FixedRateBond: requires day_count when coupon_convention is not uniform.')
         self.day_count = day_count
+
+        if self.coupon_convention == CouponConvention.UNIFORM:
+            self.periods_per_year = self.payment_frequency.periods_per_year()
+        else:
+            self.periods_per_year = None
 
         # Create coupon cashflows
         self.coupon_schedule = CouponSchedule(
@@ -323,20 +356,32 @@ class FixedRateBond(Bond):
         )
         self.cashflows = MultiLegCashflows([self.coupon_flows, self.principal_flows])
 
+    def next_coupon_frac(self, settlement_date):
+        """Return the coupon_frac for the next coupon period."""
+        settlement_date = Date(settlement_date)
+        i = self.coupon_schedule.coupon_period(settlement_date)
+        if i < 0 or i >= len(self.dcfs):
+            return 0.0
+        s_date, e_date = self.coupon_schedule.unadj_start_dates[i], self.coupon_schedule.unadj_end_dates[i]
+        return self.coupon_frac(s_date, e_date, settlement_date)
+
+    def coupon_frac(self, s_date, e_date, settlement_date):
+        # Return fraction of time from start of current coupon period to end.
+        s_date = Date(s_date)
+        e_date = Date(e_date)
+        settlement_date = Date(settlement_date)
+        if self.accrued_interest_day_count == DayCount.ACT_ACT:
+            return (settlement_date - s_date).days / (e_date - s_date).days
+        else:
+            raise NotImplementedError(f'{self.__class__.__name__}.coupon_frac: does not support AccruedInterestDayCount={self.accrued_interest_day_count}.')
+
     def accrued_interest_per_100(self, base_date=Date.today()):
         # find partial coupon period
-        settlement_date = CalendarUtil.add_business_days(self.settlement_calendars, base_date, self.settlement_days)
-        i = 0
-        unadj_dates = list(zip(self.coupon_schedule.unadj_start_dates, self.coupon_schedule.unadj_end_dates))
-        if (unadj_dates[0][0] > settlement_date) or (unadj_dates[-1][1] < settlement_date):
+        settlement_date = self.get_settlement_date(base_date)
+        i = self.coupon_schedule.coupon_period(settlement_date)
+        if i < 0 or i >= len(self.dcfs):
             return 0.0
-        
-        while i < len(unadj_dates) and unadj_dates[i][0] <= settlement_date:
-            if settlement_date <= unadj_dates[i][1]:
-                break
-            i += 1
-        
-        s_date, e_date = unadj_dates[i]
-        ai = 100.0 * (self.rate * self.dcfs[i]) * (settlement_date - s_date).days / (e_date - s_date).days
+        s_date, e_date = self.coupon_schedule.unadj_start_dates[i], self.coupon_schedule.unadj_end_dates[i]
+        ai = 100.0 * (self.rate * self.dcfs[i]) * self.coupon_frac(s_date, e_date, settlement_date)
         
         return ai

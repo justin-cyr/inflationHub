@@ -23,6 +23,7 @@ class DayCount(StrEnum):
     ACT_365 = auto()
     ACT_360 = auto()
     THIRTY_360 = auto()
+    ACT_ACT = auto()
 
 class BumpDirection(StrEnum):
     FORWARD = auto()
@@ -52,6 +53,27 @@ class DateFrequency(StrEnum):
             return DateFrequency.YEARLY
         else:
             raise ValueError(f'DateFrequency.tenor_unit_to_frequency: unsupported tenor unit {unit}')
+
+    def periods_per_year(self):
+        if self == DateFrequency.DAILY:
+            return 365
+        elif self == DateFrequency.WEEKLY:
+            return 52
+        elif self == DateFrequency.MONTHLY:
+            return 12
+        elif self == DateFrequency.QUARTERLY:
+            return 4
+        elif self == DateFrequency.SEMIANNUALLY:
+            return 2
+        elif self == DateFrequency.YEARLY:
+            return 1
+        else:
+            raise NotImplementedError(f'DateFrequency.periods_per_year: not implemented for {self}')
+        
+
+class YieldConvention(StrEnum):
+    TRUE_YIELD = auto()
+    US_STREET = auto()
 
 class Date(object):
     # wraps datetime.date but allows conversion from string types in constructor
