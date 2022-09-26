@@ -90,6 +90,8 @@ class DataAPI(object):
             self.data_parser = IntradayUSTQuoteWsjParser()
         elif data_parser == 'TwHtmlUSTYieldParser':
             self.data_parser = TwHtmlUSTYieldParser()
+        elif data_parser == 'CmeFuturesQuoteJsonParser':
+            self.data_parser = CmeFuturesQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
             self.data_parser = GasPricesExcelParser()
         elif data_parser == 'TimeSeriesStatCanXmlParser':
@@ -140,6 +142,9 @@ class DataGetter(object):
 
 
 class Parser(object):
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.__dict__})'
 
     def parse(self, data):
         """Default implementation: do nothing."""
@@ -201,9 +206,6 @@ class TimeSeriesCsvParser(Parser):
         self.value_col_name = value_col_name
         self.date_col_name = date_col_name
 
-    def __repr__(self):
-        return 'TimeSeriesCsvParser(' + str(self.__dict__) + ')'
-
     def parse(self, response):
         """Handle response as CSV and return data as {date_col_name:[...], value_col_name:[...]}
             dates: yyyy-mm-dd format
@@ -239,9 +241,6 @@ class TimeSeriesCnbcJsonParser(Parser):
         self.value_col_name = value_col_name
         self.date_col_name = date_col_name
 
-    def __repr__(self):
-        return 'TimeSeriesCnbcJsonParser(' + str(self.__dict__) + ')'
-
     def parse(self, response):
         """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
             dates: yyyy-mm-dd format
@@ -269,9 +268,6 @@ class TimeSeriesCnbcIntradayCloseParser(Parser):
     def __init__(self, value_col_name='Value', date_col_name='Date'):
         self.value_col_name = value_col_name
         self.date_col_name = date_col_name
-
-    def __repr__(self):
-        return 'TimeSeriesCnbcIntradayCloseParser(' + str(self.__dict__) + ')'
 
     def parse(self, response):
         """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
@@ -301,9 +297,6 @@ class TimeSeriesStatCanXmlParser(Parser):
         self.value_col_name = value_col_name
         self.date_col_name = date_col_name
 
-    def __repr__(self):
-        return 'TimeSeriesStatCanXmlParser(' + str(self.__dict__) + ')'
-
     def parse(self, response):
         """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
             dates: yyyy-mm-dd format
@@ -328,9 +321,6 @@ class TimeSeriesStatCanXmlParser(Parser):
 
 class IntradayUSTQuoteWsjParser(Parser):
     """Parser for intraday quotes from Wall Street Journal bonds page."""
-    def __repr__(self):
-        return 'IntradayUSTQuoteWsjParser(' + str(self.__dict__) + ')'
-
     def parse(self, response):
         """Handle response as JSON data and return data as a list quotes."""
         self.validate_response(response, fmt='json')
@@ -353,6 +343,32 @@ class IntradayUSTQuoteWsjParser(Parser):
         return res
 
 
+class CmeFuturesQuoteJsonParser(Parser):
+    """Parser for intraday CME futures quotes."""
+    def parse(self, response):
+        self.validate_response(response)
+        response_data = response.json()
+        res = []
+        if 'quotes' in response_data:
+            for q in response_data['quotes']:
+                res.append(
+                    {
+                        'ticker':       q['quoteCode'],
+                        'productDame':  q['productName'],
+                        'month':        q['expirationMonth'],
+                        'last':         q['last'],
+                        'change':       q['percentageChange'],
+                        'open':         q['open'],
+                        'high':         q['high'],
+                        'low':          q['low'],
+                        'priorSettle':  q['priorSettle'],
+                        'volume':       q['volume'],
+                        'timestamp':    q['lastUpdated']
+                    }
+                )
+        return res
+
+
 class ExcelParser(Parser):
     """Parser for Excel data (xlsx, xls, and any format supported by pandas.read_excel)."""
     def __init__(self, dropna=True, sheet_name=0, header=0, usecols=None):
@@ -360,9 +376,6 @@ class ExcelParser(Parser):
         self.sheet_name = sheet_name
         self.header = header
         self.usecols=usecols
-
-    def __repr__(self):
-        return 'ExcelParser(' + str(self.__dict__) + ')'
 
     def parse(self, response):
         """Save *.xls response as a temporary file, parse and return data series."""
@@ -392,9 +405,6 @@ class GasPricesExcelParser(ExcelParser):
             usecols='A:B'
         )
 
-    def __repr__(self):
-        return 'GasPricesExcelParser(' + str(self.__dict__) + ')'
-
     def parse(self, response):
         res = super().parse(response)
         dates = res.get('Date')
@@ -408,10 +418,7 @@ class GasPricesExcelParser(ExcelParser):
         return res
 
 
-class TwHtmlUSTYieldParser(Parser):
-    def __repr__(self):
-        return f'{self.__class__.__name__}({self.__dict__})'
-    
+class TwHtmlUSTYieldParser(Parser):    
     def parse(self, response):
         self.validate_response(response)
 
