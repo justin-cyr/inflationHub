@@ -111,7 +111,6 @@ def get_tips_prices_wsj():
     ]
     """
     from selenium import webdriver
-    from selenium.webdriver.common.service import Service
     from selenium.webdriver.common.by import By
 
     # configure web driver
@@ -131,7 +130,15 @@ def get_tips_prices_wsj():
     driver.get(url)
 
     # find table data elements
-    table_data = driver.find_elements(By.TAG_NAME, 'td')
+    tables = driver.find_elements(By.TAG_NAME, 'table')
+    if not tables:
+        raise RuntimeError(f'get_tips_prices_wsj: No <table> found on page {url}')
+    table_element = tables[0]
+    table_doc = table_element.get_attribute('innerHTML')
+
+    # close page
+    driver.quit()
+    table_data = [d.split('>')[-1] for d in table_doc.split('</td>')][:-1]
 
     # parse into row data (takes around 20-25 seconds)
     columns = [
@@ -150,16 +157,13 @@ def get_tips_prices_wsj():
     column_count = 0
     row = {}
     for td in table_data:
-        row[columns[column_count]] = td.text
+        row[columns[column_count]] = td
     
         column_count += 1
         column_count %= num_cols
         if column_count % num_cols == 0:
             row_data.append(row)
             row = {}
-
-    # close page
-    driver.quit()
 
     # post processing
     for row in row_data:
