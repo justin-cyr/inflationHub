@@ -354,7 +354,7 @@ class CmeFuturesQuoteJsonParser(Parser):
                 res.append(
                     {
                         'ticker':       q['quoteCode'],
-                        'productDame':  q['productName'],
+                        'productName':  q['productName'],
                         'month':        q['expirationMonth'],
                         'last':         q['last'],
                         'change':       q['percentageChange'],
