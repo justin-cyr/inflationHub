@@ -92,6 +92,8 @@ class DataAPI(object):
             self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'CmeFuturesQuoteJsonParser':
             self.data_parser = CmeFuturesQuoteJsonParser()
+        elif data_parser == 'YahooQuoteJsonParser':
+            self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
             self.data_parser = GasPricesExcelParser()
         elif data_parser == 'TimeSeriesStatCanXmlParser':
@@ -364,6 +366,27 @@ class CmeFuturesQuoteJsonParser(Parser):
                         'priorSettle':  q['priorSettle'],
                         'volume':       q['volume'],
                         'timestamp':    q['lastUpdated']
+                    }
+                )
+        return res
+
+
+class YahooQuoteJsonParser(Parser):
+    """Parser for intraday quotes from Yahoo Finance."""
+    def parse(self, response):
+        self.validate_response(response)
+        response_data = response.json()
+        res = []
+        if 'quoteResponse' in response_data and 'result' in response_data['quoteResponse']:
+            for q in response_data['quoteResponse']['result']:
+                name = q['longName'] if 'longName' in q else q['shortName']
+                res.append(
+                    {
+                        'name': name,
+                        'quote': q['regularMarketPrice'],
+                        'change': q['regularMarketChange'],
+                        'changePct': q['regularMarketChangePercent'],
+                        'unixTimestamp': q['regularMarketTime']
                     }
                 )
         return res
