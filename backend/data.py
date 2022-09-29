@@ -86,6 +86,8 @@ class DataAPI(object):
             self.data_parser = TimeSeriesCnbcJsonParser(self.name)
         elif data_parser == 'TimeSeriesCnbcIntradayCloseParser':
             self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
+        elif data_parser == 'CnbcJsonQuoteParser':
+            self.data_parser = CnbcJsonQuoteParser()           
         elif data_parser == 'IntradayUSTQuoteWsjParser':
             self.data_parser = IntradayUSTQuoteWsjParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -193,6 +195,9 @@ class Parser(object):
             s = s[:-1]
         return s
 
+    def chop_pct(self, s):
+        s = s[:-1] if s and isinstance(s, str) and s[-1] == '%' else s
+        return s
 
 class TimeSeriesCsvParser(Parser):
     def __init__(self, value_col_name='Value', date_col_name='Date'):
@@ -292,6 +297,40 @@ class TimeSeriesCnbcIntradayCloseParser(Parser):
 
         return {self.date_col_name: dates,
                 self.value_col_name: values}
+
+
+class CnbcJsonQuoteParser(Parser):
+    """Parser for CNBC quotes JSON data."""
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' + str(self.__dict__) + ')'
+
+    def parse(self, response):
+        """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
+            dates: yyyy-mm-dd format
+            values: float
+        """
+        self.validate_response(response, fmt='json')
+        response_data = response.json()
+        quote_list = response_data['FormattedQuoteResult']['FormattedQuote']
+        res = []
+
+        for record in quote_list:
+            yield_num = float(self.chop_pct(record.get('last')))
+            coupon = float(self.chop_pct(record.get('last')))
+
+            res.append(
+                {
+                    'name': record.get('name'),
+                    'coupon': coupon,
+                    'price': record.get('bond_last_price'),
+                    'priceChange': record.get('bond_change_price'),
+                    'yield': yield_num,
+                    'yieldChange': record.get('change_pct'),
+                    'timestamp': record.get('last_time')[:19],
+                    'maturityDate': record.get('maturity_date')
+                }
+            )
+        return res
 
 class TimeSeriesStatCanXmlParser(Parser):
     """Parser for time series from Statistics Canada."""
