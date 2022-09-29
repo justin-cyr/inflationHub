@@ -147,6 +147,35 @@ class DataGetter(object):
 
 class Parser(object):
 
+    standard_name_map = {
+    # US Treasuries
+        ####
+        # CNBC
+        'U.S. 1 Month Treasury': 'US 1M',
+        'U.S. 3 Month Treasury': 'US 3M',
+        'U.S. 6 Month Treasury': 'US 6M',
+        'U.S. 1 Year Treasury':  'US 1Y',
+        'U.S. 2 Year Treasury':  'US 2Y',
+        'U.S. 3 Year Treasury':  'US 3Y',
+        'U.S. 5 Year Treasury':  'US 5Y',
+        'U.S. 7 Year Treasury':  'US 7Y',
+        'U.S. 10 Year Treasury': 'US 10Y',
+        'U.S. 20 Year Treasury': 'US 20Y',
+        'U.S. 30 Year Treasury': 'US 30Y',
+        ####
+        # WSJ
+        '1-Month Bill': 'US 1M',
+        '3-Month Bill': 'US 3M',
+        '6-Month Bill': 'US 6M',
+        '1-Year Bill':  'US 1Y',
+        '2-Year Note':  'US 2Y',
+        '3-Year Note':  'US 3Y',
+        '5-Year Note':  'US 5Y',
+        '7-Year Note':  'US 7Y',
+        '10-Year Note': 'US 10Y',
+        '30-Year Bond': 'US 30Y'
+    }
+
     def __repr__(self):
         return f'{self.__class__.__name__}({self.__dict__})'
 
@@ -207,6 +236,12 @@ class Parser(object):
     def chop_pct(self, s):
         s = s[:-1] if s and isinstance(s, str) and s[-1] == '%' else s
         return s
+    
+    @staticmethod
+    def standard_name(name):
+        """Return the standard name of this quote used in this app."""
+        return Parser.standard_name_map.get(name, '')
+
 
 class TimeSeriesCsvParser(Parser):
     def __init__(self, value_col_name='Value', date_col_name='Date'):
@@ -317,10 +352,13 @@ class CnbcJsonQuoteParser(Parser):
         for record in quote_list:
             yield_num = float(self.chop_pct(record.get('last')))
             coupon = float(self.chop_pct(record.get('last')))
+            name = record.get('name')
+            standard_name = Parser.standard_name(name)
 
             res.append(
                 {
-                    'name': record.get('name'),
+                    'standardName': standard_name,
+                    'name': name,
                     'coupon': coupon,
                     'price': record.get('bond_last_price'),
                     'priceChange': record.get('bond_change_price'),
@@ -370,9 +408,12 @@ class IntradayUSTQuoteWsjParser(Parser):
         if 'data' in response_data and 'instruments' in response_data['data']:
             for inst in response_data['data']['instruments']:
                 if 'bond' in inst:
+                    name = inst.get('formattedName')
+                    standard_name = Parser.standard_name(name)
                     res.append(
                         {
-                            'name': inst.get('formattedName'),
+                            'standardName': standard_name,
+                            'name': name,
                             'coupon': inst['bond'].get('couponRate'),
                             'price': inst['bond'].get('tradePrice'),
                             'priceChange': inst['bond'].get('formattedTradePriceChange'),

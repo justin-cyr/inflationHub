@@ -76,7 +76,7 @@ class MarketData extends React.Component {
                 ? <tr key={'empty'}><td colSpan="7"><center>{'... Loading data ...'}</center></td></tr>
                 : this.state.wsjTreasuryYields.map(record => 
                     <tr key={record['name']}>
-                        <td style={{ textAlign: 'center' }}>{record['name']}</td> 
+                        <td style={{ textAlign: 'center' }}>{record['standardName']}</td> 
                         <td style={{ textAlign: 'center' }}>{Number(record['coupon']).toFixed(3) + '%'}</td> 
                         <td style={{ textAlign: 'center',
                                      color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor  
@@ -84,7 +84,7 @@ class MarketData extends React.Component {
                         <td style={{ textAlign: 'center' }}>{record['priceChange']}</td>                
                         <td style={{ textAlign: 'center' }}>{record['yield']}</td>        
                         <td style={{ textAlign: 'center' }}>{record['yieldChange']}</td>  
-                        <td style={{ textAlign: 'center' }}>{record['timestamp']}</td>                               
+                        <td style={{ textAlign: 'center' }}>{(new Date(record['timestamp'])).toLocaleTimeString()}</td>                               
                     </tr>
                 );
     
