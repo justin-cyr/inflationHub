@@ -2299,13 +2299,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
 /* harmony import */ var _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nav_bar/nav_bar_container */ "./components/nav_bar/nav_bar_container.js");
 /* harmony import */ var _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data_viewer/data_viewer_container */ "./components/data_viewer/data_viewer_container.js");
 /* harmony import */ var _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tips_data/tips_data_container */ "./components/tips_data/tips_data_container.js");
 /* harmony import */ var _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./curve_builder/curve_builder_container */ "./components/curve_builder/curve_builder_container.jsx");
 /* harmony import */ var _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./knowledge_center/knowledge_center_container */ "./components/knowledge_center/knowledge_center_container.js");
 /* harmony import */ var _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./footer/footer_container */ "./components/footer/footer_container.js");
+/* harmony import */ var _market_data_market_data_container__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./market_data/market_data_container */ "./components/market_data/market_data_container.js");
 
 
 
@@ -2314,29 +2315,34 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
   path: "/",
   component: _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
   exact: true,
   path: "/",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
   exact: true,
   path: "/data_viewer",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
   exact: true,
   path: "/tips_data",
   component: _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+  exact: true,
+  path: "/market_data",
+  component: _market_data_market_data_container__WEBPACK_IMPORTED_MODULE_7__["default"]
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
   path: "/curve_builder",
   component: _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
   exact: true,
   path: "/knowledge_center",
   component: _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
   path: "/",
   component: _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__["default"]
 })));
@@ -3743,6 +3749,199 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./components/market_data/market_data.jsx":
+/*!************************************************!*\
+  !*** ./components/market_data/market_data.jsx ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+
+
+
+
+
+
+class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+    const today = new Date();
+    const year = today.getFullYear().toString();
+    const month = (1 + today.getMonth()).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    const todayStr = year + '-' + month + '-' + day;
+    this._isMounted = false;
+    this.state = {
+      wsjTreasuryYields: [],
+      // styles
+      upColor: '#198754',
+      // green
+      downColor: '#dc3545' // red
+
+    };
+    this.getTreasuryYieldfromWSJ = this.getTreasuryYieldfromWSJ.bind(this);
+  }
+
+  getTreasuryYieldfromWSJ() {
+    // Request Market price data
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: '/data/WSJ US Treasury Yields (intraday)',
+      method: 'GET',
+      complete: () => {
+        // schedule the next request only when the current one is complete
+        if (this._isMounted) {
+          console.log('Schdule the next');
+          setTimeout(this.getTreasuryYieldfromWSJ, 10000);
+        }
+      },
+      success: response => {
+        const wsjTreasuryYields = response.data;
+        console.log(response);
+        this._isMounted && this.setState({
+          wsjTreasuryYields: wsjTreasuryYields
+        });
+      }
+    });
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+    this.getTreasuryYieldfromWSJ();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  render() {
+    // Reference data table
+    let data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'); // if wsjTreasuryYields(dict) is defined
+
+    if (this.state.wsjTreasuryYields) {
+      const table_rows = this.state.wsjTreasuryYields.length === 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        key: 'empty'
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        colSpan: "7"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'))) : this.state.wsjTreasuryYields.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        key: record['name']
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record['name']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, Number(record['coupon']).toFixed(3) + '%'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor
+        }
+      }, Number(record['price']).toFixed(3)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record['priceChange']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record['yield']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record['yieldChange']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record['timestamp'])));
+      data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          height: '500px',
+          overflow: 'auto'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        id: "market-data-table",
+        responsive: true,
+        hover: true
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        style: {
+          color: '#bdbdbd'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Price"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Price Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "YTM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "YTM Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Timestamp"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+        style: {
+          color: '#bdbdbd'
+        }
+      }, table_rows)));
+    } // if we do not comment off the following line, the table will auto update secondly 
+    //this.getTreasuryYieldfromWSJ();
+
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      fluid: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, data_table));
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MarketData);
+
+/***/ }),
+
+/***/ "./components/market_data/market_data_container.js":
+/*!*********************************************************!*\
+  !*** ./components/market_data/market_data_container.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _market_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./market_data */ "./components/market_data/market_data.jsx");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_market_data__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
 /***/ "./components/nav_bar/nav_bar.jsx":
 /*!****************************************!*\
   !*** ./components/nav_bar/nav_bar.jsx ***!
@@ -3778,6 +3977,10 @@ __webpack_require__.r(__webpack_exports__);
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/tips_data"
   }, "TIPS Data")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    className: "nav-link"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
+    to: "/market_data"
+  }, "Market Data")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], {
     className: "nav-link"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/curve_builder"
@@ -6636,7 +6839,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#market-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#market-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
