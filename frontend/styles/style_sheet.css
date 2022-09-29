@@ -62,6 +62,13 @@ body {
     border-top: 0 none;
 }
 
+/* Market Data */
+
+#market-data-table {
+    --bs-table-hover-color: #6bcbff;
+    --bs-table-hover-bg: #121729;
+}
+
 /* CurveBuilder */
 .curve-data-form {
     padding-top: 3px;
