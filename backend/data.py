@@ -174,7 +174,13 @@ class Parser(object):
         '7-Year Note':  'US 7Y',
         '10-Year Note': 'US 10Y',
         '20-Year Bond': 'US 20Y',
-        '30-Year Bond': 'US 30Y'
+        '30-Year Bond': 'US 30Y',
+    # TIPS
+        # CNBC
+        'UST 5-Yr. TIPS':    'TIPS 5Y',
+        'U.S. 5 Year TIPS':  'TIPS 5Y',
+        'U.S. 10 Year TIPS': 'TIPS 10Y',
+        'U.S. 30 Year TIPS': 'TIPS 30Y'
     }
 
     def __repr__(self):
