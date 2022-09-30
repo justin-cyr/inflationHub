@@ -173,6 +173,7 @@ class Parser(object):
         '5-Year Note':  'US 5Y',
         '7-Year Note':  'US 7Y',
         '10-Year Note': 'US 10Y',
+        '20-Year Bond': 'US 20Y',
         '30-Year Bond': 'US 30Y'
     }
 

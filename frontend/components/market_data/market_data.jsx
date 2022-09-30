@@ -37,7 +37,6 @@ class MarketData extends React.Component {
             complete: () => {
                 // schedule the next request only when the current one is complete
                 if (this._isMounted) {
-                    console.log('Schdule the next');
                     setTimeout(this.getTreasuryYieldfromWSJ, 10000);
                 }
             },
@@ -45,8 +44,6 @@ class MarketData extends React.Component {
 
             success: (response) => {
                 const wsjTreasuryYields = response.data;
-                console.log(response);
-
 
                 this._isMounted && this.setState({
                     wsjTreasuryYields: wsjTreasuryYields

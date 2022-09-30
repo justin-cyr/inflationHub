@@ -3800,13 +3800,11 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       complete: () => {
         // schedule the next request only when the current one is complete
         if (this._isMounted) {
-          console.log('Schdule the next');
           setTimeout(this.getTreasuryYieldfromWSJ, 10000);
         }
       },
       success: response => {
         const wsjTreasuryYields = response.data;
-        console.log(response);
         this._isMounted && this.setState({
           wsjTreasuryYields: wsjTreasuryYields
         });
