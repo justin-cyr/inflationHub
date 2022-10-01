@@ -90,6 +90,8 @@ class DataAPI(object):
             self.data_parser = CnbcJsonQuoteParser()           
         elif data_parser == 'IntradayUSTQuoteWsjParser':
             self.data_parser = IntradayUSTQuoteWsjParser()
+        elif data_parser == 'MarketWatchBondQuoteParser':
+            self.data_parser = MarketWatchBondQuoteParser()
         elif data_parser == 'TwHtmlUSTYieldParser':
             self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'CmeFuturesQuoteJsonParser':
@@ -175,6 +177,19 @@ class Parser(object):
         '10-Year Note': 'US 10Y',
         '20-Year Bond': 'US 20Y',
         '30-Year Bond': 'US 30Y',
+        ####
+        # MarketWatch
+        'U.S. 1 Month Treasury Bill': 'US 1M',
+        'U.S. 3 Month Treasury Bill': 'US 3M',
+        'U.S. 6 Month Treasury Bill': 'US 6M',
+        'U.S. 1 Year Treasury Bill':  'US 1Y',
+        'U.S. 2 Year Treasury Note':  'US 2Y',
+        'U.S. 3 Year Treasury Note':  'US 3Y',
+        'U.S. 5 Year Treasury Note':  'US 5Y',
+        'U.S. 7 Year Treasury Note':  'US 7Y',
+        'U.S. 10 Year Treasury Note': 'US 10Y',
+        'U.S. 20 Year Treasury Bond': 'US 20Y',
+        'U.S. 30 Year Treasury Bond': 'US 30Y',
     # TIPS
         # CNBC
         'UST 5-Yr. TIPS':    'TIPS 5Y',
@@ -476,6 +491,45 @@ class YahooQuoteJsonParser(Parser):
                         'unixTimestamp': q['regularMarketTime']
                     }
                 )
+        return res
+
+
+class MarketWatchBondQuoteParser(Parser):
+    """Parse MarketWatch bond quotes for last price and yield."""
+    def parse(self, response):
+        self.validate_response(response, fmt='json')
+        response_data = response.json()
+        res = []
+        if 'InstrumentResponses' in response_data:
+            for record in response_data['InstrumentResponses']:
+                if 'Matches' in record and record['Matches']:
+                    match = record['Matches'][0]
+                    res_record = {}
+
+                    # Name
+                    if 'Instrument' in match:
+                        res_record['name'] = match['Instrument'].get('CommonName')
+                        res_record['standardName'] = Parser.standard_name(res_record['name'])
+
+                    # Price
+                    if 'BondSpecific' in match:
+                        bond_specific = match['BondSpecific']
+                        res_record['coupon'] = bond_specific.get('CouponRate')
+                        res_record['price'] = bond_specific['TradePrice']['Value'] if 'TradePrice' in bond_specific and 'Value' in bond_specific['TradePrice'] else None
+                        res_record['priceChange'] = bond_specific.get('TradeChangePercent')
+                        res_record['yieldChange'] = bond_specific.get('YieldChangePercent')
+                        res_record['maturityDate'] = bond_specific.get('MaturityDate')[:10]
+
+                    # Yield
+                    if 'CompositeTrading' in match:
+                        composite_trading = match['CompositeTrading']
+                        if 'Last' in composite_trading:
+                            last = composite_trading['Last']
+                            res_record['timestamp'] = last.get('Time')
+                            if 'Price' in last:
+                                res_record['yield'] = last['Price'].get('Value')
+
+                    res.append(res_record)
         return res
 
 

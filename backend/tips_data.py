@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from backend.data import DataGetter, get_fred_data
+from backend.data import DataGetter, get_fred_data, MarketWatchBondQuoteParser
 from backend import config as cfg
 
 # get logger from current_app instance
@@ -189,7 +189,7 @@ def get_tips_prices_wsj():
     return row_data
 
 
-def get_tips_quotes_from_market_watch(cusips):
+def get_tips_quotes_from_marketwatch(cusips):
     """Query Market-Watch for last price and yield of these TIPS CUSIPs."""
     endpoint = 'https://api.wsj.net/api/dylan/quotes/v2/comp/quoteByDialect'
     static_query_params = {
@@ -205,37 +205,5 @@ def get_tips_quotes_from_market_watch(cusips):
     url = endpoint + '?' + '&'.join([k + '=' + v for k, v in static_query_params.items()]) + '&id=' + ','.join(mapped_cusip_names)
     getter = DataGetter(f'Market-Watch TIPS Quotes {cusips}')
     response = getter.get(url)
-    response_data = response.json()
-
-    # Parse data
-    res = []
-    if 'InstrumentResponses' in response_data:
-        for record in response_data['InstrumentResponses']:
-            if 'Matches' in record and record['Matches']:
-                match = record['Matches'][0]
-                res_record = {}
-
-                # Name
-                if 'Instrument' in match:
-                    res_record['name'] = match['Instrument'].get('CommonName')
-
-                # Price
-                if 'BondSpecific' in match:
-                    bond_specific = match['BondSpecific']
-                    res_record['coupon'] = bond_specific.get('CouponRate')
-                    res_record['price'] = bond_specific['TradePrice']['Value'] if 'TradePrice' in bond_specific and 'Value' in bond_specific['TradePrice'] else None
-                    res_record['priceChange'] = bond_specific.get('TradeChangePercent')
-                    res_record['yieldChange'] = bond_specific.get('YieldChangePercent')
-                    res_record['maturityDate'] = bond_specific.get('MaturityDate')[:10]
-
-                # Yield
-                if 'CompositeTrading' in match:
-                    composite_trading = match['CompositeTrading']
-                    if 'Last' in composite_trading:
-                        last = composite_trading['Last']
-                        res_record['timestamp'] = last.get('Time')
-                        if 'Price' in last:
-                            res_record['yield'] = last['Price'].get('Value')
-
-                res.append(res_record)
-    return res
+    parser = MarketWatchBondQuoteParser()
+    return parser.parse(response)
