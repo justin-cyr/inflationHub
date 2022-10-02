@@ -95,6 +95,9 @@ class ProjectedCashflows(object):
         
         return res
 
+    def sum_projected_amounts(self):
+        return sum(self.projected_amounts)
+
     def cashflow_times(self, base_date, day_count):
         """Return list of cashflow times in years."""
         return [day_count_fraction(base_date, payment_date, day_count)
