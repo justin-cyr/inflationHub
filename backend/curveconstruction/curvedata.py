@@ -1,10 +1,10 @@
 import math
-from multiprocessing.managers import ValueProxy
 
 from .. import config as cfg
 from ..utils import Date, Tenor
 from . import convertutils as cu
 from . import domains
+from ..products.bonds import Bond
 
 def supported_curve_data_point_types(curve_type):
     """Return the names of curve data point sub-classes that can be used by the front end."""
@@ -195,3 +195,56 @@ class YoYDataPoint(CurveDataPoint):
     def convert(self, domainX, domainY, start_date_cpi, base_date=None, base_cpi=None):
         cpiLevelDataPoint = self.to_CpiLevelDataPoint(start_date_cpi)
         return cpiLevelDataPoint.convert(domainX, domainY, base_date, base_cpi)
+
+
+class BondDataPoint(CurveDataPoint):
+    def __init__(self, value, bond, base_date=Date.today(), label=None):
+        # Validate bond
+        if not isinstance(bond, Bond):
+            raise ValueError(f'{self.__class__.__name__}: bond argument must be type Bond.')
+        
+        if not label:
+            label = '_'.join([self.__class__.__name__, str(bond.maturity_date)])
+        
+        super.__init__(value, label)
+        self.bond = bond
+        self.base_date = Date(base_date)
+
+
+class BondPriceDataPoint(BondDataPoint):
+    def __init__(self, clean_price, bond, base_date=Date.today(), label=None):
+        super.__init__(clean_price, bond, base_date=base_date, label=label)
+        self.price = clean_price
+    
+    @classmethod
+    def deserialize(cls, d):
+        for key in ['clean_price', 'bond']:
+            if key not in d:
+                raise KeyError(f'{cls.__name__}.deserialize: dict must contain key {key}.')
+
+        return BondPriceDataPoint(d['clean_price'], Bond.create_bond(d['bond']), base_date=d.get('base_date'), label=d.get('label'))
+
+    def to_BondYieldDatapoint(self):
+        """Return the equivalent BondYieldDataPoint"""
+        ytm = self.bond.clean_price_to_yield(self.price, self.base_date)
+        return BondYieldDataPoint(ytm, self.bond, base_date=self.base_date, label=f'Converted_{self.label}')
+
+
+class BondYieldDataPoint(BondDataPoint):
+    def __init__(self, ytm, bond, base_date=Date.today(), label=None):
+        super.__init__(ytm, bond, base_date=base_date, label=label)
+        self.ytm = ytm
+    
+    @classmethod
+    def deserialize(cls, d):
+        for key in ['ytm', 'bond']:
+            if key not in d:
+                raise KeyError(f'{cls.__name__}.deserialize: dict must contain key {key}.')
+
+        return BondYieldDataPoint(d['ytm'], Bond.create_bond(d['bond']), base_date=d.get('base_date'), label=d.get('label'))
+
+    def to_BondPriceDataPoint(self):
+        """Return the equivalent BondPriceDataPoint"""
+        clean_price = self.bond.yield_to_clean_price(self.ytm, self.base_date)
+        return BondPriceDataPoint(clean_price, self.bond, base_date=self.base_date, label=f'Converted_{self.label}')
+

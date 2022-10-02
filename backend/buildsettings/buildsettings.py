@@ -89,3 +89,36 @@ class BuildSettingsSeasonality(BuildSettings):
                 domains.ADDITIVE_SEASONALITY
                 ]
             )
+
+
+class BuildSettingsBondCurve(BuildSettings):
+    def __init__(self, domainX, domainY, fitting_method_str, t0_date=None):
+        super().__init__(domainX, domainY, fitting_method_str)
+        self.validate()
+
+        if self.domainY in [domains.TIME_WEIGHTED_ZERO_RATE, domains.ZERO_RATE]:
+            # t0_date is required
+            if not t0_date:
+                raise ValueError(f'BuildSettingsBondCurve: t0_date is required when domainY={self.domainY}.')
+            
+        self.t0_date = t0_date
+    
+    @classmethod
+    def get_usage(cls):
+        return dict(
+            domainX=[
+                domains.TIME_ACT_365,
+                domains.TIME_30_360
+                ],
+            domainY=[
+                domains.TIME_WEIGHTED_ZERO_RATE,
+                domains.ZERO_RATE
+                ],
+            fitting_method_str=[
+                fm.PiecewiseLinear,
+                fm.BestFitLinear,
+                fm.BestFitConstant,
+                fm.PiecewiseConstantLeftCts,
+                fm.PiecewiseConstantRightCts
+                ]
+            )
