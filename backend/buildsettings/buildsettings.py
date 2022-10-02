@@ -5,12 +5,15 @@ from ..fittingmethods import fittingmethod as fm
 
 def get_usage_by_model(model_str):
     """Return the usage of the build settings for this model string."""
-    if model_str == cfg.CPI:
-        return BuildSettingsCPICurve.get_usage()
-    if model_str == cfg.SEASONALITY:
-        return BuildSettingsSeasonality.get_usage()
-    else:
+    model_usage = {
+        cfg.BONDCURVE: BuildSettingsBondCurve.get_usage,
+        cfg.CPI: BuildSettingsCPICurve.get_usage,
+        cfg.SEASONALITY: BuildSettingsSeasonality.get_usage
+    }
+    if model_str not in model_usage:
         raise ValueError(f'get_usage_by_model: unsupported model type {model_str}.')
+    
+    return model_usage[model_str]()
 
 
 class BuildSettings(object):
