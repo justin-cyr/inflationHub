@@ -86,7 +86,7 @@ class CpiModel(Model):
                             ]
 
         # Fit training data
-        self.fitting_method.fit(*zip(*self.training_data))
+        self.fit()
 
         # Set t0_cpi if necessary
         if not self.t0_cpi:

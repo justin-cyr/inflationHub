@@ -29,6 +29,9 @@ class Model(object):
     def __repr__(self):
         return f'{self.__class__.__name__}({self.base_date})'
 
+    def fit(self):
+        self.fitting_method.fit(*zip(*self.training_data))
+        return
 
     def get_all_results(self, **kwargs):
         """Return a dict of all model output."""
