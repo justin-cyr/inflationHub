@@ -11,10 +11,12 @@ CHROMEDRIVER_PATH = 'CHROMEDRIVER_PATH'
 GOOGLE_CHROME_BIN = 'GOOGLE_CHROME_BIN'
 
 # Model names
+BONDCURVE = 'BondCurve'
 CPI = 'CPI'
 SEASONALITY = 'Seasonality'
 
 # Numerical constants
+calibration_tolerance_ = 1E-6
 zero_tolerance_ = 1E-12
 
 # get logger from current_app instance

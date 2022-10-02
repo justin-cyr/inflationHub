@@ -47,6 +47,7 @@ class Bond(object):
         CalendarUtil.check_calendar_names(settlement_calendars)
         CalendarUtil.check_calendar_names(payment_calendars)
 
+        self.bond_type = self.__class__.__name__
         self.notional = float(notional)
         self.settlement_days = int(settlement_days)
         self.maturity_date = Date(maturity_date)
@@ -65,14 +66,6 @@ class Bond(object):
     @staticmethod
     def create_bond(**kwargs):
         """Construct a Bond object from a data convention and parameters dictionary."""
-        if 'Convention' not in kwargs:
-            raise ValueError('Bond.create_bond: no Convention specified.')
-        
-        name = kwargs['Convention']
-        if name not in BOND_CONFIG:
-            raise KeyError(f'Bond.create_bond: Convention={name} not found in Bonds.csv.')
-        bond_conventions = BOND_CONFIG[name]
-
         # universal parameters passed in kwargs
         notional = kwargs.get('notional')
         maturity_date = kwargs.get('maturity_date')
@@ -81,18 +74,39 @@ class Bond(object):
         dated_date = kwargs.get('dated_date')
         rate = kwargs.get('rate')
 
-        # optional parameters in Bonds.csv
-        settlement_days = bond_conventions.get('SettlementDays', 0)
-        settlement_calendars_str = bond_conventions.get('SettlementCalendars')
-        settlement_calendars = CalendarUtil.split_calendars(settlement_calendars_str)
-        payment_days = bond_conventions.get('PaymentDays', 0)
-        payment_calendars_str = bond_conventions.get('PaymentCalendars')
-        payment_calendars = CalendarUtil.split_calendars(payment_calendars_str)
-        payment_frequency = bond_conventions.get('PaymentFrequency')
-        day_count = bond_conventions.get('CouponDayCount')
-        coupon_convention = bond_conventions.get('CouponConvention')
-        accrued_interest_day_count = bond_conventions.get('AccruedInterestDayCount')
-        yield_convention = bond_conventions.get('YieldConvention')
+        # optional parameters in kwargs or Bonds.csv
+        if 'Convention' not in kwargs:
+            # get optional parameters from kwargs
+            bond_type = kwargs.get('bond_type')
+            settlement_days = kwargs.get('settlement_days')
+            settlement_calendars = kwargs.get('settlement_calendars')
+            payment_days = kwargs.get('PaymentDays', 0)
+            payment_calendars = kwargs.get('payment_calendars')
+            payment_frequency = kwargs.get('payment_frequency')
+            day_count = kwargs.get('day_count')
+            coupon_convention = kwargs.get('coupon_convention')
+            accrued_interest_day_count = kwargs.get('accrued_interest_day_count')
+            yield_convention = kwargs.get('yield_convention')
+        
+        else:
+            # get optional parameters from Bonds.csv
+            name = kwargs['Convention']
+            if name not in BOND_CONFIG:
+                raise KeyError(f'Bond.create_bond: Convention={name} not found in Bonds.csv.')
+            bond_conventions = BOND_CONFIG[name]
+
+            bond_type = bond_conventions.get('Type')
+            settlement_days = bond_conventions.get('SettlementDays', 0)
+            settlement_calendars_str = bond_conventions.get('SettlementCalendars')
+            settlement_calendars = CalendarUtil.split_calendars(settlement_calendars_str)
+            payment_days = bond_conventions.get('PaymentDays', 0)
+            payment_calendars_str = bond_conventions.get('PaymentCalendars')
+            payment_calendars = CalendarUtil.split_calendars(payment_calendars_str)
+            payment_frequency = bond_conventions.get('PaymentFrequency')
+            day_count = bond_conventions.get('CouponDayCount')
+            coupon_convention = bond_conventions.get('CouponConvention')
+            accrued_interest_day_count = bond_conventions.get('AccruedInterestDayCount')
+            yield_convention = bond_conventions.get('YieldConvention')
 
         # Convert types of optional arguments
         coupon_convention = CouponConvention.from_str(coupon_convention) if coupon_convention else None
@@ -102,7 +116,6 @@ class Bond(object):
         yield_convention = YieldConvention.from_str(yield_convention)
 
         # Delegate to constructor based on type
-        bond_type = bond_conventions.get('Type')
         if bond_type == ZeroCouponBond.__name__:
             return ZeroCouponBond(notional, maturity_date, payment_days, payment_calendars)
         elif bond_type == FixedRateBond.__name__:
@@ -126,7 +139,7 @@ class Bond(object):
 
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.__dict__})'
+        return str(self.__dict__)
 
     def schedule(self):
         if isinstance(self.cashflows, Cashflows):

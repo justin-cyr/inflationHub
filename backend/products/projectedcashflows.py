@@ -59,13 +59,27 @@ class ProjectedCashflows(object):
             projected_schedule.append(record)
         return projected_schedule
 
+    def projection_factor(self, projected_params):
+        """Return the product of these projected parameters."""
+        if isinstance(projected_params, float):
+            factor = projected_params
+        elif isinstance(projected_params, list):
+            factor = 1.0
+            for p in projected_params:
+                factor *= p
+        else:
+            raise ValueError(f'Projection functions must be float or list valued.')
+        
+        return factor
+
     def projected_amount(self, d):
         if Date(d) < self.base_date:
             return 0.0
 
         try:
             if self.proj:
-                res = self.contractual_cashflows.amount(d, *self.proj(d))
+                factor = self.projection_factor(self.proj(d))
+                res = self.contractual_cashflows.amount(d) * factor
             else:
                 res = self.contractual_cashflows.amount(d)
         except Exception as e:
@@ -87,7 +101,8 @@ class ProjectedCashflows(object):
             proj_j = self.proj[j]
             try:
                 if proj_j:
-                    res[j] = self.contractual_cashflows.legs[j].amount(d, *proj_j(d))
+                    factor = self.projection_factor(proj_j(d))
+                    res[j] = self.contractual_cashflows.legs[j].amount(d) * factor
                 else:
                     res[j] = self.contractual_cashflows.legs[j].amount(d)
             except Exception as e:

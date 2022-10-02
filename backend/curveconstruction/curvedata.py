@@ -1,3 +1,5 @@
+
+import json
 import math
 
 from .. import config as cfg
@@ -9,6 +11,10 @@ from ..products.bonds import Bond
 def supported_curve_data_point_types(curve_type):
     """Return the names of curve data point sub-classes that can be used by the front end."""
     data_point_map = {
+        cfg.BONDCURVE: [
+            BondPriceDataPoint.__name__,
+            BondYieldDataPoint.__name__
+        ],
         cfg.CPI: [
             CpiLevelDataPoint.__name__,
             YoYDataPoint.__name__
@@ -82,14 +88,18 @@ class CurveDataPointFactory(object):
 
         t = d['type']
         # Call constructor based on type
-        if t == 'CurveDataPoint':
-            return CurveDataPoint.deserialize(d)
-        elif t == 'CpiLevelDataPoint':
-            return CpiLevelDataPoint.deserialize(d)
-        elif t == 'YoYDataPoint':
-            return YoYDataPoint.deserialize(d)
-        else:
+        deserializer_map = { cls.__name__: cls.deserialize for cls in [
+                                    CurveDataPoint,
+                                    CpiLevelDataPoint,
+                                    YoYDataPoint,
+                                    BondPriceDataPoint,
+                                    BondYieldDataPoint
+                                ]
+                            }
+        if t not in deserializer_map:
             raise NotImplementedError(f'CurveDataPointFactory.deserialize: type {t} is not supported.')
+        
+        return deserializer_map[t](d)
 
 
 class CpiLevelDataPoint(CurveDataPoint):
@@ -199,21 +209,27 @@ class YoYDataPoint(CurveDataPoint):
 
 class BondDataPoint(CurveDataPoint):
     def __init__(self, value, bond, base_date=Date.today(), label=None):
-        # Validate bond
-        if not isinstance(bond, Bond):
-            raise ValueError(f'{self.__class__.__name__}: bond argument must be type Bond.')
+        # bond argument is eiter type Bond or deserializable as a Bond
+        if isinstance(bond, Bond):
+            self.bond = bond
+        elif isinstance(bond, dict):
+            self.bond = Bond.create_bond(**bond)
+        elif isinstance(bond, str):
+            self.bond = Bond.create_bond(**json.loads(bond))
+        else:
+            raise ValueError(f'{self.__class__.__name__}: bond argument must Bond type or deserializable using Bond.create_bond.')
         
         if not label:
             label = '_'.join([self.__class__.__name__, str(bond.maturity_date)])
         
-        super.__init__(value, label)
+        super().__init__(value, label)
         self.bond = bond
         self.base_date = Date(base_date)
 
 
 class BondPriceDataPoint(BondDataPoint):
     def __init__(self, clean_price, bond, base_date=Date.today(), label=None):
-        super.__init__(clean_price, bond, base_date=base_date, label=label)
+        super().__init__(clean_price, bond, base_date=base_date, label=label)
         self.price = clean_price
     
     @classmethod
@@ -222,7 +238,7 @@ class BondPriceDataPoint(BondDataPoint):
             if key not in d:
                 raise KeyError(f'{cls.__name__}.deserialize: dict must contain key {key}.')
 
-        return BondPriceDataPoint(d['clean_price'], Bond.create_bond(d['bond']), base_date=d.get('base_date'), label=d.get('label'))
+        return BondPriceDataPoint(d['clean_price'], d['bond'], base_date=d.get('base_date'), label=d.get('label'))
 
     def to_BondYieldDatapoint(self):
         """Return the equivalent BondYieldDataPoint"""
@@ -232,7 +248,7 @@ class BondPriceDataPoint(BondDataPoint):
 
 class BondYieldDataPoint(BondDataPoint):
     def __init__(self, ytm, bond, base_date=Date.today(), label=None):
-        super.__init__(ytm, bond, base_date=base_date, label=label)
+        super().__init__(ytm, bond, base_date=base_date, label=label)
         self.ytm = ytm
     
     @classmethod
@@ -241,7 +257,7 @@ class BondYieldDataPoint(BondDataPoint):
             if key not in d:
                 raise KeyError(f'{cls.__name__}.deserialize: dict must contain key {key}.')
 
-        return BondYieldDataPoint(d['ytm'], Bond.create_bond(d['bond']), base_date=d.get('base_date'), label=d.get('label'))
+        return BondYieldDataPoint(d['ytm'], d['bond'], base_date=d.get('base_date'), label=d.get('label'))
 
     def to_BondPriceDataPoint(self):
         """Return the equivalent BondPriceDataPoint"""
