@@ -11,7 +11,7 @@ from ..products.bonds import Bond
 from ..products.cashflows import MultiLegCashflows
 from ..products.projectedcashflows import ProjectedCashflows
 
-from collections import defaultdict
+from collections import defaultdict, deque
 import math
 from scipy.optimize import minimize
 
@@ -51,18 +51,22 @@ class BondModel(Model):
         if len(self.training_times) != len(self.bond_data_points):
             raise ValueError(f'{self.__class__.__name__}: must have equal number of training times and bond points, but got {len(self.training_times)} and {len(self.bond_data_points)}, respectively.')
 
+        if any([t <= 0.0 for t in self.training_times]):
+            raise ValueError(f'{self.__class__.__name__}: training times must be strictly positive.')
+
         # Calibrate model
         # Use a numerical minimizer to iteratively update training data, re-fit model and
         # re-price instruments until square error to target PV is minimized.
         # - Default minimization method is BFGS.
+        app.logger.info(f'Calibrating {self.__class__.__name__} using method={self.build_settings.opt_method}')
         res = minimize(
                 self.calibration_objective,
-                self.initial_training_data_guess()
+                self.initial_training_data_guess(),
+                method=self.build_settings.opt_method
             )
-        if not res.success:
-            raise RuntimeError(f'{self.__class__.__name__} convergence failed: {res.message}.')
+        app.logger.info(f'{self.__class__.__name__} calibration result:\n{res}')
         
-        # Round-trip check - also ensures model is fit to the solution
+        # Round-trip check - also ensures model is fit to the final iteration
         square_error = self.calibration_objective(res.x)
 
         if square_error >= self.calibration_tolerance:
@@ -73,42 +77,52 @@ class BondModel(Model):
                 square_diff = diff * diff
             
                 calibration_failure_info.append(dict(
-                    instrument=p.bond.label,
+                    instrument=p.label,
                     target_pv=target_pv,
                     model_pv=model_pv,
                     diff=diff,
                     square_diff=square_diff
                     )
                 )
-            raise RuntimeError(f"""{self.__class__.__name__} convergence failed to reach calibration tolerance:\n
+            msg = f"""{self.__class__.__name__} convergence failed to reach calibration tolerance:\n
                                     \tcalibration_tolerance: {self.calibration_tolerance},
                                     \tminimization square_error: {square_error},
                                     \tfailure info: {calibration_failure_info}.
-                                """
-                    )
+                    """
+            app.logger.error(msg)
+            raise RuntimeError(msg)
+        else:
+            app.logger.info(f'{self.__class__.__name__} calibrated within tolerance {self.calibration_tolerance}.')
     
 
     def calibration_objective(self, training_values):
         """Objective function for calibration: use a training guess to fit model, price bonds, minimize error to target PVs."""
-        self.training_data = list(zip(self.training_times, training_values))
+        # Insert node at time 0
+        q = deque(zip(self.training_times, training_values))
+        q.appendleft((0.0, 0.0))
+        
+        self.training_data = list(q)
         self.fit()
-
+        print('*'*100)
+        print(f'training_data = {self.training_data}')
         # price instruments and calculate difference from target
         square_error = 0.0
         for p, target_pv in zip(self.bond_data_points, self.target_pvs):
             model_pv = self.pv_bond(p.bond)
             diff = target_pv - model_pv
             square_error += diff * diff
+            print(f'target_pv={target_pv}, model_pv={model_pv}, diff={diff}')
         
+        print(f'square_error={square_error}')
         return square_error
 
 
     @classmethod
-    def build(cls, base_date, curve_data, domainX, domainY, fitting_method_str, t0_date=None, calibration_tolerance=cfg.calibration_tolerance_):
+    def build(cls, base_date, curve_data, domainX, domainY, fitting_method_str, t0_date=None, calibration_tolerance=cfg.calibration_tolerance_, opt_method=cfg.BFGS):
          # default t0_date to base_date
         if not t0_date:
             t0_date = base_date
-        build_settings = BuildSettingsBondCurve(domainX, domainY, fitting_method_str, t0_date)
+        build_settings = BuildSettingsBondCurve(domainX, domainY, fitting_method_str, t0_date, opt_method)
         return BondModel(base_date, curve_data, build_settings, calibration_tolerance=calibration_tolerance)
     
 

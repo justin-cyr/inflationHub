@@ -19,6 +19,22 @@ SEASONALITY = 'Seasonality'
 calibration_tolerance_ = 1E-6
 zero_tolerance_ = 1E-12
 
+# Optimization methods supported by scipy.optimize.minimize
+NELDER_MEAD = 'Nelder-Mead'
+POWELL = 'Powell'
+CG = 'CG'
+BFGS = 'BFGS'
+NEWTON_CG = 'Newton-CG'
+L_BFGS_B = 'L-BFGS-B'
+TNC = 'TNC'
+COBYLA = 'COBYLA'
+SLSQP = 'SLSQP'
+TRUST_CONSTR = 'trust-constr'
+DOGLEG = 'dogleg'
+TRUST_NCG = 'trust-ncg'
+TRUST_EXACT = 'trust-exact'
+TRUST_KRYLOV = 'trust-krylov'
+
 # get logger from current_app instance
 from flask import current_app as app
 

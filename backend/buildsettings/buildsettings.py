@@ -95,7 +95,7 @@ class BuildSettingsSeasonality(BuildSettings):
 
 
 class BuildSettingsBondCurve(BuildSettings):
-    def __init__(self, domainX, domainY, fitting_method_str, t0_date=None):
+    def __init__(self, domainX, domainY, fitting_method_str, t0_date=None, opt_method=cfg.BFGS):
         super().__init__(domainX, domainY, fitting_method_str)
         self.validate()
 
@@ -105,6 +105,7 @@ class BuildSettingsBondCurve(BuildSettings):
                 raise ValueError(f'BuildSettingsBondCurve: t0_date is required when domainY={self.domainY}.')
             
         self.t0_date = t0_date
+        self.opt_method = opt_method
     
     @classmethod
     def get_usage(cls):
@@ -123,5 +124,10 @@ class BuildSettingsBondCurve(BuildSettings):
                 fm.BestFitConstant,
                 fm.PiecewiseConstantLeftCts,
                 fm.PiecewiseConstantRightCts
-                ]
+                ],
+            opt_method=[
+                cfg.CG,
+                cfg.BFGS,
+                cfg.TRUST_CONSTR
+            ]
             )

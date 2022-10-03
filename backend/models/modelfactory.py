@@ -18,7 +18,8 @@ class ModelFactory(object):
         domainY = params.get('domainY')
         fitting_method_str = params.get('fitting_method_str')
         t0_date = params.get('t0_date')
-        calibration_tolerance = params.get('calibration_tolerance')
+        calibration_tolerance = params.get('calibration_tolerance', cfg.calibration_tolerance_)
+        opt_method = params.get('opt_method', cfg.BFGS)
 
         if model_type == cfg.CPI:
             return CpiModel.build(
@@ -37,7 +38,8 @@ class ModelFactory(object):
                     domainY,
                     fitting_method_str,
                     t0_date=t0_date,
-                    calibration_tolerance=calibration_tolerance
+                    calibration_tolerance=calibration_tolerance,
+                    opt_method=opt_method
                 )
         else:
             raise ValueError(f'ModelFactory.build: unsupported model type" {model_type}.')
