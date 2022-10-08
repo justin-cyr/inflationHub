@@ -1,7 +1,7 @@
 
 from .model import Model
 from ..buildsettings.buildsettings import BuildSettingsBondCurve
-from ..curveconstruction.curvedata import BondPriceDataPoint, BondYieldDataPoint
+from ..curveconstruction.curvedata import BondDataPoint
 from ..curveconstruction import domains
 from ..curveconstruction import convertutils as cu
 from .. import config as cfg
@@ -34,10 +34,8 @@ class BondModel(Model):
 
         bond_data_points = []
         for p in self.model_data:
-            if isinstance(p, BondPriceDataPoint):
-                bond_data_points.append(p)
-            elif isinstance(p, BondYieldDataPoint):
-                bond_data_points.append(p.to_BondPriceDataPoint())
+            if isinstance(p, BondDataPoint):
+                bond_data_points.append(p.to_BondPriceAndYieldDataPoint())
             else:
                 raise ValueError(f'{self.__class__.__name__}: Received unsupported curve data point {p}.')
         
@@ -132,7 +130,17 @@ class BondModel(Model):
 
     def initial_training_data_guess(self):
         """Return initial guess for the model's training data."""
-        return [0.0 for _ in self.training_times]
+        domainY = self.build_settings.domainY
+        ctsly_compounded_yields = [p.ctsly_compounded_yield() for p in self.bond_data_points]
+        
+        if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
+            return [t * z for t, z in zip(self.training_times, ctsly_compounded_yields)]
+
+        elif domainY == domains.ZERO_RATE:
+            return ctsly_compounded_yields
+        
+        else:
+            raise ValueError(f'{self.__class__.__name__}.{__name__}: unsupported domain {domainY}.')
     
     def predict_at_date(self, date):
         """Get fitting method's prediction at a given date."""

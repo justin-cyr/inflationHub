@@ -226,6 +226,9 @@ class BondDataPoint(CurveDataPoint):
         self.bond = bond
         self.base_date = Date(base_date)
 
+    def to_BondPriceAndYieldDataPoint(self):
+        raise NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class')
+
 
 class BondPriceDataPoint(BondDataPoint):
     def __init__(self, clean_price, bond, base_date=Date.today(), label=None):
@@ -245,6 +248,9 @@ class BondPriceDataPoint(BondDataPoint):
         ytm = self.bond.clean_price_to_yield(self.price, self.base_date)
         return BondYieldDataPoint(ytm, self.bond, base_date=self.base_date, label=f'Converted_{self.label}')
 
+    def to_BondPriceAndYieldDataPoint(self):
+        return BondPriceAndYieldDataPoint(self.bond, clean_price=self.price, base_date=self.base_date, label=f'Consistent_{self.label}')
+
 
 class BondYieldDataPoint(BondDataPoint):
     def __init__(self, ytm, bond, base_date=Date.today(), label=None):
@@ -263,4 +269,33 @@ class BondYieldDataPoint(BondDataPoint):
         """Return the equivalent BondPriceDataPoint"""
         clean_price = self.bond.yield_to_clean_price(self.ytm, self.base_date)
         return BondPriceDataPoint(clean_price, self.bond, base_date=self.base_date, label=f'Converted_{self.label}')
+
+    def to_BondPriceAndYieldDataPoint(self):
+        return BondPriceAndYieldDataPoint(self.bond, ytm=self.ytm, base_date=self.base_date, label=f'Consistent_{self.label}')
+
+
+class BondPriceAndYieldDataPoint(BondDataPoint):
+    """A bond with consistent price and yield values."""
+    def __init__(self, bond, ytm=None, clean_price=None, base_date=Date.today(), label=None):
+        super().__init__(0.0, bond, base_date=base_date, label=label)
+        
+        # requires ytm or clean_price
+        if ytm:
+            self.ytm = ytm
+            # override price with consistent price from yield
+            self.price = self.bond.yield_to_clean_price(self.ytm, self.base_date)
+
+        elif clean_price:
+            self.price = clean_price
+            self.ytm = self.bond.clean_price_to_yield(self.price, self.base_date)
+        
+        else:
+            raise ValueError(f'{self.__class__.__name__}: requires either ytm or clean_price.')
+    
+    def to_BondPriceAndYieldDataPoint(self):
+        return self
+
+    def ctsly_compounded_yield(self):
+        return self.bond.annual_yield_to_ctsly_compounded(self.ytm, self.base_date)
+        
 

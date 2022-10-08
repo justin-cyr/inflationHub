@@ -227,6 +227,10 @@ class Bond(object):
         dirty_price = self.yield_to_dirty_price(y, base_date)
         return self.dirty_price_to_clean_price(dirty_price, base_date)
 
+    def annual_yield_to_ctsly_compounded(self, y, base_date=Date.today()):
+        projected_cashflows = self.get_projected_cashflows(base_date)
+        return projected_cashflows.annual_yield_to_ctsly_compounded(y)
+
     # Decorator
     def require_yield_or_clean_price(calc):
         def inner(self, base_date=Date.today(), *, ytm=None, clean_price=None):

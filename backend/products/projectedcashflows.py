@@ -1,4 +1,6 @@
 
+import math
+
 from ..utils import Date, DayCount, day_count_fraction, YieldConvention
 from .cashflows import Cashflows, MultiLegCashflows
 
@@ -141,6 +143,8 @@ class ProjectedCashflows(object):
     def convexity(self, y):
         return self.yield_calculator.convexity(y)
 
+    def annual_yield_to_ctsly_compounded(self, y):
+        return self.yield_calculator.annual_yield_to_ctsly_compounded(y)
 
 class YieldCalculator(object):
     """An abstract class for yield calculations for various conventions."""
@@ -201,6 +205,8 @@ class YieldCalculator(object):
         price = self.yield_to_pv(y)
         return self.yield_to_pv_prime2(y) / price
     
+    def annual_yield_to_ctsly_compounded(self, y):
+        raise NotImplementedError('YieldCalculator.annual_yield_to_ctsly_compounded: not implemented in base class.')
 
 class USStreetYieldCalculator(YieldCalculator):
     def __init__(self, projected_amounts, periods_per_year, coupon_frac):
@@ -241,6 +247,9 @@ class USStreetYieldCalculator(YieldCalculator):
     def macauley_duration(self, y):
         return (1.0 + y / self.periods_per_year) * self.modified_duration(y)
 
+    def annual_yield_to_ctsly_compounded(self, y):
+        return self.periods_per_year * math.log(1.0 + y / self.periods_per_year)
+
 class TrueYieldCalculator(YieldCalculator):
     def __init__(self, projected_amounts, payment_times):
         super().__init__()
@@ -268,3 +277,6 @@ class TrueYieldCalculator(YieldCalculator):
             t * (t + 1.0) * a / (1.0 + y)**(t + 2.0)
             for a, t in zip(self.projected_amounts, self.payment_times)
         ])
+
+    def annual_yield_to_ctsly_compounded(self, y):
+        return math.log(1.0 + y)
