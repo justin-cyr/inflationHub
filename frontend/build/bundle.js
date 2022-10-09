@@ -2287,6 +2287,31 @@ function useWindow() {
 
 /***/ }),
 
+/***/ "./actions/quotesDaily.js":
+/*!********************************!*\
+  !*** ./actions/quotesDaily.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RECEIVE_TIPS_PRICES": () => (/* binding */ RECEIVE_TIPS_PRICES),
+/* harmony export */   "updateTipsPrices": () => (/* binding */ updateTipsPrices)
+/* harmony export */ });
+/* harmony import */ var _requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../requests/quotesDaily */ "./requests/quotesDaily.js");
+
+const RECEIVE_TIPS_PRICES = 'RECEIVE_TIPS_PRICES';
+
+const receiveTipsPrices = response => ({
+  type: RECEIVE_TIPS_PRICES,
+  response
+});
+
+const updateTipsPrices = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getTipsPrices)().then(response => dispatch(receiveTipsPrices(response)));
+
+/***/ }),
+
 /***/ "./components/app.jsx":
 /*!****************************!*\
   !*** ./components/app.jsx ***!
@@ -2299,7 +2324,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
 /* harmony import */ var _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nav_bar/nav_bar_container */ "./components/nav_bar/nav_bar_container.js");
 /* harmony import */ var _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data_viewer/data_viewer_container */ "./components/data_viewer/data_viewer_container.js");
 /* harmony import */ var _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tips_data/tips_data_container */ "./components/tips_data/tips_data_container.js");
@@ -2307,6 +2332,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./knowledge_center/knowledge_center_container */ "./components/knowledge_center/knowledge_center_container.js");
 /* harmony import */ var _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./footer/footer_container */ "./components/footer/footer_container.js");
 /* harmony import */ var _market_data_market_data_container__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./market_data/market_data_container */ "./components/market_data/market_data_container.js");
+/* harmony import */ var _state_loader_state_loader_container__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./state_loader/state_loader_container */ "./components/state_loader/state_loader_container.js");
 
 
 
@@ -2316,33 +2342,37 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
+  path: "/",
+  component: _state_loader_state_loader_container__WEBPACK_IMPORTED_MODULE_8__["default"]
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/",
   component: _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/data_viewer",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/tips_data",
   component: _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/market_data",
   component: _market_data_market_data_container__WEBPACK_IMPORTED_MODULE_7__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/curve_builder",
   component: _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/knowledge_center",
   component: _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/",
   component: _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__["default"]
 })));
@@ -4042,6 +4072,67 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./components/state_loader/state_loader.jsx":
+/*!**************************************************!*\
+  !*** ./components/state_loader/state_loader.jsx ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    this.props.updateTipsPrices();
+  }
+
+  render() {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "stateLoader"
+    });
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (StateLoader);
+
+/***/ }),
+
+/***/ "./components/state_loader/state_loader_container.js":
+/*!***********************************************************!*\
+  !*** ./components/state_loader/state_loader_container.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../actions/quotesDaily */ "./actions/quotesDaily.js");
+/* harmony import */ var _state_loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state_loader */ "./components/state_loader/state_loader.jsx");
+
+
+
+
+const mapDispatchToProps = dispatch => ({
+  updateTipsPrices: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateTipsPrices)())
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(null, mapDispatchToProps)(_state_loader__WEBPACK_IMPORTED_MODULE_2__["default"]));
+
+/***/ }),
+
 /***/ "./components/tips_data/tips_data.jsx":
 /*!********************************************!*\
   !*** ./components/tips_data/tips_data.jsx ***!
@@ -4532,9 +4623,56 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _tips_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tips_data */ "./components/tips_data/tips_data.jsx");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _tips_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tips_data */ "./components/tips_data/tips_data.jsx");
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_tips_data__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+const mapStateToProps = state => ({
+  quotes: state.quotes
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps)(_tips_data__WEBPACK_IMPORTED_MODULE_1__["default"]));
+
+/***/ }),
+
+/***/ "./reducers/quotesDaily.js":
+/*!*********************************!*\
+  !*** ./reducers/quotesDaily.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/quotesDaily */ "./actions/quotesDaily.js");
+ // default state
+
+const _emptyState = {
+  quotes: {
+    daily: {}
+  }
+}; // Daily quotes reducer
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((state = _emptyState, action) => {
+  Object.freeze(state);
+
+  switch (action.type) {
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_PRICES:
+      return Object.assign({}, {
+        quotes: {
+          daily: { ...state.quotes.daily,
+            'tipsPrices': action.response
+          }
+        }
+      });
+
+    default:
+      return state;
+  }
+});
 
 /***/ }),
 
@@ -4549,7 +4687,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => {});
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+/* harmony import */ var _quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quotesDaily */ "./reducers/quotesDaily.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,redux__WEBPACK_IMPORTED_MODULE_1__.combineReducers)({
+  quotesDaily: _quotesDaily__WEBPACK_IMPORTED_MODULE_0__["default"]
+}));
+
+/***/ }),
+
+/***/ "./requests/quotesDaily.js":
+/*!*********************************!*\
+  !*** ./requests/quotesDaily.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getTipsPrices": () => (/* binding */ getTipsPrices)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+const getTipsPrices = () => // Request TIPS price data
+jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/tips_prices',
+  method: 'GET'
+});
 
 /***/ }),
 
@@ -63223,6 +63389,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const root = document.getElementById("root");
   let preloadedState = {};
   const store = (0,_store_store__WEBPACK_IMPORTED_MODULE_2__["default"])(preloadedState);
+  window.getState = store.getState;
+  window.dispatch = store.dispatch;
   react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_root__WEBPACK_IMPORTED_MODULE_3__["default"], {
     store: store
   }), root);
