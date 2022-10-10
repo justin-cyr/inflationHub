@@ -113,7 +113,7 @@ class Bond(object):
         payment_frequency = DateFrequency.from_str(payment_frequency) if payment_frequency else None
         day_count = DayCount.from_str(day_count) if day_count else None
         accrued_interest_day_count = DayCount.from_str(accrued_interest_day_count) if accrued_interest_day_count else None
-        yield_convention = YieldConvention.from_str(yield_convention)
+        yield_convention = YieldConvention.from_str(yield_convention) if yield_convention else None
 
         # Delegate to constructor based on type
         if bond_type == ZeroCouponBond.__name__:
