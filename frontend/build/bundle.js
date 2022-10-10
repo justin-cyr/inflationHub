@@ -2312,6 +2312,40 @@ const updateTipsPrices = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMP
 
 /***/ }),
 
+/***/ "./actions/referenceData.js":
+/*!**********************************!*\
+  !*** ./actions/referenceData.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RECEIVE_TIPS_CUSIPS": () => (/* binding */ RECEIVE_TIPS_CUSIPS),
+/* harmony export */   "RECEIVE_TIPS_REF_DATA": () => (/* binding */ RECEIVE_TIPS_REF_DATA),
+/* harmony export */   "updateTipsCusips": () => (/* binding */ updateTipsCusips),
+/* harmony export */   "updateTipsRefData": () => (/* binding */ updateTipsRefData)
+/* harmony export */ });
+/* harmony import */ var _requests_referenceData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../requests/referenceData */ "./requests/referenceData.js");
+
+const RECEIVE_TIPS_CUSIPS = 'RECEIVE_TIPS_CUSIPS';
+const RECEIVE_TIPS_REF_DATA = 'RECEIVE_TIPS_REF_DATA';
+
+const receiveTipsCusips = response => ({
+  type: RECEIVE_TIPS_CUSIPS,
+  response
+});
+
+const receiveTipsRefData = response => ({
+  type: RECEIVE_TIPS_REF_DATA,
+  response
+});
+
+const updateTipsCusips = () => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTipsCusips)().then(response => dispatch(receiveTipsCusips(response)));
+const updateTipsRefData = cusip => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTipsRefData)(cusip).then(response => dispatch(receiveTipsRefData(response)));
+
+/***/ }),
+
 /***/ "./components/app.jsx":
 /*!****************************!*\
   !*** ./components/app.jsx ***!
@@ -4092,6 +4126,9 @@ class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   componentDidMount() {
+    this.props.updateTipsCusips().then(() => {
+      this.props.referenceData.tips.cusips.map(cusip => this.props.updateTipsRefData(cusip));
+    });
     this.props.updateTipsPrices();
   }
 
@@ -4120,16 +4157,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 /* harmony import */ var _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../actions/quotesDaily */ "./actions/quotesDaily.js");
-/* harmony import */ var _state_loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state_loader */ "./components/state_loader/state_loader.jsx");
+/* harmony import */ var _actions_referenceData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../actions/referenceData */ "./actions/referenceData.js");
+/* harmony import */ var _state_loader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state_loader */ "./components/state_loader/state_loader.jsx");
 
 
 
 
-const mapDispatchToProps = dispatch => ({
-  updateTipsPrices: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateTipsPrices)())
+
+const mapStateToProps = state => ({
+  referenceData: state.referenceData
 });
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(null, mapDispatchToProps)(_state_loader__WEBPACK_IMPORTED_MODULE_2__["default"]));
+const mapDispatchToProps = dispatch => ({
+  updateTipsPrices: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateTipsPrices)()),
+  updateTipsCusips: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsCusips)()),
+  updateTipsRefData: cusip => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsRefData)(cusip))
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps, mapDispatchToProps)(_state_loader__WEBPACK_IMPORTED_MODULE_3__["default"]));
 
 /***/ }),
 
@@ -4168,12 +4213,14 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     const month = (1 + today.getMonth()).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     const todayStr = year + '-' + month + '-' + day;
+    let referenceData = Object.values(this.props.referenceData.tips.bonds);
+    referenceData = referenceData.sort((a, b) => a.tenor - b.tenor);
     this._isMounted = false;
     this.state = {
       chartData: [],
-      cusips: [],
+      cusips: this.props.referenceData.tips.cusips,
       priceData: [],
-      referenceData: [],
+      referenceData: referenceData,
       yieldData: [],
       todayStr: todayStr,
       showModal: false,
@@ -4200,20 +4247,12 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   getTipsCusips() {
     // Request TIPS CUSIPs
-    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
-      url: '/tips_cusips',
-      method: 'GET',
-      success: response => {
-        this._isMounted && this.setState({
-          cusips: response.cusips
-        }, // get reference data for each cusip in callback 
-        () => {
-          this.state.cusips.map(cusip => {
-            this.getTipsData(cusip);
-            this.getTipsYields(cusip);
-          });
-        });
-      }
+    this.state.cusips.map(cusip => {
+      this.getTipsYields(cusip);
+    });
+    const newReferenceData = this.state.referenceData.map(refData => this.mergePriceToReferenceData(this.state.priceData, refData));
+    this._isMounted && this.setState({
+      referenceData: newReferenceData
     });
   }
 
@@ -4629,7 +4668,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const mapStateToProps = state => ({
-  quotes: state.quotes
+  quotes: state.quotes,
+  referenceData: state.referenceData
 });
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps)(_tips_data__WEBPACK_IMPORTED_MODULE_1__["default"]));
@@ -4676,6 +4716,56 @@ const _emptyState = {
 
 /***/ }),
 
+/***/ "./reducers/referenceData.js":
+/*!***********************************!*\
+  !*** ./reducers/referenceData.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/referenceData */ "./actions/referenceData.js");
+ // default state
+
+const _emptyState = {
+  tips: {
+    cusips: [],
+    otr: {},
+    bonds: {}
+  }
+}; // Reference data reducer
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((state = _emptyState, action) => {
+  Object.freeze(state);
+
+  switch (action.type) {
+    case _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_CUSIPS:
+      return { ...state,
+        tips: { ...state.tips,
+          cusips: action.response.cusips
+        }
+      };
+
+    case _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_REF_DATA:
+      const cusip = action.response.referenceData.cusip;
+      return { ...state,
+        tips: { ...state.tips,
+          bonds: { ...state.tips.bonds,
+            [cusip]: action.response.referenceData
+          }
+        }
+      };
+
+    default:
+      return state;
+  }
+});
+
+/***/ }),
+
 /***/ "./reducers/root.js":
 /*!**************************!*\
   !*** ./reducers/root.js ***!
@@ -4687,12 +4777,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
 /* harmony import */ var _quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quotesDaily */ "./reducers/quotesDaily.js");
+/* harmony import */ var _referenceData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./referenceData */ "./reducers/referenceData.js");
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,redux__WEBPACK_IMPORTED_MODULE_1__.combineReducers)({
-  quotesDaily: _quotesDaily__WEBPACK_IMPORTED_MODULE_0__["default"]
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,redux__WEBPACK_IMPORTED_MODULE_2__.combineReducers)({
+  quotesDaily: _quotesDaily__WEBPACK_IMPORTED_MODULE_0__["default"],
+  referenceData: _referenceData__WEBPACK_IMPORTED_MODULE_1__["default"]
 }));
 
 /***/ }),
@@ -4714,6 +4807,33 @@ __webpack_require__.r(__webpack_exports__);
 const getTipsPrices = () => // Request TIPS price data
 jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
   url: '/tips_prices',
+  method: 'GET'
+});
+
+/***/ }),
+
+/***/ "./requests/referenceData.js":
+/*!***********************************!*\
+  !*** ./requests/referenceData.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getTipsCusips": () => (/* binding */ getTipsCusips),
+/* harmony export */   "getTipsRefData": () => (/* binding */ getTipsRefData)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+const getTipsCusips = () => // Request TIPS CUSIPs
+jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/tips_cusips',
+  method: 'GET'
+});
+const getTipsRefData = cusip => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/tips_reference_data/' + cusip,
   method: 'GET'
 });
 

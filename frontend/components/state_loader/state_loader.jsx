@@ -6,13 +6,14 @@ class StateLoader extends React.Component {
     }
 
     componentDidMount() {
+        this.props.updateTipsCusips()
+            .then(() => {this.props.referenceData.tips.cusips.map(cusip => this.props.updateTipsRefData(cusip)) });
         this.props.updateTipsPrices();
     }
 
     render() {
         return (<div id="stateLoader"></div>);
     }
-
 }
 
 export default StateLoader;

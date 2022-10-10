@@ -18,12 +18,15 @@ class TipsData extends React.Component {
         const day = today.getDate().toString().padStart(2, '0');
         const todayStr = year + '-' + month + '-' + day;
 
+        let referenceData = Object.values(this.props.referenceData.tips.bonds);
+        referenceData = referenceData.sort((a, b) => a.tenor - b.tenor );
+
         this._isMounted = false;
         this.state = {
             chartData: [],
-            cusips: [],
+            cusips: this.props.referenceData.tips.cusips,
             priceData: [],
-            referenceData: [],
+            referenceData: referenceData,
             yieldData: [],
             todayStr: todayStr,
             showModal: false,
@@ -48,20 +51,12 @@ class TipsData extends React.Component {
 
     getTipsCusips() {
         // Request TIPS CUSIPs
-        $.ajax({
-            url: '/tips_cusips',
-            method: 'GET',
-            success: (response) => {
-                this._isMounted && this.setState({
-                    cusips: response.cusips
-                },
-                // get reference data for each cusip in callback 
-                () => { this.state.cusips.map((cusip) => {
-                            this.getTipsData(cusip);
-                            this.getTipsYields(cusip)
-                        }); 
-                    });
-            }
+        this.state.cusips.map((cusip) => {
+            this.getTipsYields(cusip);
+        });
+        const newReferenceData = this.state.referenceData.map(refData => this.mergePriceToReferenceData(this.state.priceData, refData));
+        this._isMounted && this.setState({
+            referenceData: newReferenceData
         });
     }
 

@@ -1,9 +1,16 @@
 import { connect } from 'react-redux';
 import { updateTipsPrices } from '../../actions/quotesDaily';
+import { updateTipsCusips, updateTipsRefData } from '../../actions/referenceData';
 import StateLoader from './state_loader';
 
-const mapDispatchToProps = dispatch => ({
-    updateTipsPrices: () => dispatch(updateTipsPrices())
+const mapStateToProps = state => ({
+    referenceData: state.referenceData
 });
 
-export default connect(null, mapDispatchToProps)(StateLoader);
+const mapDispatchToProps = dispatch => ({
+    updateTipsPrices: () => dispatch(updateTipsPrices()),
+    updateTipsCusips: () => dispatch(updateTipsCusips()),
+    updateTipsRefData: cusip => dispatch(updateTipsRefData(cusip))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(StateLoader);
