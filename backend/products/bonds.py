@@ -148,6 +148,7 @@ class Bond(object):
             return []
 
     def get_settlement_date(self, base_date):
+        # post-condition: returns a Date
         settlement_date = CalendarUtil.add_business_days(
             self.settlement_calendars,
             base_date,
@@ -375,7 +376,7 @@ class FixedRateBond(Bond):
 
     def next_coupon_frac(self, settlement_date):
         """Return the coupon_frac for the next coupon period."""
-        settlement_date = Date(settlement_date)
+        # pre-condition: settlment_date is a Date
         i = self.coupon_schedule.coupon_period(settlement_date)
         if i < 0 or i >= len(self.dcfs):
             return 0.0
@@ -384,9 +385,7 @@ class FixedRateBond(Bond):
 
     def coupon_frac(self, s_date, e_date, settlement_date):
         # Return fraction of time from start of current coupon period to end.
-        s_date = Date(s_date)
-        e_date = Date(e_date)
-        settlement_date = Date(settlement_date)
+        # pre-condition: all arguments are of type Date
         if self.accrued_interest_day_count == DayCount.ACT_ACT:
             return (settlement_date - s_date).days / (e_date - s_date).days
         else:

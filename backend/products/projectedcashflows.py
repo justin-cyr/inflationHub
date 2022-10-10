@@ -75,7 +75,8 @@ class ProjectedCashflows(object):
         return factor
 
     def projected_amount(self, d):
-        if Date(d) < self.base_date:
+        # pre-condition: d is of type Date
+        if d < self.base_date:
             return 0.0
 
         try:
@@ -91,11 +92,12 @@ class ProjectedCashflows(object):
 
     def projected_amounts_by_leg(self, d):
         # Projected amount for each leg in a MultiLegCashflow
+        # precondition: d is of type Date (this function is critical for calibrating models to cashflow products)
         if not isinstance(self.contractual_cashflows, MultiLegCashflows):
             return [self.projected_amount(d)]
         
         res = [0.0 for _ in self.contractual_cashflows.legs]
-        if Date(d) < self.base_date:
+        if d < self.base_date:
             return res
         
         for j in self.contractual_cashflows.nonzero_leg_map.get(d, []):

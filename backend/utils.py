@@ -79,28 +79,32 @@ class Date(object):
     # wraps datetime.date but allows conversion from string types in constructor
     def __init__(self, date):
 
-        date = str(date)
-
-        supported_formats = [
-            '%Y-%m-%d', # 2022-04-01
-            '%Y%m%d',   # 20220401
-            '%Y-%m',    # 2022-04
-            '%Y %b'     # 2022 Apr
-        ]
-        date_obj = None
-        for fmt in supported_formats:
-            try:
-                date_obj = datetime.datetime.strptime(date, fmt).date()
-                break
-            except ValueError as e:
-                pass
-
-        if date_obj:
-            date = date_obj
+        if isinstance(date, Date):
+            self.date = date.date
         else:
-            raise TypeError(f'Unsupported date format: {date}')
+            date = str(date)
 
-        self.date = date
+            supported_formats = [
+                '%Y-%m-%d', # 2022-04-01
+                '%Y%m%d',   # 20220401
+                '%Y-%m',    # 2022-04
+                '%Y %b'     # 2022 Apr
+            ]
+
+            for fmt in supported_formats:
+                try:
+                    date_obj = datetime.datetime.strptime(date, fmt).date()
+                    break
+                except ValueError as e:
+                    pass
+
+            if date_obj:
+                date = date_obj
+            else:
+                raise TypeError(f'Unsupported date format: {date}')
+
+            self.date = date
+        
         # datetime.date API
         self.year = date.year
         self.month = date.month
@@ -122,38 +126,38 @@ class Date(object):
     # Overload binary operators
     def __lt__(self, rhs):
         rhs = Date(rhs)
-        return self.datetime_date() < rhs.datetime_date()
+        return self.date < rhs.date
 
     def __le__(self, rhs):
         rhs = Date(rhs)
-        return self.datetime_date() <= rhs.datetime_date()
+        return self.date <= rhs.date
 
     def __gt__(self, rhs):
         rhs = Date(rhs)
-        return self.datetime_date() > rhs.datetime_date()
+        return self.date > rhs.date
 
     def __gt__(self, rhs):
         rhs = Date(rhs)
-        return self.datetime_date() >= rhs.datetime_date()
+        return self.date >= rhs.date
 
     def __eq__(self, rhs):
         rhs = Date(rhs)
-        return self.datetime_date() == rhs.datetime_date()
+        return self.date == rhs.date
 
     def __ne__(self, rhs):
         rhs = Date(rhs)
-        return self.datetime_date() != rhs.datetime_date()
+        return self.date != rhs.date
 
     def __sub__(self, rhs):
         rhs = Date(rhs)
-        return self.datetime_date() - rhs.datetime_date()
+        return self.date - rhs.date
 
     @classmethod
     def today(cls):
         return Date(datetime.date.today())
 
     def weekday(self):
-        return self.datetime_date().weekday()
+        return self.date.weekday()
 
     def is_weekday(self):
         return self.weekday() < 5
@@ -231,7 +235,7 @@ class Date(object):
 
     def addDays(self, days):
         """Return a new Date that is days ahead of this date."""
-        return Date(self.datetime_date() + datetime.timedelta(days=days))
+        return Date(self.date + datetime.timedelta(days=days))
 
     def addTenor(self, tenor):
         """Return a new Date that is tenor ahead of this date."""
