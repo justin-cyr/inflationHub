@@ -145,7 +145,7 @@ class CouponCashflows(Cashflows):
         if period_dates:
             sorted_schedule = sorted(zip(payment_date_objs, dcfs, period_dates), key=lambda pair: pair[0])
             period_dates = [pair[2] for pair in sorted_schedule]
-            self.period_dates = [(Date(s), Date(e)) for s, e in period_dates]
+            self.period_dates = period_dates
         else:
             sorted_schedule = sorted(zip(payment_date_objs, dcfs), key=lambda pair: pair[0])
         self.payment_dates = [pair[0] for pair in sorted_schedule]

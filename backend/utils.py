@@ -341,9 +341,7 @@ class Tenor(object):
 
 
 def day_count_fraction(start_date, end_date, day_count):
-    start_date = Date(start_date)
-    end_date = Date(end_date)
-
+    # pre-condition start_date and end_date are of type Date
     if day_count == DayCount.ACT_365:
         return (end_date - start_date).days / 365.0
     else:
