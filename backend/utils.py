@@ -81,6 +81,8 @@ class Date(object):
 
         if isinstance(date, Date):
             self.date = date.date
+        elif isinstance(date, datetime.date):
+            self.date = date
         else:
             date = str(date)
 
@@ -90,7 +92,7 @@ class Date(object):
                 '%Y-%m',    # 2022-04
                 '%Y %b'     # 2022 Apr
             ]
-
+            date_obj = None
             for fmt in supported_formats:
                 try:
                     date_obj = datetime.datetime.strptime(date, fmt).date()
@@ -270,32 +272,38 @@ class DateTime(object):
     # wraps datetime.datetime but allows conversion from string types in constructor
     def __init__(self, dt):
 
-        dt = str(dt)
-
-        supported_formats = [
-            '%Y%m%d%H%M%S',         # 20220401170435
-            '%Y-%m-%d %H:%M:%S',    # 2022-04-01 17:04:35
-            '%Y-%m-%d %H:%M:%S.%f', # 2022-04-01 17:04:35.987654
-            # Date formats
-            '%Y-%m-%d', # 2022-04-01
-            '%Y%m%d',   # 20220401
-            '%Y-%m',    # 2022-04
-            '%Y %b'     # 2022 Apr
-        ]
-        date_obj = None
-        for fmt in supported_formats:
-            try:
-                date_obj = datetime.datetime.strptime(dt, fmt)
-                break
-            except ValueError:
-                pass
-
-        if date_obj:
-            dt = date_obj
+        if isinstance(dt, DateTime):
+            self.datetime = dt.datetime
+        elif isinstance(dt, datetime.datetime):
+            self.datetime = dt
         else:
-            raise TypeError(f'Unsupported date format: {dt}')
+            dt = str(dt)
 
-        self.datetime = dt
+            supported_formats = [
+                '%Y%m%d%H%M%S',         # 20220401170435
+                '%Y-%m-%d %H:%M:%S',    # 2022-04-01 17:04:35
+                '%Y-%m-%d %H:%M:%S.%f', # 2022-04-01 17:04:35.987654
+                # Date formats
+                '%Y-%m-%d', # 2022-04-01
+                '%Y%m%d',   # 20220401
+                '%Y-%m',    # 2022-04
+                '%Y %b'     # 2022 Apr
+            ]
+            date_obj = None
+            for fmt in supported_formats:
+                try:
+                    date_obj = datetime.datetime.strptime(dt, fmt)
+                    break
+                except ValueError:
+                    pass
+
+            if date_obj:
+                dt = date_obj
+            else:
+                raise TypeError(f'Unsupported date format: {dt}')
+
+            self.datetime = dt
+        
         # datetime.datetime API
         self.year = dt.year
         self.month = dt.month
