@@ -65,7 +65,7 @@ class MultiLegCashflows(Cashflows):
         self.legs = cashflows_list
 
         payment_dates, merged_schedule = self.merge_legs()
-        self.payment_dates = payment_dates
+        self.payment_dates = [Date(d) for d in payment_dates]
         self.merged_schedule = merged_schedule
 
         self.nonzero_leg_map = defaultdict(list)
