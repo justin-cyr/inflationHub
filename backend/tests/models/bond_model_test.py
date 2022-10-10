@@ -12,9 +12,17 @@ import pytest
 @pytest.fixture()
 def otr_nominal_bonds():
     params = [
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04125, 'maturity_date': '2027-09-30', 'dated_date': '2022-09-30'}, # 5y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.02750, 'maturity_date': '2032-08-15', 'dated_date': '2022-08-15'}, # 10y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03000, 'maturity_date': '2052-08-15', 'dated_date': '2022-08-15'}  # 30y
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2022-11-08'}, # 1M
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-01-05'}, # 3M
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-04-06'}, # 6M
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-10-05'}, # 1Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04250, 'maturity_date': '2024-09-30', 'dated_date': '2022-09-30'}, # 2Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03500, 'maturity_date': '2025-09-30', 'dated_date': '2022-09-15'}, # 3Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04125, 'maturity_date': '2027-09-30', 'dated_date': '2022-09-30'}, # 5Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03875, 'maturity_date': '2029-09-30', 'dated_date': '2022-09-30'}, # 7Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.02750, 'maturity_date': '2032-08-15', 'dated_date': '2022-08-15'}, # 10Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03375, 'maturity_date': '2042-08-15', 'dated_date': '2022-08-15'}, # 20Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03000, 'maturity_date': '2052-08-15', 'dated_date': '2022-08-15'}  # 30Y
     ]
     bonds = [Bond.create_bond(**p) for p in params]
 
@@ -23,9 +31,17 @@ def otr_nominal_bonds():
 @pytest.fixture()
 def otr_nominal_yields():
     yields = [
-        0.04087, # 5y
-        0.03829, # 10y
-        0.03781  # 30y
+        0.02967, # 1M
+        0.03378, # 3M
+        0.04089, # 6M
+        0.04181, # 1Y
+        0.04312, # 2Y
+        0.04349, # 3Y
+        0.04149, # 5Y
+        0.04037, # 7Y
+        0.03888, # 10Y
+        0.04148, # 20Y
+        0.03848  # 30Y
     ]
     return yields
 
@@ -37,12 +53,12 @@ def bond_data_points(otr_nominal_bonds, otr_nominal_yields):
 def default_build_params(bond_data_points):
     model_build_params = {
         'model_type': 'BondCurve',
-        'base_date': '2022-10-01',
+        'base_date': '2022-10-10',
         'model_data': bond_data_points,
         'domainX': domains.TIME_ACT_365,
         'domainY': domains.TIME_WEIGHTED_ZERO_RATE,
         'fitting_method_str': 'PiecewiseLinear',
-        't0_date': '2022-10-01',
+        't0_date': '2022-10-10',
         'calibration_tolerance': 1E-8,
         'opt_method': 'BFGS'
         }
