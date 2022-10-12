@@ -1,5 +1,7 @@
+from concurrent import futures
 import datetime
 import os
+import requests
 
 from backend.data import DataGetter, get_fred_data, MarketWatchBondQuoteParser
 from backend import config as cfg
@@ -27,6 +29,45 @@ def get_tips_cusips():
 
     response = getter.get(tips_cusips_url)
     return [record['cusip'] for record in response.json()]
+
+
+def get_outstanding_tsy_reference_data():
+    """Return reference data for all outstanding Treasuries, from Auction Query page on TreasuryDirect."""
+    first_page_url = f'https://www.treasurydirect.gov/TA_WS/securities/jqsearch?format=json&pagesize=1&pagenum=0'
+    app.logger.info(f'get_outstanding_tsy_reference_data: making request GET {first_page_url}')
+    num_records = requests.get(first_page_url).json()['totalResultsCount']
+
+    page_size = 100
+    max_workers = 32
+    pages = (num_records // page_size) + 1
+    urls = [f'https://www.treasurydirect.gov/TA_WS/securities/jqsearch?format=json&pagesize={page_size}&pagenum={p}'
+                for p in range(pages)
+            ]
+
+    def get_page(url):
+        res = requests.get(url).json()
+        return res['securityList']
+
+    today = datetime.date.today()
+    def str_to_date(s):
+        s = s[:10]
+        return datetime.date(int(s[:4]), int(s[5:7]), int(s[8:]))
+
+    # request pages in multiple threads
+    results = []
+    with futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_url = { executor.submit(get_page, url): url for url in urls }
+        
+        for future in futures.as_completed(future_to_url):
+            try:
+                results += future.result()
+            except Exception as e:
+                # log error
+                print(e)
+
+    # filter out matured bonds
+    outstanding = [r for r in results if str_to_date(r['maturityDate']) > today]
+    return outstanding
 
 
 def get_treasury_reference_data(cusip):

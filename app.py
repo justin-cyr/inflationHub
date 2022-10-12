@@ -53,6 +53,17 @@ def get_tips_cusips():
         app.logger.error(str(e))
         return dict(errors=str(e))
 
+@app.route('/all_tsy_reference_data')
+def get_all_tsy_reference_data():
+    try:
+        from backend.tips_data import get_all_tsy_reference_data
+        ref_data = get_all_tsy_reference_data()
+        return dict(referenceData=ref_data)
+        
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))
+
 @app.route('/tips_reference_data/<cusip>')
 def get_tips_reference_data(cusip):
     try:
