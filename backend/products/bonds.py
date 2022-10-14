@@ -2,7 +2,7 @@
 from ast import Yield
 from backend.products.cashflows import Cashflows, FixedCouponCashflows, MultiLegCashflows, PrincipalCashflows
 from backend.products.projectedcashflows import ProjectedCashflows
-from ..utils import BumpDirection, Date, DateFrequency, DayCount, StrEnum, YieldConvention
+from ..utils import BumpDirection, Date, DateFrequency, DayCount, StrEnum, Tenor, YieldConvention
 from ..utilities.calendar import CalendarUtil
 from ..utilities.couponschedule import CouponSchedule
 
@@ -72,6 +72,7 @@ class Bond(object):
 
         # optional parameters passed in kwargs
         dated_date = kwargs.get('dated_date')
+        tenor = kwargs.get('tenor')
         rate = kwargs.get('rate')
 
         # optional parameters in kwargs or Bonds.csv
@@ -122,17 +123,18 @@ class Bond(object):
             return FixedRateBond(
                     notional,
                     maturity_date,
-                    dated_date,
                     rate,
                     payment_frequency,
                     coupon_convention,
                     yield_convention,
                     accrued_interest_day_count,
-                    settlement_days,
-                    settlement_calendars,
-                    payment_days,
-                    payment_calendars,
-                    day_count
+                    dated_date=dated_date,
+                    tenor=tenor,
+                    settlement_days=settlement_days,
+                    settlement_calendars=settlement_calendars,
+                    payment_days=payment_days,
+                    payment_calendars=payment_calendars,
+                    day_count=day_count
                     )
         else:
             raise NotImplementedError(f'Bond.create_bond: does not support bond type {bond_type}.')
@@ -289,12 +291,13 @@ class FixedRateBond(Bond):
     def __init__(self,
             notional,
             maturity_date,
-            dated_date,
             rate,
             payment_frequency,
             coupon_convention,
             yield_convention,
             accrued_interest_day_count,
+            dated_date=None,
+            tenor=None,
             settlement_days=0,
             settlement_calendars=[],
             payment_days=0,
@@ -312,7 +315,6 @@ class FixedRateBond(Bond):
 
         required_arguments = {
             'rate': rate,
-            'dated_date': dated_date,
             'coupon_convention': coupon_convention,
             'payment_frequency': payment_frequency,
             'yield_convention': yield_convention,
@@ -323,8 +325,17 @@ class FixedRateBond(Bond):
             if val is None:
                 raise ValueError(f'FixedRateBond: requires argument {name}.')
 
+        # dated_date is required unless Tenor is provided
+        if not tenor:
+            if not dated_date:
+                raise ValueError(f'FixedRateBond: requires either tenor or dated_date.')
+        else:
+            bkwd_tenor = Tenor('-'+tenor)
+            dated_date = self.maturity_date.addTenor(bkwd_tenor)
+
         self.rate = float(rate)
         self.dated_date = Date(dated_date)
+        self.tenor = tenor
         self.coupon_convention = coupon_convention
         self.payment_frequency = payment_frequency
         self.yield_convention = yield_convention

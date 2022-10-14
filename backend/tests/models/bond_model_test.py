@@ -16,13 +16,13 @@ def otr_nominal_bonds():
         {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-01-05'}, # 3M
         {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-04-06'}, # 6M
         {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-10-05'}, # 1Y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04250, 'maturity_date': '2024-09-30', 'dated_date': '2022-09-30'}, # 2Y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03500, 'maturity_date': '2025-09-30', 'dated_date': '2022-09-15'}, # 3Y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04125, 'maturity_date': '2027-09-30', 'dated_date': '2022-09-30'}, # 5Y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03875, 'maturity_date': '2029-09-30', 'dated_date': '2022-09-30'}, # 7Y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.02750, 'maturity_date': '2032-08-15', 'dated_date': '2022-08-15'}, # 10Y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03375, 'maturity_date': '2042-08-15', 'dated_date': '2022-08-15'}, # 20Y
-        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03000, 'maturity_date': '2052-08-15', 'dated_date': '2022-08-15'}  # 30Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04250, 'maturity_date': '2024-09-30', 'tenor': '2Y'}, # 2Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03500, 'maturity_date': '2025-09-30', 'tenor': '3Y'}, # 3Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04125, 'maturity_date': '2027-09-30', 'tenor': '5Y'}, # 5Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03875, 'maturity_date': '2029-09-30', 'tenor': '7Y'}, # 7Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.02750, 'maturity_date': '2032-08-15', 'tenor': '10Y'}, # 10Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03375, 'maturity_date': '2042-08-15', 'tenor': '20Y'}, # 20Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03000, 'maturity_date': '2052-08-15', 'tenor': '30Y'}  # 30Y
     ]
     bonds = [Bond.create_bond(**p) for p in params]
 

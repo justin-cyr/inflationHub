@@ -329,12 +329,13 @@ class Tenor(object):
         if not (tenor.endswith('Y') or tenor.endswith('M') or tenor.endswith('D')):
             raise ValueError(f'Tenor expected to end with Y, M, D but got {tenor_str}')
 
-        if not tenor[:-1].isnumeric():
+        size = tenor[:-1]
+        if not (size.isnumeric() or (size.startswith('-') and size[1:].isnumeric())):
             raise ValueError(f'Tenor expected to start with number but got {tenor_str}')
 
         self.tenor = tenor
         self.unit = tenor[-1]
-        self.size = int(tenor[:-1])
+        self.size = int(size)
 
     def __repr__(self):
         return self.tenor
