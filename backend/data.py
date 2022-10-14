@@ -373,7 +373,7 @@ class CnbcJsonQuoteParser(Parser):
 
         for record in quote_list:
             yield_num = float(self.chop_pct(record.get('last')))
-            coupon = float(self.chop_pct(record.get('last')))
+            coupon = float(self.chop_pct(record.get('coupon')))
             name = record.get('name')
             standard_name = Parser.standard_name(name)
 
