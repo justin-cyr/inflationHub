@@ -2,6 +2,7 @@ import datetime
 import os
 
 from backend.data import DataGetter, get_fred_data, MarketWatchBondQuoteParser
+from backend.curveconstruction.curvedata import BondYieldDataPoint
 from backend import config as cfg
 
 # get logger from current_app instance
@@ -207,3 +208,70 @@ def get_tips_quotes_from_marketwatch(cusips):
     response = getter.get(url)
     parser = MarketWatchBondQuoteParser()
     return parser.parse(response)
+
+
+# Benchmark bond input
+benchmark_bond_conventions = {
+    # US Treasuries
+    'US 1M': 'USTBill',
+    'US 3M': 'USTBill',
+    'US 6M': 'USTBill',
+    'US 1Y': 'USTBill',
+    'US 2Y': 'USTBond',
+    'US 3Y': 'USTBond',
+    'US 5Y': 'USTBond',
+    'US 7Y': 'USTBond',
+    'US 10Y': 'USTBond',
+    'US 20Y': 'USTBond',
+    'US 30Y': 'USTBond'
+    ####
+    # TIPS
+    }
+
+def benchmark_bond_inputs(**kwargs):
+    """Return a dict that can be passed to Bond.create_bond from the kwargs."""
+    required_args = [
+        'standardName',
+        'maturityDate',
+        'timestamp'
+    ]
+    for a in required_args:
+        if a not in kwargs:
+            raise KeyError(f'{__name__} requires argument {a}.')
+    
+    name = kwargs['standardName']
+    if not name in benchmark_bond_conventions:
+        raise ValueError(f'{name} is not a recognized benchmark bond name.')
+
+    # expect second part of name is tenor
+    tenor = name.split(' ')[-1]
+
+    base_date = kwargs['timestamp'][:10]
+
+    convention = benchmark_bond_conventions[name]
+    bond_inputs = {
+        'Convention': convention,
+        'notional': 100.0,
+        'rate': kwargs.get('coupon', 0.0) / 100.0,
+        'maturity_date': kwargs['maturityDate'],
+        'tenor': tenor,
+        'base_date': base_date,
+        'label': name
+    }
+    return bond_inputs
+
+def benchmark_bond_yield_data_point(**kwargs):
+    """Return a BondYieldDataPoint for the benchmark bond in kwargs."""
+    if 'yield' not in kwargs:
+        raise KeyError(f'{__name__} requires argument yield.')
+    
+    bond_inputs = benchmark_bond_inputs(**kwargs)
+    bond_dp = {
+        'bond': bond_inputs,
+        'ytm': kwargs['yield'] / 100.0,
+        'base_date': bond_inputs['base_date'],
+        'label': bond_inputs['label']
+    }
+    data_point = BondYieldDataPoint.deserialize(bond_dp)
+
+    return data_point

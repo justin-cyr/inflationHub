@@ -1,9 +1,10 @@
 
 from ...products.bonds import Bond
 from ...curveconstruction.curvedata import BondYieldDataPoint
-from ...buildsettings.buildsettings import BuildSettingsBondCurve
 from ...curveconstruction import domains
 from ...models.modelfactory import ModelFactory
+from ...data import DataAPI
+from ...tips_data import benchmark_bond_yield_data_point
 
 import pytest
 
@@ -60,7 +61,7 @@ def default_build_params(bond_data_points):
         'fitting_method_str': 'PiecewiseLinear',
         't0_date': '2022-10-10',
         'calibration_tolerance': 1E-8,
-        'opt_method': 'BFGS'
+        'opt_method': 'CG'
         }
     return model_build_params
 
@@ -115,3 +116,17 @@ def test_trust_constr_calibration(app, default_build_params):
 
     with app.app_context():
         bond_model = ModelFactory.build(build_params)
+
+@run_with_profiler
+def test_standard_nominal_calibration(app, default_build_params):
+    # volatile test: quotes can change on each test run
+    build_params = default_build_params
+
+    with app.app_context(): 
+        quotes = DataAPI('CNBC US Treasury Yields (intraday)').get_and_parse_data()['data']
+        benchmark_bond_quotes = [benchmark_bond_yield_data_point(**q).serialize() for q in quotes]
+        build_params['model_data'] = benchmark_bond_quotes
+
+        bond_model = ModelFactory.build(build_params)
+
+    print(quotes)

@@ -220,10 +220,9 @@ class BondDataPoint(CurveDataPoint):
             raise ValueError(f'{self.__class__.__name__}: bond argument must Bond type or deserializable using Bond.create_bond.')
         
         if not label:
-            label = '_'.join([self.__class__.__name__, str(bond.maturity_date)])
+            label = '_'.join([self.__class__.__name__, str(self.bond.maturity_date)])
         
         super().__init__(value, label)
-        self.bond = bond
         self.base_date = Date(base_date)
 
     def to_BondPriceAndYieldDataPoint(self):
