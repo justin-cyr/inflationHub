@@ -2323,13 +2323,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "RECEIVE_TIPS_CUSIPS": () => (/* binding */ RECEIVE_TIPS_CUSIPS),
 /* harmony export */   "RECEIVE_TIPS_REF_DATA": () => (/* binding */ RECEIVE_TIPS_REF_DATA),
+/* harmony export */   "RECEIVE_TSY_REF_DATA": () => (/* binding */ RECEIVE_TSY_REF_DATA),
 /* harmony export */   "updateTipsCusips": () => (/* binding */ updateTipsCusips),
-/* harmony export */   "updateTipsRefData": () => (/* binding */ updateTipsRefData)
+/* harmony export */   "updateTipsRefData": () => (/* binding */ updateTipsRefData),
+/* harmony export */   "updateTsyRefData": () => (/* binding */ updateTsyRefData)
 /* harmony export */ });
 /* harmony import */ var _requests_referenceData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../requests/referenceData */ "./requests/referenceData.js");
 
 const RECEIVE_TIPS_CUSIPS = 'RECEIVE_TIPS_CUSIPS';
 const RECEIVE_TIPS_REF_DATA = 'RECEIVE_TIPS_REF_DATA';
+const RECEIVE_TSY_REF_DATA = 'RECEIVE_TSY_REF_DATA';
 
 const receiveTipsCusips = response => ({
   type: RECEIVE_TIPS_CUSIPS,
@@ -2341,8 +2344,14 @@ const receiveTipsRefData = response => ({
   response
 });
 
+const receiveTsyRefData = response => ({
+  type: RECEIVE_TSY_REF_DATA,
+  response
+});
+
 const updateTipsCusips = () => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTipsCusips)().then(response => dispatch(receiveTipsCusips(response)));
 const updateTipsRefData = cusip => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTipsRefData)(cusip).then(response => dispatch(receiveTipsRefData(response)));
+const updateTsyRefData = cusip => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTsyRefData)(cusip).then(response => dispatch(receiveTsyRefData(response)));
 
 /***/ }),
 
@@ -4130,6 +4139,7 @@ class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       this.props.referenceData.tips.cusips.map(cusip => this.props.updateTipsRefData(cusip));
     });
     this.props.updateTipsPrices();
+    this.props.updateTsyRefData();
   }
 
   render() {
@@ -4171,7 +4181,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   updateTipsPrices: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateTipsPrices)()),
   updateTipsCusips: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsCusips)()),
-  updateTipsRefData: cusip => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsRefData)(cusip))
+  updateTipsRefData: cusip => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsRefData)(cusip)),
+  updateTsyRefData: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTsyRefData)())
 });
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps, mapDispatchToProps)(_state_loader__WEBPACK_IMPORTED_MODULE_3__["default"]));
@@ -4735,6 +4746,11 @@ const _emptyState = {
     cusips: [],
     otr: {},
     bonds: {}
+  },
+  tsys: {
+    cusips: [],
+    otr: {},
+    bonds: {}
   }
 }; // Reference data reducer
 
@@ -4756,6 +4772,14 @@ const _emptyState = {
           bonds: { ...state.tips.bonds,
             [cusip]: action.response.referenceData
           }
+        }
+      };
+
+    case _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TSY_REF_DATA:
+      return { ...state,
+        tsys: { ...state.tsys,
+          cusips: action.response.cusips,
+          bonds: action.response.bonds
         }
       };
 
@@ -4822,7 +4846,8 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "getTipsCusips": () => (/* binding */ getTipsCusips),
-/* harmony export */   "getTipsRefData": () => (/* binding */ getTipsRefData)
+/* harmony export */   "getTipsRefData": () => (/* binding */ getTipsRefData),
+/* harmony export */   "getTsyRefData": () => (/* binding */ getTsyRefData)
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
@@ -4834,6 +4859,10 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
 });
 const getTipsRefData = cusip => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
   url: '/tips_reference_data/' + cusip,
+  method: 'GET'
+});
+const getTsyRefData = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/all_tsy_reference_data',
   method: 'GET'
 });
 

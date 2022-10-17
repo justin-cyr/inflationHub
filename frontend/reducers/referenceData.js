@@ -1,8 +1,9 @@
-import { RECEIVE_TIPS_CUSIPS, RECEIVE_TIPS_REF_DATA } from "../actions/referenceData";
+import { RECEIVE_TIPS_CUSIPS, RECEIVE_TIPS_REF_DATA, RECEIVE_TSY_REF_DATA } from "../actions/referenceData";
 
 // default state
 const _emptyState = {
-    tips: { cusips: [], otr: {}, bonds: {} }
+    tips: { cusips: [], otr: {}, bonds: {} },
+    tsys: { cusips: [], otr: {}, bonds: {} },
 }
 
 // Reference data reducer
@@ -31,6 +32,16 @@ export default (state = _emptyState, action) => {
                     }
                 }
             };
+
+        case RECEIVE_TSY_REF_DATA:
+            return {
+                ...state,
+                tsys: {
+                    ...state.tsys,
+                    cusips: action.response.cusips,
+                    bonds: action.response.bonds
+                }
+            }
 
         default:
             return state;

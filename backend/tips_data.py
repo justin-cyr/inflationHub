@@ -31,7 +31,7 @@ def get_tips_cusips():
     return [record['cusip'] for record in response.json()]
 
 
-def get_outstanding_tsy_reference_data():
+def get_all_tsy_reference_data():
     """Return reference data for all outstanding Treasuries, from Auction Query page on TreasuryDirect."""
     first_page_url = f'https://www.treasurydirect.gov/TA_WS/securities/jqsearch?format=json&pagesize=1&pagenum=0'
     app.logger.info(f'get_outstanding_tsy_reference_data: making request GET {first_page_url}')

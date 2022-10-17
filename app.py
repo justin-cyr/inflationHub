@@ -58,7 +58,9 @@ def get_all_tsy_reference_data():
     try:
         from backend.tips_data import get_all_tsy_reference_data
         ref_data = get_all_tsy_reference_data()
-        return dict(referenceData=ref_data)
+        bonds = {r['cusip']: r for r in ref_data}
+        cusips = list(bonds.keys())
+        return dict(referenceData=dict(cusips=cusips, bonds=bonds))
         
     except Exception as e:
         app.logger.error(str(e))

@@ -14,3 +14,10 @@ export const getTipsRefData = cusip => (
         method: 'GET'
     })
 );
+
+export const getTsyRefData = () => (
+    $.ajax({
+        url: '/all_tsy_reference_data',
+        method: 'GET'
+    })
+);
