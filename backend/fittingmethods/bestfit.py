@@ -5,7 +5,7 @@ class BestFitConstant(FittingMethod):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
         self.constant = None
-
+        self.training_len = None
 
     def __repr__(self):
         return f'BestFitConstant({self.domain_pair.domainY})'
@@ -17,7 +17,8 @@ class BestFitConstant(FittingMethod):
         if not ys:
             raise ValueError('BestFitConstant.fit: ys must be list of at least 1 point.')
 
-        self.constant = sum(ys) / len(ys)
+        self.training_len = len(ys)
+        self.constant = sum(ys) / self.training_len
 
 
     @FittingMethod.check_is_fit
@@ -26,6 +27,9 @@ class BestFitConstant(FittingMethod):
 
     def dydx(self, x):
         return 0.0
+
+    def grad(self, x):
+        return [1.0 / self.training_len for _ in range(self.training_len)]
 
 
 class BestFitLinear(FittingMethod):

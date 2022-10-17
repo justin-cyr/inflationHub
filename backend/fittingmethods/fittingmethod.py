@@ -75,3 +75,7 @@ class FittingMethod(object):
         """Return the derivative dy/dx at point x."""
         # Default implementation is a difference quotient with small step size
         return self.difference_quotient(x, delta_x=1E-8)
+
+    def grad(self, x):
+        """Return the gradient vector (df(x)/dy_1,...,df(x)/dy_n)"""
+        raise NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class.')
