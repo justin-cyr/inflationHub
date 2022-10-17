@@ -34,7 +34,7 @@ def get_tips_cusips():
 def get_all_tsy_reference_data():
     """Return reference data for all outstanding Treasuries, from Auction Query page on TreasuryDirect."""
     first_page_url = f'https://www.treasurydirect.gov/TA_WS/securities/jqsearch?format=json&pagesize=1&pagenum=0'
-    app.logger.info(f'get_outstanding_tsy_reference_data: making request GET {first_page_url}')
+    app.logger.info(f'get_all_tsy_reference_data: making request GET {first_page_url}')
     num_records = requests.get(first_page_url).json()['totalResultsCount']
 
     page_size = 100
@@ -62,11 +62,10 @@ def get_all_tsy_reference_data():
             try:
                 results += future.result()
             except Exception as e:
-                # log error
-                print(e)
+                app.logger.error(e)
 
-    # filter out matured bonds
-    outstanding = [r for r in results if str_to_date(r['maturityDate']) > today]
+    # filter out matured bonds and reopenings
+    outstanding = [r for r in results if (str_to_date(r['maturityDate']) > today) and (r['reopening'] == 'No')]
     return outstanding
 
 
