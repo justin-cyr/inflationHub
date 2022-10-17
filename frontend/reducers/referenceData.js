@@ -38,8 +38,8 @@ export default (state = _emptyState, action) => {
                 ...state,
                 tsys: {
                     ...state.tsys,
-                    cusips: action.response.cusips,
-                    bonds: action.response.bonds
+                    cusips: action.response.referenceData.cusips,
+                    bonds: action.response.referenceData.bonds
                 }
             }
 

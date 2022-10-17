@@ -4778,8 +4778,8 @@ const _emptyState = {
     case _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TSY_REF_DATA:
       return { ...state,
         tsys: { ...state.tsys,
-          cusips: action.response.cusips,
-          bonds: action.response.bonds
+          cusips: action.response.referenceData.cusips,
+          bonds: action.response.referenceData.bonds
         }
       };
 
