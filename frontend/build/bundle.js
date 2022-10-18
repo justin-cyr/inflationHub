@@ -4226,9 +4226,24 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     const todayStr = year + '-' + month + '-' + day;
     let referenceData = Object.values(this.props.referenceData.tips.bonds);
     referenceData = referenceData.sort((a, b) => a.tenor - b.tenor);
+    const priceData = this.props.quotes.daily.tipsPrices.priceData;
+
+    for (let i = 0; i < referenceData.length; ++i) {
+      referenceData[i] = this.mergePriceToReferenceData(priceData, referenceData[i]);
+    }
+
+    const series = {
+      x: priceData.map(record => record.TENOR),
+      y: priceData.map(record => record.YIELD / 100),
+      text: priceData.map(record => record.MATURITY),
+      type: 'scatter',
+      mode: 'markers',
+      showlegend: false,
+      name: 'Real Yields'
+    };
     this._isMounted = false;
     this.state = {
-      chartData: [],
+      chartData: [series],
       cusips: this.props.referenceData.tips.cusips,
       priceData: [],
       referenceData: referenceData,
@@ -4687,10 +4702,10 @@ const mapStateToProps = state => ({
 
 /***/ }),
 
-/***/ "./reducers/quotesDaily.js":
-/*!*********************************!*\
-  !*** ./reducers/quotesDaily.js ***!
-  \*********************************/
+/***/ "./reducers/quotes.js":
+/*!****************************!*\
+  !*** ./reducers/quotes.js ***!
+  \****************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4702,8 +4717,10 @@ __webpack_require__.r(__webpack_exports__);
  // default state
 
 const _emptyState = {
-  quotes: {
-    daily: {}
+  daily: {
+    tipsPrices: {
+      priceData: []
+    }
   }
 }; // Daily quotes reducer
 
@@ -4712,13 +4729,13 @@ const _emptyState = {
 
   switch (action.type) {
     case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_PRICES:
-      return Object.assign({}, {
-        quotes: {
-          daily: { ...state.quotes.daily,
-            'tipsPrices': action.response
+      return { ...state,
+        daily: { ...state.daily,
+          tipsPrices: { ...state.daily.tipsPrices,
+            priceData: action.response.priceData
           }
         }
-      });
+      };
 
     default:
       return state;
@@ -4802,13 +4819,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
-/* harmony import */ var _quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quotesDaily */ "./reducers/quotesDaily.js");
+/* harmony import */ var _quotes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quotes */ "./reducers/quotes.js");
 /* harmony import */ var _referenceData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./referenceData */ "./reducers/referenceData.js");
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,redux__WEBPACK_IMPORTED_MODULE_2__.combineReducers)({
-  quotesDaily: _quotesDaily__WEBPACK_IMPORTED_MODULE_0__["default"],
+  quotes: _quotes__WEBPACK_IMPORTED_MODULE_0__["default"],
   referenceData: _referenceData__WEBPACK_IMPORTED_MODULE_1__["default"]
 }));
 

@@ -21,9 +21,24 @@ class TipsData extends React.Component {
         let referenceData = Object.values(this.props.referenceData.tips.bonds);
         referenceData = referenceData.sort((a, b) => a.tenor - b.tenor );
 
+        const priceData = this.props.quotes.daily.tipsPrices.priceData;
+        for (let i = 0; i < referenceData.length; ++i) {
+            referenceData[i] = this.mergePriceToReferenceData(priceData, referenceData[i]);
+        }
+
+        const series = {
+            x: priceData.map(record => record.TENOR),
+            y: priceData.map(record => record.YIELD / 100),
+            text: priceData.map(record => record.MATURITY),
+            type: 'scatter',
+            mode: 'markers',
+            showlegend: false,
+            name: 'Real Yields'
+        }
+
         this._isMounted = false;
         this.state = {
-            chartData: [],
+            chartData: [series],
             cusips: this.props.referenceData.tips.cusips,
             priceData: [],
             referenceData: referenceData,

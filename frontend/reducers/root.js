@@ -1,10 +1,10 @@
 
 import { combineReducers } from 'redux';
 
-import quotesDailyReducer from './quotesDaily';
+import quotesReducer from './quotes';
 import referenceDataReducer from './referenceData';
 
 export default combineReducers({
-    quotesDaily: quotesDailyReducer,
+    quotes: quotesReducer,
     referenceData: referenceDataReducer
 });
