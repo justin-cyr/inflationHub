@@ -3968,7 +3968,11 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         style: {
           textAlign: 'center'
         }
-      }, "YTM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        src: "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg",
+        width: "36",
+        height: "24"
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
         style: {
           textAlign: 'center'
         }

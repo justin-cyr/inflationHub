@@ -100,7 +100,9 @@ class MarketData extends React.Component {
                         <th style={{ textAlign: 'center' }}>Coupon</th>
                         <th style={{ textAlign: 'center' }}>Price</th>
                         <th style={{ textAlign: 'center' }}>Price Change</th>
-                        <th style={{ textAlign: 'center' }}>YTM</th>
+                        <th style={{ textAlign: 'center' }}>YTM
+                            <img src="https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg" width="36" height="24"></img>
+                            </th>
                         <th style={{ textAlign: 'center' }}>YTM Change</th>
                         <th style={{ textAlign: 'center' }}>Timestamp</th>
                     </tr>
