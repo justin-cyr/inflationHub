@@ -32,10 +32,10 @@ export default (state = _emptyState, action) => {
                 if (!state.daily.tsys.otr[record.standardName] ||
                     (quoteTime > state.daily.tsys.otr[record.standardName].timestamp)) {
                     newOtrTsys[record.standardName] = {
-                        price: record.price,
+                        price: Number(record.price),
                         priceChange: record.priceChange,
                         timestamp: quoteTime,
-                        yield: record.yield,
+                        yield: Number(record.yield),
                         yieldChange: record.yieldChange
                     }
                 }

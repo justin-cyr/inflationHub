@@ -3855,6 +3855,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const benchmarkTsys = ['US 1M', 'US 3M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
 
 class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -3873,32 +3874,10 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       downColor: '#dc3545' // red
 
     };
-    this.getTreasuryYieldfromWSJ = this.getTreasuryYieldfromWSJ.bind(this);
-  }
-
-  getTreasuryYieldfromWSJ() {
-    // Request Market price data
-    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
-      url: '/data/WSJ US Treasury Yields (intraday)',
-      method: 'GET',
-      complete: () => {
-        // schedule the next request only when the current one is complete
-        if (this._isMounted) {
-          setTimeout(this.getTreasuryYieldfromWSJ, 10000);
-        }
-      },
-      success: response => {
-        const wsjTreasuryYields = response.data;
-        this._isMounted && this.setState({
-          wsjTreasuryYields: wsjTreasuryYields
-        });
-      }
-    });
   }
 
   componentDidMount() {
     this._isMounted = true;
-    this.getTreasuryYieldfromWSJ();
   }
 
   componentWillUnmount() {
@@ -3907,45 +3886,45 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   render() {
     // Reference data table
-    let data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'); // if wsjTreasuryYields(dict) is defined
+    let data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'); // if quotes have updated in the state
 
-    if (this.state.wsjTreasuryYields) {
-      const table_rows = this.state.wsjTreasuryYields.length === 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+    if (Object.keys(this.props.quotes.daily.tsys.otr).length > 0) {
+      const table_rows = this.props.quotes.daily.tsys.otr.length === 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
         key: 'empty'
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         colSpan: "7"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'))) : this.state.wsjTreasuryYields.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        key: record['name']
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'))) : benchmarkTsys.map(standardName => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        key: standardName
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
-      }, record['standardName']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
-      }, Number(record['coupon']).toFixed(3) + '%'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center',
-          color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor
+          color: this.props.quotes.daily.tsys.otr[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor
         }
-      }, Number(record['price']).toFixed(3)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, this.props.quotes.daily.tsys.otr[standardName].price.toFixed(3)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
-      }, record['priceChange']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, this.props.quotes.daily.tsys.otr[standardName].priceChange || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
-      }, record['yield']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, this.props.quotes.daily.tsys.otr[standardName].yield.toFixed(3) || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
-      }, record['yieldChange']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, this.props.quotes.daily.tsys.otr[standardName].yieldChange || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center'
         }
-      }, new Date(record['timestamp']).toLocaleTimeString())));
+      }, this.props.quotes.daily.tsys.otr[standardName].timestamp.toLocaleTimeString() || '')));
       data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           height: '500px',
@@ -3996,9 +3975,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           color: '#bdbdbd'
         }
       }, table_rows)));
-    } // if we do not comment off the following line, the table will auto update secondly 
-    //this.getTreasuryYieldfromWSJ();
-
+    }
 
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
@@ -4022,9 +3999,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _market_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./market_data */ "./components/market_data/market_data.jsx");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _market_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./market_data */ "./components/market_data/market_data.jsx");
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_market_data__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+const mapStateToProps = state => ({
+  referenceData: state.referenceData,
+  quotes: state.quotes
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps)(_market_data__WEBPACK_IMPORTED_MODULE_1__["default"]));
 
 /***/ }),
 
@@ -4766,10 +4751,10 @@ const _emptyState = {
 
         if (!state.daily.tsys.otr[record.standardName] || quoteTime > state.daily.tsys.otr[record.standardName].timestamp) {
           newOtrTsys[record.standardName] = {
-            price: record.price,
+            price: Number(record.price),
             priceChange: record.priceChange,
             timestamp: quoteTime,
-            yield: record.yield,
+            yield: Number(record.yield),
             yieldChange: record.yieldChange
           };
         } else {

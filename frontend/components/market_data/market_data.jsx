@@ -5,6 +5,19 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
+const benchmarkTsys = [
+    'US 1M',
+    'US 3M',
+    'US 6M',
+    'US 1Y',
+    'US 2Y',
+    'US 3Y',
+    'US 5Y',
+    'US 7Y',
+    'US 10Y',
+    'US 20Y',
+    'US 30Y'
+];
 
 class MarketData extends React.Component {
 
@@ -25,38 +38,10 @@ class MarketData extends React.Component {
             downColor:  '#dc3545',  // red
         }
 
-        this.getTreasuryYieldfromWSJ = this.getTreasuryYieldfromWSJ.bind(this);
-    }
-
-    getTreasuryYieldfromWSJ() {
-        // Request Market price data
-        $.ajax({
-            url: '/data/WSJ US Treasury Yields (intraday)',
-            method: 'GET',
-
-            complete: () => {
-                // schedule the next request only when the current one is complete
-                if (this._isMounted) {
-                    setTimeout(this.getTreasuryYieldfromWSJ, 10000);
-                }
-            },
-
-
-            success: (response) => {
-                const wsjTreasuryYields = response.data;
-
-                this._isMounted && this.setState({
-                    wsjTreasuryYields: wsjTreasuryYields
-                });
-            }
-
-
-        });
     }
     
     componentDidMount() {
         this._isMounted = true;
-        this.getTreasuryYieldfromWSJ();
     }
 
     componentWillUnmount() {
@@ -67,21 +52,21 @@ class MarketData extends React.Component {
         // Reference data table
         let data_table = <center>{'... Loading data ...'}</center>;
         
-        // if wsjTreasuryYields(dict) is defined
-        if (this.state.wsjTreasuryYields) {
-            const table_rows = this.state.wsjTreasuryYields.length === 0
+        // if quotes have updated in the state
+        if (Object.keys(this.props.quotes.daily.tsys.otr).length > 0) {
+            const table_rows = this.props.quotes.daily.tsys.otr.length === 0
                 ? <tr key={'empty'}><td colSpan="7"><center>{'... Loading data ...'}</center></td></tr>
-                : this.state.wsjTreasuryYields.map(record => 
-                    <tr key={record['name']}>
-                        <td style={{ textAlign: 'center' }}>{record['standardName']}</td> 
-                        <td style={{ textAlign: 'center' }}>{Number(record['coupon']).toFixed(3) + '%'}</td> 
+                : benchmarkTsys.map(standardName => 
+                    <tr key={standardName}>
+                        <td style={{ textAlign: 'center' }}>{standardName}</td> 
+                        <td style={{ textAlign: 'center' }}>{}</td> 
                         <td style={{ textAlign: 'center',
-                                     color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor  
-                                                         }}>{Number(record['price']).toFixed(3)}</td>    
-                        <td style={{ textAlign: 'center' }}>{record['priceChange']}</td>                
-                        <td style={{ textAlign: 'center' }}>{record['yield']}</td>        
-                        <td style={{ textAlign: 'center' }}>{record['yieldChange']}</td>  
-                        <td style={{ textAlign: 'center' }}>{(new Date(record['timestamp'])).toLocaleTimeString()}</td>                               
+                            color: this.props.quotes.daily.tsys.otr[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor  
+                                                  }}>{this.props.quotes.daily.tsys.otr[standardName].price.toFixed(3)}</td>    
+                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].priceChange || ''}</td>                
+                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].yield.toFixed(3) || ''}</td>          
+                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].yieldChange || ''}</td>  
+                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].timestamp.toLocaleTimeString() || ''}</td>                               
                     </tr>
                 );
     
@@ -115,8 +100,7 @@ class MarketData extends React.Component {
             </Table>
             </div>;
         }
-        // if we do not comment off the following line, the table will auto update secondly 
-        //this.getTreasuryYieldfromWSJ();
+
         return (
             <Container fluid>
                 <Row>
