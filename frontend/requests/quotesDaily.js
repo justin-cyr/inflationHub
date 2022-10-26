@@ -7,3 +7,11 @@ export const getTipsPrices = () => (
         method: 'GET'
     })
 );
+
+export const getOtrTsyQuotesWsj = () => (
+    $.ajax({
+        url: '/data/WSJ US Treasury Yields (intraday)',
+        method: 'GET'
+    })
+);
+
