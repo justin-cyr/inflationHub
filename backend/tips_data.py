@@ -209,7 +209,7 @@ def get_tips_prices_wsj():
     for row in row_data:
         row['MATURITY'] = str(datetime.datetime.strptime(row['MATURITY'], '%Y %b %d').date())
         row['TENOR'] = calc_tenor(row['MATURITY'])
-        row['CHANGE'] = 0.0 if row['CHANGE'] == 'unch.' else float(row['CHANGE'])
+        row['CHANGE'] = 0.0 if row['CHANGE'] in ['unch.', '...'] else float(row['CHANGE'])
         
         for col in ['COUPON', 'BID', 'ASK', 'YIELD', 'ACCRUED PRINCIPAL']:
             try:
