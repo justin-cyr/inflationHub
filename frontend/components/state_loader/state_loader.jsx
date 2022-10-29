@@ -12,6 +12,7 @@ class StateLoader extends React.Component {
         this.props.updateTsyRefData();
         this.props.updateOtrTsyQuotesCnbc();
         this.props.updateOtrTsyQuotesWsj();
+        this.props.updateOtrTsyQuotesMw();
     }
 
     render() {

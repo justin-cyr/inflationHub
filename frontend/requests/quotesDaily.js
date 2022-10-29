@@ -21,3 +21,10 @@ export const getOtrTsyQuotesCnbc = () => (
         method: 'GET'
     })
 );
+
+export const getOtrTsyQuotesMw = () => (
+    $.ajax({
+        url: '/data/MW US Treasury Yields (intraday)',
+        method: 'GET'
+    })
+);
