@@ -19,6 +19,10 @@ const benchmarkTsys = [
     'US 30Y'
 ];
 
+const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
+const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
+const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
+
 class MarketData extends React.Component {
 
     constructor(props) {
@@ -59,16 +63,18 @@ class MarketData extends React.Component {
                 <td style={{ textAlign: 'center' }}>{standardName}</td>
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''}</td> 
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''}</td> 
-                <td style={{ textAlign: 'center',
-                color: (standardName in this.props.quotes.daily.tsys.otr.wsj) 
-                        && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-'
-                        ? this.state.downColor
-                        : this.state.upColor  
-                }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''}</td>    
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3): ''}</td>                
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''}</td>
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''}</td>          
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yieldChange : ''}</td>  
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].price.toFixed(3) : ''}</td>   
+                <td style={{
+                    textAlign: 'center',
+                    color: (standardName in this.props.quotes.daily.tsys.otr.wsj)
+                        && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-'
+                        ? this.state.downColor
+                        : this.state.upColor
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''}</td>           
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : ''}</td>                               
             </tr>
         );
@@ -87,17 +93,24 @@ class MarketData extends React.Component {
                     <th style={{ textAlign: 'center' }}>Name</th>
                     <th style={{ textAlign: 'center' }}>Maturity</th>
                     <th style={{ textAlign: 'center' }}>Coupon</th>
-                    <th style={{ textAlign: 'center' }}>Price</th>
                     <th style={{ textAlign: 'center' }}>YTM
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg" width="36" height="24"></img>
-                        </th>
-                    <th style={{ textAlign: 'center' }}>YTM
-                        <img src="https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg" width="42" height="28"></img>
-                        </th>
-                    <th style={{ textAlign: 'center' }}>YTM
-                        <img src="https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413" width="30" height="30"></img>
+                        <img src={cnbcLogo} width="36" height="24"></img>
                     </th>
-                    <th style={{ textAlign: 'center' }}>YTM Change</th>
+                    <th style={{ textAlign: 'center' }}>YTM
+                        <img src={wsjLogo} width="42" height="28"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>YTM
+                        <img src={mwLogo} width="30" height="30"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={cnbcLogo} width="36" height="24"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={wsjLogo} width="42" height="28"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={mwLogo} width="30" height="30"></img>
+                    </th>
                     <th style={{ textAlign: 'center' }}>Timestamp</th>
                 </tr>
             </thead>

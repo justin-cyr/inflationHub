@@ -3879,6 +3879,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const benchmarkTsys = ['US 1M', 'US 3M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
+const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
+const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
+const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
 
 class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -3927,11 +3930,6 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       }
     }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center',
-        color: standardName in this.props.quotes.daily.tsys.otr.wsj && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor
-      }
-    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-      style: {
         textAlign: 'center'
       }
     }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
@@ -3946,7 +3944,16 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
-    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].yieldChange : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+    }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: standardName in this.props.quotes.daily.tsys.otr.wsj && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.mw ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
         textAlign: 'center'
       }
@@ -3980,12 +3987,8 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
-    }, "Price"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
     }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-      src: "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg",
+      src: cnbcLogo,
       width: "36",
       height: "24"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
@@ -3993,7 +3996,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         textAlign: 'center'
       }
     }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-      src: "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg",
+      src: wsjLogo,
       width: "42",
       height: "28"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
@@ -4001,14 +4004,34 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         textAlign: 'center'
       }
     }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-      src: "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413",
+      src: mwLogo,
       width: "30",
       height: "30"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
       style: {
         textAlign: 'center'
       }
-    }, "YTM Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cnbcLogo,
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: wsjLogo,
+      width: "42",
+      height: "28"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: mwLogo,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
       style: {
         textAlign: 'center'
       }
