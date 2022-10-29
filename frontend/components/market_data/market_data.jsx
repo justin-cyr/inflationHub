@@ -53,53 +53,54 @@ class MarketData extends React.Component {
         let data_table = <center>{'... Loading data ...'}</center>;
         
         // if quotes have updated in the state
-        if (Object.keys(this.props.quotes.daily.tsys.otr).length > 0) {
-            const table_rows = this.props.quotes.daily.tsys.otr.length === 0
-                ? <tr key={'empty'}><td colSpan="7"><center>{'... Loading data ...'}</center></td></tr>
-                : benchmarkTsys.map(standardName => 
-                    <tr key={standardName}>
-                        <td style={{ textAlign: 'center' }}>{standardName}</td> 
-                        <td style={{ textAlign: 'center' }}>{}</td> 
-                        <td style={{ textAlign: 'center',
-                            color: this.props.quotes.daily.tsys.otr[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor  
-                                                  }}>{this.props.quotes.daily.tsys.otr[standardName].price.toFixed(3)}</td>    
-                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].priceChange || ''}</td>                
-                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].yield.toFixed(3) || ''}</td>          
-                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].yieldChange || ''}</td>  
-                        <td style={{ textAlign: 'center' }}>{this.props.quotes.daily.tsys.otr[standardName].timestamp.toLocaleTimeString() || ''}</td>                               
-                    </tr>
-                );
-    
 
-        data_table = <div
-                style={{ height: '500px', overflow: 'auto' }}
+        const table_rows = benchmarkTsys.map(standardName =>
+            <tr key={standardName}>
+                <td style={{ textAlign: 'center' }}>{standardName}</td> 
+                <td style={{ textAlign: 'center' }}>{/* coupon from reference data */}</td> 
+                <td style={{ textAlign: 'center',
+                color: (standardName in this.props.quotes.daily.tsys.otr.wsj) 
+                        && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-'
+                        ? this.state.downColor
+                        : this.state.upColor  
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''}</td>    
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange : ''}</td>                
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''}</td>          
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yieldChange : ''}</td>  
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].timestamp.toLocaleTimeString() : ''}</td>                               
+            </tr>
+        );
+
+
+    data_table = <div
+            style={{ height: '500px', overflow: 'auto' }}
+        >
+        <Table
+            id="market-data-table"
+            responsive
+            hover
+        >
+            <thead>
+                <tr style={{ color: '#bdbdbd'}}>
+                    <th style={{ textAlign: 'center' }}>Name</th>
+                    <th style={{ textAlign: 'center' }}>Coupon</th>
+                    <th style={{ textAlign: 'center' }}>Price</th>
+                    <th style={{ textAlign: 'center' }}>Price Change</th>
+                    <th style={{ textAlign: 'center' }}>YTM
+                        <img src="https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg" width="36" height="24"></img>
+                        </th>
+                    <th style={{ textAlign: 'center' }}>YTM Change</th>
+                    <th style={{ textAlign: 'center' }}>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody
+                style={{ color: '#bdbdbd' }}
             >
-            <Table
-                id="market-data-table"
-                responsive
-                hover
-            >
-                <thead>
-                    <tr style={{ color: '#bdbdbd'}}>
-                        <th style={{ textAlign: 'center' }}>Name</th>
-                        <th style={{ textAlign: 'center' }}>Coupon</th>
-                        <th style={{ textAlign: 'center' }}>Price</th>
-                        <th style={{ textAlign: 'center' }}>Price Change</th>
-                        <th style={{ textAlign: 'center' }}>YTM
-                            <img src="https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg" width="36" height="24"></img>
-                            </th>
-                        <th style={{ textAlign: 'center' }}>YTM Change</th>
-                        <th style={{ textAlign: 'center' }}>Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody
-                    style={{ color: '#bdbdbd' }}
-                >
-                    {table_rows}
-                </tbody>
-            </Table>
-            </div>;
-        }
+                {table_rows}
+            </tbody>
+        </Table>
+        </div>;
+
 
         return (
             <Container fluid>

@@ -2,7 +2,7 @@ import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TSY_QUOTES_WSJ } from "../actions/quot
 
 // default state
 const _emptyState = {
-    daily: { tipsPrices: { priceData: [] }, tsys: { otr: {} }}
+    daily: { tipsPrices: { priceData: [] }, tsys: { otr: { wsj: {}, cnbc: {}, mw: {}, cme: {} } }}
 }
 
 // Daily quotes reducer
@@ -51,7 +51,10 @@ export default (state = _emptyState, action) => {
                     ...state.daily,
                     tsys: {
                         ...state.daily.tsys,
-                        otr: newOtrTsys
+                        otr: {
+                            ...state.daily.tsys.otr,
+                            wsj: newOtrTsys
+                        }
                     }
                 }
             };

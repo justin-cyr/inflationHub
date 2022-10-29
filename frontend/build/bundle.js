@@ -3888,95 +3888,88 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     // Reference data table
     let data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'); // if quotes have updated in the state
 
-    if (Object.keys(this.props.quotes.daily.tsys.otr).length > 0) {
-      const table_rows = this.props.quotes.daily.tsys.otr.length === 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        key: 'empty'
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        colSpan: "7"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'))) : benchmarkTsys.map(standardName => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        key: standardName
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center',
-          color: this.props.quotes.daily.tsys.otr[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor
-        }
-      }, this.props.quotes.daily.tsys.otr[standardName].price.toFixed(3)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, this.props.quotes.daily.tsys.otr[standardName].priceChange || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, this.props.quotes.daily.tsys.otr[standardName].yield.toFixed(3) || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, this.props.quotes.daily.tsys.otr[standardName].yieldChange || ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, this.props.quotes.daily.tsys.otr[standardName].timestamp.toLocaleTimeString() || '')));
-      data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          height: '500px',
-          overflow: 'auto'
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        id: "market-data-table",
-        responsive: true,
-        hover: true
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        style: {
-          color: '#bdbdbd'
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Price"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Price Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-        src: "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg",
-        width: "36",
-        height: "24"
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "YTM Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Timestamp"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
-        style: {
-          color: '#bdbdbd'
-        }
-      }, table_rows)));
-    }
-
+    const table_rows = benchmarkTsys.map(standardName => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      key: standardName
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: standardName in this.props.quotes.daily.tsys.otr.wsj && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].yieldChange : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].timestamp.toLocaleTimeString() : '')));
+    data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: '500px',
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      id: "market-data-table",
+      responsive: true,
+      hover: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      style: {
+        color: '#bdbdbd'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg",
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "YTM Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Timestamp"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+      style: {
+        color: '#bdbdbd'
+      }
+    }, table_rows)));
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, data_table));
@@ -4724,7 +4717,12 @@ const _emptyState = {
       priceData: []
     },
     tsys: {
-      otr: {}
+      otr: {
+        wsj: {},
+        cnbc: {},
+        mw: {},
+        cme: {}
+      }
     }
   }
 }; // Daily quotes reducer
@@ -4766,7 +4764,9 @@ const _emptyState = {
       return { ...state,
         daily: { ...state.daily,
           tsys: { ...state.daily.tsys,
-            otr: newOtrTsys
+            otr: { ...state.daily.tsys.otr,
+              wsj: newOtrTsys
+            }
           }
         }
       };
