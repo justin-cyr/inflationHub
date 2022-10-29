@@ -15,12 +15,20 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
         const quoteTime = new Date(record.timestamp)
         if (!(record.standardName in currentOtrTsys) ||
             (quoteTime > currentOtrTsys[record.standardName].timestamp)) {
+
+            let priceChange = 0;
+            let yieldChange = 0;
+            if (record.standardName in currentOtrTsys) {
+                priceChange = record.price - currentOtrTsys[record.standardName].price;
+                yieldChange = record.yield - currentOtrTsys[record.standardName].yield;
+            }
+
             newOtrTsys[record.standardName] = {
                 price: Number(record.price),
-                priceChange: record.priceChange,
+                priceChange: priceChange,
                 timestamp: quoteTime,
                 yield: Number(record.yield),
-                yieldChange: record.yieldChange
+                yieldChange: yieldChange
             }
         }
         else {
@@ -41,8 +49,15 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
         const quoteTime = new Date(record.timestamp)
         if (!(record.standardName in currentOtrTsys) ||
             (quoteTime > currentOtrTsys[record.standardName].timestamp)) {
+
+            let priceChange = 0;
+            if (record.standardName in currentOtrTsys) {
+                priceChange = record.price - currentOtrTsys[record.standardName].price;
+            }
+
             newOtrTsys[record.standardName] = {
                 price: Number(record.price),
+                priceChange: priceChange,
                 displayPrice: record.displayPrice,
                 timestamp: quoteTime,
                 volume: record.volume

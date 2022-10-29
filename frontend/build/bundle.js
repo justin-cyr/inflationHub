@@ -3889,6 +3889,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const upColor = '#198754'; // green
+
+const downColor = '#dc3545'; // red
+
+const unchColor = '#bdbdbd'; // default text color
+
 const benchmarkTsys = ['US 1M', 'US 3M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
 const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
 const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
@@ -3905,12 +3911,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     const todayStr = year + '-' + month + '-' + day;
     this._isMounted = false;
     this.state = {
-      wsjTreasuryYields: [],
-      // styles
-      upColor: '#198754',
-      // green
-      downColor: '#dc3545' // red
-
+      wsjTreasuryYields: []
     };
   }
 
@@ -3920,6 +3921,18 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
+  }
+
+  getChangeColor(quoteObj, key, field) {
+    if (key in quoteObj && field in quoteObj[key]) {
+      if (quoteObj[key][field] > 0) {
+        return upColor;
+      } else if (quoteObj[key][field] < 0) {
+        return downColor;
+      }
+    }
+
+    return unchColor;
   }
 
   render() {
@@ -3942,32 +3955,38 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       }
     }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'yieldChange')
       }
     }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'yieldChange')
       }
     }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'yieldChange')
       }
     }, standardName in this.props.quotes.daily.tsys.otr.mw ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'priceChange')
       }
     }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
         textAlign: 'center',
-        color: standardName in this.props.quotes.daily.tsys.otr.wsj && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'priceChange')
       }
     }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'priceChange')
       }
     }, standardName in this.props.quotes.daily.tsys.otr.mw ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cme, standardName, 'priceChange')
       }
     }, standardName in this.props.quotes.daily.tsys.otr.cme ? this.props.quotes.daily.tsys.otr.cme[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
@@ -4835,12 +4854,20 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
     const quoteTime = new Date(record.timestamp);
 
     if (!(record.standardName in currentOtrTsys) || quoteTime > currentOtrTsys[record.standardName].timestamp) {
+      let priceChange = 0;
+      let yieldChange = 0;
+
+      if (record.standardName in currentOtrTsys) {
+        priceChange = record.price - currentOtrTsys[record.standardName].price;
+        yieldChange = record.yield - currentOtrTsys[record.standardName].yield;
+      }
+
       newOtrTsys[record.standardName] = {
         price: Number(record.price),
-        priceChange: record.priceChange,
+        priceChange: priceChange,
         timestamp: quoteTime,
         yield: Number(record.yield),
-        yieldChange: record.yieldChange
+        yieldChange: yieldChange
       };
     } else {
       // keep existing quote
@@ -4859,8 +4886,15 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
     const quoteTime = new Date(record.timestamp);
 
     if (!(record.standardName in currentOtrTsys) || quoteTime > currentOtrTsys[record.standardName].timestamp) {
+      let priceChange = 0;
+
+      if (record.standardName in currentOtrTsys) {
+        priceChange = record.price - currentOtrTsys[record.standardName].price;
+      }
+
       newOtrTsys[record.standardName] = {
         price: Number(record.price),
+        priceChange: priceChange,
         displayPrice: record.displayPrice,
         timestamp: quoteTime,
         volume: record.volume

@@ -5,6 +5,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
+const upColor = '#198754';  // green
+const downColor = '#dc3545';  // red
+const unchColor = '#bdbdbd'; // default text color
+
 const benchmarkTsys = [
     'US 1M',
     'US 3M',
@@ -38,9 +42,6 @@ class MarketData extends React.Component {
         this._isMounted = false;
         this.state = {
             wsjTreasuryYields: [],
-            // styles
-            upColor:    '#198754',  // green
-            downColor:  '#dc3545',  // red
         }
 
     }
@@ -51,6 +52,18 @@ class MarketData extends React.Component {
 
     componentWillUnmount() {
         this._isMounted = false;
+    }
+
+    getChangeColor(quoteObj, key, field) {
+        if ((key in quoteObj) && (field in quoteObj[key])) {
+            if (quoteObj[key][field] > 0) {
+                return upColor;
+            }
+            else if (quoteObj[key][field] < 0) {
+                return downColor;
+            }
+        }
+        return unchColor;
     }
 
     render() {
@@ -64,19 +77,34 @@ class MarketData extends React.Component {
                 <td style={{ textAlign: 'center' }}>{standardName}</td>
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''}</td> 
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''}</td> 
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3): ''}</td>                
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''}</td>
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''}</td>
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].price.toFixed(3) : ''}</td>   
                 <td style={{
                     textAlign: 'center',
-                    color: (standardName in this.props.quotes.daily.tsys.otr.wsj)
-                        && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-'
-                        ? this.state.downColor
-                        : this.state.upColor
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3): ''}</td>                
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].price.toFixed(3) : ''}</td>   
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'priceChange')
                 }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''}</td>
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''}</td>
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cme) ? this.props.quotes.daily.tsys.otr.cme[standardName].price.toFixed(3) : ''}</td>           
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cme, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.cme) ? this.props.quotes.daily.tsys.otr.cme[standardName].price.toFixed(3) : ''}</td>           
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : ''}</td>                               
             </tr>
         );
