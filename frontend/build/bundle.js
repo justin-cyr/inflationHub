@@ -3910,7 +3910,11 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+    }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
         textAlign: 'center',
         color: standardName in this.props.quotes.daily.tsys.otr.wsj && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-' ? this.state.downColor : this.state.upColor
@@ -3919,7 +3923,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
-    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+    }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
         textAlign: 'center'
       }
@@ -3931,7 +3935,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
-    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].timestamp.toLocaleTimeString() : '')));
+    }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : '')));
     data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         height: '500px',
@@ -3953,6 +3957,10 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
+    }, "Maturity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
     }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
       style: {
         textAlign: 'center'
@@ -3961,14 +3969,18 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
-    }, "Price Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+    }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg",
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
       style: {
         textAlign: 'center'
       }
     }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
       src: "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg",
-      width: "36",
-      height: "24"
+      width: "42",
+      height: "28"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
       style: {
         textAlign: 'center'
@@ -4762,7 +4774,7 @@ const _emptyState = {
         for (let record of data) {
           const quoteTime = new Date(record.timestamp);
 
-          if (!state.daily.tsys.otr[record.standardName] || quoteTime > state.daily.tsys.otr[record.standardName].timestamp) {
+          if (!(record.standardName in state.daily.tsys.otr.wsj) || quoteTime > state.daily.tsys.otr.wsj[record.standardName].timestamp) {
             newOtrTsys[record.standardName] = {
               price: Number(record.price),
               priceChange: record.priceChange,
@@ -4772,7 +4784,7 @@ const _emptyState = {
             };
           } else {
             // keep existing quote
-            newOtrTsys = state.daily.tsys.otr;
+            newOtrTsys[record.standardName] = state.daily.tsys.otr.wsj[record.standardName];
           }
         }
 
@@ -4795,7 +4807,7 @@ const _emptyState = {
         for (let record of data) {
           const quoteTime = new Date(record.timestamp);
 
-          if (!state.daily.tsys.otr[record.standardName] || quoteTime > state.daily.tsys.otr[record.standardName].timestamp) {
+          if (!(record.standardName in state.daily.tsys.otr.cnbc) || quoteTime > state.daily.tsys.otr.cnbc[record.standardName].timestamp) {
             newOtrTsys[record.standardName] = {
               price: Number(record.price),
               priceChange: record.priceChange,
@@ -4805,7 +4817,7 @@ const _emptyState = {
             };
           } else {
             // keep existing quote
-            newOtrTsys = state.daily.tsys.otr;
+            newOtrTsys[record.standardName] = state.daily.tsys.otr.cnbc[record.standardName];
           }
         }
 

@@ -30,8 +30,8 @@ export default (state = _emptyState, action) => {
             // Update quotes for the first time or replace older quotes
             for (let record of data) {
                 const quoteTime = new Date(record.timestamp)
-                if (!state.daily.tsys.otr[record.standardName] ||
-                    (quoteTime > state.daily.tsys.otr[record.standardName].timestamp)) {
+                if (!(record.standardName in state.daily.tsys.otr.wsj) ||
+                    (quoteTime > state.daily.tsys.otr.wsj[record.standardName].timestamp)) {
                     newOtrTsys[record.standardName] = {
                         price: Number(record.price),
                         priceChange: record.priceChange,
@@ -42,7 +42,7 @@ export default (state = _emptyState, action) => {
                 }
                 else {
                     // keep existing quote
-                    newOtrTsys = state.daily.tsys.otr;
+                    newOtrTsys[record.standardName] = state.daily.tsys.otr.wsj[record.standardName];
                 }
             }
 
@@ -68,8 +68,8 @@ export default (state = _emptyState, action) => {
             // Update quotes for the first time or replace older quotes
             for (let record of data) {
                 const quoteTime = new Date(record.timestamp)
-                if (!state.daily.tsys.otr[record.standardName] ||
-                    (quoteTime > state.daily.tsys.otr[record.standardName].timestamp)) {
+                if (!(record.standardName in state.daily.tsys.otr.cnbc) ||
+                    (quoteTime > state.daily.tsys.otr.cnbc[record.standardName].timestamp)) {
                     newOtrTsys[record.standardName] = {
                         price: Number(record.price),
                         priceChange: record.priceChange,
@@ -80,7 +80,7 @@ export default (state = _emptyState, action) => {
                 }
                 else {
                     // keep existing quote
-                    newOtrTsys = state.daily.tsys.otr;
+                    newOtrTsys[record.standardName] = state.daily.tsys.otr.cnbc[record.standardName];
                 }
             }
 

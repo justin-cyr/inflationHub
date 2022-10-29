@@ -56,18 +56,19 @@ class MarketData extends React.Component {
 
         const table_rows = benchmarkTsys.map(standardName =>
             <tr key={standardName}>
-                <td style={{ textAlign: 'center' }}>{standardName}</td> 
-                <td style={{ textAlign: 'center' }}>{/* coupon from reference data */}</td> 
+                <td style={{ textAlign: 'center' }}>{standardName}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''}</td> 
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''}</td> 
                 <td style={{ textAlign: 'center',
                 color: (standardName in this.props.quotes.daily.tsys.otr.wsj) 
                         && this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange[0] === '-'
                         ? this.state.downColor
                         : this.state.upColor  
                 }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''}</td>    
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].priceChange : ''}</td>                
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3): ''}</td>                
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''}</td>          
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yieldChange : ''}</td>  
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].timestamp.toLocaleTimeString() : ''}</td>                               
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : ''}</td>                               
             </tr>
         );
 
@@ -83,11 +84,14 @@ class MarketData extends React.Component {
             <thead>
                 <tr style={{ color: '#bdbdbd'}}>
                     <th style={{ textAlign: 'center' }}>Name</th>
+                    <th style={{ textAlign: 'center' }}>Maturity</th>
                     <th style={{ textAlign: 'center' }}>Coupon</th>
                     <th style={{ textAlign: 'center' }}>Price</th>
-                    <th style={{ textAlign: 'center' }}>Price Change</th>
                     <th style={{ textAlign: 'center' }}>YTM
-                        <img src="https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg" width="36" height="24"></img>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg" width="36" height="24"></img>
+                        </th>
+                    <th style={{ textAlign: 'center' }}>YTM
+                        <img src="https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg" width="42" height="28"></img>
                         </th>
                     <th style={{ textAlign: 'center' }}>YTM Change</th>
                     <th style={{ textAlign: 'center' }}>Timestamp</th>
