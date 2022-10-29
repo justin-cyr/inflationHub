@@ -3924,6 +3924,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.state = {
       wsjTreasuryYields: []
     };
+    this.getChangeColor = this.getChangeColor.bind(this);
   }
 
   componentDidMount() {

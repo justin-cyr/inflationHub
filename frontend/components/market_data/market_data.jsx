@@ -44,6 +44,7 @@ class MarketData extends React.Component {
             wsjTreasuryYields: [],
         }
 
+        this.getChangeColor = this.getChangeColor.bind(this);
     }
     
     componentDidMount() {
