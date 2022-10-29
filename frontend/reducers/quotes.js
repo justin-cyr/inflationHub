@@ -16,7 +16,7 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
 
     // Update quotes for the first time or replace older quotes
     for (let record of data) {
-        const quoteTime = new Date(record.timestamp)
+        const quoteTime = new Date(record.timestamp);
         if (!(record.standardName in currentOtrTsys) ||
             (quoteTime > currentOtrTsys[record.standardName].timestamp)) {
 
@@ -38,6 +38,12 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
         else {
             // keep existing quote
             newOtrTsys[record.standardName] = currentOtrTsys[record.standardName];
+
+            if (quoteTime.getTime() === currentOtrTsys[record.standardName].timestamp.getTime()) {
+                // set changes back to 0
+                newOtrTsys[record.standardName].priceChange = 0;
+                newOtrTsys[record.standardName].yieldChange = 0;
+            }
         }
     }
 
@@ -50,7 +56,7 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
 
     // Update quotes for the first time or replace older quotes
     for (let record of data) {
-        const quoteTime = new Date(record.timestamp)
+        const quoteTime = new Date(record.timestamp);
         if (!(record.standardName in currentOtrTsys) ||
             (quoteTime > currentOtrTsys[record.standardName].timestamp)) {
 
@@ -70,6 +76,11 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
         else {
             // keep existing quote
             newOtrTsys[record.standardName] = currentOtrTsys[record.standardName];
+
+            if (quoteTime.getTime() === currentOtrTsys[record.standardName].timestamp.getTime()) {
+                // set changes back to 0
+                newOtrTsys[record.standardName].priceChange = 0;
+            }
         }
     }
 

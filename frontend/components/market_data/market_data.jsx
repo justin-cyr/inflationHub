@@ -1,6 +1,6 @@
 import React from 'react';
-import $, { merge } from 'jquery';
 
+import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
@@ -21,6 +21,12 @@ const benchmarkTsys = [
     'US 10Y',
     'US 20Y',
     'US 30Y'
+];
+
+const benchmarkTips = [
+    'TIPS 5Y',
+    'TIPS 10Y',
+    'TIPS 30Y'
 ];
 
 const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
@@ -69,11 +75,11 @@ class MarketData extends React.Component {
 
     render() {
         // Reference data table
-        let data_table = <center>{'... Loading data ...'}</center>;
+        const loading_data_table = <center>{'... Loading data ...'}</center>;;
         
-        // if quotes have updated in the state
-
-        const table_rows = benchmarkTsys.map(standardName =>
+        // Tsys benchmark table
+        let tsy_data_table = loading_data_table;
+        const tsy_table_rows = benchmarkTsys.map(standardName =>
             <tr key={standardName}>
                 <td style={{ textAlign: 'center' }}>{standardName}</td>
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''}</td> 
@@ -111,16 +117,16 @@ class MarketData extends React.Component {
         );
 
 
-    data_table = <div
+    tsy_data_table = <div
             style={{ height: '500px', overflow: 'auto' }}
         >
         <Table
-            id="market-data-table"
+            id="tsys-benchmark-table"
             responsive
             hover
         >
             <thead>
-                <tr style={{ color: '#bdbdbd'}}>
+                <tr style={{ color: unchColor }}>
                     <th style={{ textAlign: 'center' }}>Name</th>
                     <th style={{ textAlign: 'center' }}>Maturity</th>
                     <th style={{ textAlign: 'center' }}>Coupon</th>
@@ -149,19 +155,74 @@ class MarketData extends React.Component {
                 </tr>
             </thead>
             <tbody
-                style={{ color: '#bdbdbd' }}
+                style={{ color: unchColor }}
             >
-                {table_rows}
+                {tsy_table_rows}
             </tbody>
         </Table>
         </div>;
 
+        // TIPS benchmark table
+        let tips_data_table = loading_data_table;
+        const tips_table_rows = benchmarkTips.map(standardName =>
+            <tr key={standardName}>
+                <td style={{ textAlign: 'center' }}>{standardName}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tips.otr) ? this.props.referenceData.tips.otr[standardName].maturityDate : ''}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tips.otr) ? this.props.referenceData.tips.otr[standardName].coupon.toFixed(3) + '%' : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tips.otr.cnbc, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tips.otr.cnbc) ? this.props.quotes.daily.tips.otr.cnbc[standardName].yield.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tips.otr.cnbc, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tips.otr.cnbc) ? this.props.quotes.daily.tips.otr.cnbc[standardName].price.toFixed(3) : ''}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tips.otr.cnbc) ? this.props.quotes.daily.tips.otr.cnbc[standardName].timestamp.toLocaleTimeString() : ''}</td>
+            </tr>
+        );
+
+
+        tips_data_table = <div
+            style={{ height: '250px', width: '600px', overflow: 'auto', paddingTop: '25px' }}
+        >
+            <Table
+                id="tips-benchmark-table"
+                responsive
+                hover
+            >
+                <thead>
+                    <tr style={{ color: unchColor }}>
+                        <th style={{ textAlign: 'center' }}>Name</th>
+                        <th style={{ textAlign: 'center' }}>Maturity</th>
+                        <th style={{ textAlign: 'center' }}>Coupon</th>
+                        <th style={{ textAlign: 'center' }}>YTM
+                            <img src={cnbcLogo} width="36" height="24"></img>
+                        </th>
+                        <th style={{ textAlign: 'center' }}>Price
+                            <img src={cnbcLogo} width="36" height="24"></img>
+                        </th>
+                        <th style={{ textAlign: 'center' }}>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody
+                    style={{ color: unchColor }}
+                >
+                    {tips_table_rows}
+                </tbody>
+            </Table>
+        </div>;
 
         return (
             <Container fluid>
                 <Row>
-                    {/* Table */}
-                    {data_table}
+                    {/* Tsys benchmark table */}
+                    {tsy_data_table}
+                </Row>
+                <Row>
+                    <Col>
+                        {/* Tips benchmark table */}
+                        {tips_data_table}
+                    </Col>
                 </Row>
             </Container>
         );
