@@ -4848,6 +4848,11 @@ const _emptyState = {
     tipsPrices: {
       priceData: []
     },
+    tips: {
+      otr: {
+        cnbc: {}
+      }
+    },
     tsys: {
       otr: {
         wsj: {},
@@ -4934,6 +4939,20 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
           }
         }
       };
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TIPS_QUOTES_CNBC:
+      {
+        const newOtrTips = newOtrTsyQuotes(state.daily.tips.otr.cnbc, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tips: { ...state.daily.tips,
+              otr: { ...state.daily.tips.otr,
+                cnbc: newOtrTips
+              }
+            }
+          }
+        };
+      }
 
     case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TSY_QUOTES_WSJ:
       {

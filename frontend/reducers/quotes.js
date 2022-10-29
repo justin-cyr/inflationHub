@@ -1,8 +1,12 @@
-import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME } from "../actions/quotesDaily";
+import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME } from "../actions/quotesDaily";
 
 // default state
 const _emptyState = {
-    daily: { tipsPrices: { priceData: [] }, tsys: { otr: { wsj: {}, cnbc: {}, mw: {}, cme: {} } }}
+    daily: {
+        tipsPrices: { priceData: [] },
+        tips: { otr: { cnbc: {} } },
+        tsys: { otr: { wsj: {}, cnbc: {}, mw: {}, cme: {} } }
+    }
 }
 
 // helper for updating OTR quotes
@@ -89,6 +93,25 @@ export default (state = _emptyState, action) => {
                 }
             };
         
+        case RECEIVE_OTR_TIPS_QUOTES_CNBC:
+        {
+            const newOtrTips = newOtrTsyQuotes(state.daily.tips.otr.cnbc, action.response.data);
+
+            return {
+                ...state,
+                daily: {
+                    ...state.daily,
+                    tips: {
+                        ...state.daily.tips,
+                        otr: {
+                            ...state.daily.tips.otr,
+                            cnbc: newOtrTips
+                        }
+                    }
+                }
+            };
+        }
+
         case RECEIVE_OTR_TSY_QUOTES_WSJ:
         {
             const newOtrTsys = newOtrTsyQuotes(state.daily.tsys.otr.wsj, action.response.data);
