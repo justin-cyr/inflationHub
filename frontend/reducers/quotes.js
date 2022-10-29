@@ -51,27 +51,7 @@ export default (state = _emptyState, action) => {
         
         case RECEIVE_OTR_TSY_QUOTES_WSJ:
         {
-            const data = action.response.data;
-            let newOtrTsys = {};
-
-            // Update quotes for the first time or replace older quotes
-            for (let record of data) {
-                const quoteTime = new Date(record.timestamp)
-                if (!(record.standardName in state.daily.tsys.otr.wsj) ||
-                    (quoteTime > state.daily.tsys.otr.wsj[record.standardName].timestamp)) {
-                    newOtrTsys[record.standardName] = {
-                        price: Number(record.price),
-                        priceChange: record.priceChange,
-                        timestamp: quoteTime,
-                        yield: Number(record.yield),
-                        yieldChange: record.yieldChange
-                    }
-                }
-                else {
-                    // keep existing quote
-                    newOtrTsys[record.standardName] = state.daily.tsys.otr.wsj[record.standardName];
-                }
-            }
+            const newOtrTsys = newOtrTsyQuotes(state.daily.tsys.otr.wsj, action.response.data);
 
             return {
                 ...state,
@@ -89,27 +69,7 @@ export default (state = _emptyState, action) => {
         }
         case RECEIVE_OTR_TSY_QUOTES_CNBC:
         {
-            const data = action.response.data;
-            let newOtrTsys = {};
-
-            // Update quotes for the first time or replace older quotes
-            for (let record of data) {
-                const quoteTime = new Date(record.timestamp)
-                if (!(record.standardName in state.daily.tsys.otr.cnbc) ||
-                    (quoteTime > state.daily.tsys.otr.cnbc[record.standardName].timestamp)) {
-                    newOtrTsys[record.standardName] = {
-                        price: Number(record.price),
-                        priceChange: record.priceChange,
-                        timestamp: quoteTime,
-                        yield: Number(record.yield),
-                        yieldChange: record.yieldChange
-                    }
-                }
-                else {
-                    // keep existing quote
-                    newOtrTsys[record.standardName] = state.daily.tsys.otr.cnbc[record.standardName];
-                }
-            }
+            const newOtrTsys = newOtrTsyQuotes(state.daily.tsys.otr.cnbc, action.response.data);
 
             return {
                 ...state,
