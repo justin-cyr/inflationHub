@@ -35,3 +35,10 @@ export const getOtrTsyQuotesCme = () => (
         method: 'GET'
     })
 );
+
+export const getOtrTipsQuotesCnbc = () => (
+    $.ajax({
+        url: '/data/CNBC TIPS Yields (intraday)',
+        method: 'GET'
+    })
+);

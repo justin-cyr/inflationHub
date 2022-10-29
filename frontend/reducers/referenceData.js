@@ -1,11 +1,38 @@
 import { RECEIVE_TIPS_CUSIPS, RECEIVE_TIPS_REF_DATA, RECEIVE_TSY_REF_DATA } from "../actions/referenceData";
-import { RECEIVE_OTR_TSY_QUOTES_CNBC } from "../actions/quotesDaily";
+import { RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_CNBC } from "../actions/quotesDaily";
 
 // default state
 const _emptyState = {
     tips: { cusips: [], otr: {}, bonds: {} },
     tsys: { cusips: [], otr: {}, bonds: {} },
 }
+
+// helper function for OTR reference data update
+const newOtrBondRefData = (currentOtrBonds, responseData) => {
+    const data = responseData;
+    let newOtrBonds = {};
+
+    // Update quotes for the first time or replace older quotes
+    for (let record of data) {
+        const quoteTime = new Date(record.timestamp)
+        if (!(record.standardName in currentOtrBonds) ||
+            (quoteTime > currentOtrBonds[record.standardName].timestamp)) {
+
+            newOtrBonds[record.standardName] = {
+                name: record.name,
+                maturityDate: record.maturityDate,
+                coupon: Number(record.coupon),
+                timestamp: quoteTime
+            }
+        }
+        else {
+            // keep existing quote
+            newOtrBonds[record.standardName] = currentOtrBonds[record.standardName];
+        }
+    }
+
+    return newOtrBonds;
+};
 
 // Reference data reducer
 export default (state = _emptyState, action) => {
@@ -46,25 +73,7 @@ export default (state = _emptyState, action) => {
 
         case RECEIVE_OTR_TSY_QUOTES_CNBC:
         {
-            const data = action.response.data;
-            let newOtrTsys = {};
-
-            for (let record of data) {
-                const quoteTime = new Date(record.timestamp)
-                if (!state.tsys.otr[record.standardName] ||
-                    (quoteTime > state.tsys.otr[record.standardName].timestamp)) {
-                    newOtrTsys[record.standardName] = {
-                        name: record.name,
-                        maturityDate: record.maturityDate,
-                        coupon: Number(record.coupon),
-                        timestamp: quoteTime
-                    }
-                }
-                else {
-                    // keep existing quote
-                    newOtrTsys = state.tsys.otr;
-                }
-            }
+            const newOtrTsys = newOtrBondRefData(state.tsys.otr, action.response.data);
 
             return {
                 ...state,
@@ -74,6 +83,19 @@ export default (state = _emptyState, action) => {
                 }
             }
         }
+
+        case RECEIVE_OTR_TIPS_QUOTES_CNBC:
+            {
+                const newOtrTips = newOtrBondRefData(state.tips.otr, action.response.data);
+
+                return {
+                    ...state,
+                    tips: {
+                        ...state.tips,
+                        otr: newOtrTips
+                    }
+                }
+            }
 
         default:
             return state;

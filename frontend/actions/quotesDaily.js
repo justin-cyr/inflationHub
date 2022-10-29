@@ -1,6 +1,8 @@
-import { getTipsPrices, getOtrTsyQuotesWsj, getOtrTsyQuotesCnbc, getOtrTsyQuotesMw, getOtrTsyQuotesCme } from "../requests/quotesDaily";
+import { getTipsPrices, getOtrTsyQuotesWsj, getOtrTsyQuotesCnbc, getOtrTsyQuotesMw, getOtrTsyQuotesCme, getOtrTipsQuotesCnbc } from "../requests/quotesDaily";
 
 export const RECEIVE_TIPS_PRICES = 'RECEIVE_TIPS_PRICES';
+export const RECEIVE_OTR_TIPS_QUOTES_CNBC = 'RECEIVE_OTR_TIPS_QUOTES_CNBC';
+
 export const RECEIVE_OTR_TSY_QUOTES_WSJ = 'RECEIVE_OTR_TSY_QUOTES_WSJ';
 export const RECEIVE_OTR_TSY_QUOTES_CNBC = 'RECEIVE_OTR_TSY_QUOTES_CNBC';
 export const RECEIVE_OTR_TSY_QUOTES_MW = 'RECEIVE_OTR_TSY_QUOTES_MW';
@@ -10,6 +12,11 @@ const quoteUpdateFreq = 10000;
 
 const receiveTipsPrices = response => ({
     type: RECEIVE_TIPS_PRICES,
+    response
+});
+
+const receiveOtrTipsQuotesCnbc = response => ({
+    type: RECEIVE_OTR_TIPS_QUOTES_CNBC,
     response
 });
 
@@ -35,6 +42,10 @@ const receiveOtrTsyQuotesCme = response => ({
 
 export const updateTipsPrices = () => dispatch => getTipsPrices()
     .then(response => dispatch(receiveTipsPrices(response)));
+
+export const updateOtrTipsQuotesCnbc = () => dispatch => getOtrTipsQuotesCnbc()
+    .then(response => dispatch(receiveOtrTipsQuotesCnbc(response)))
+    .then(() => { setTimeout(() => dispatch(updateOtrTipsQuotesCnbc()), quoteUpdateFreq) });
 
 export const updateOtrTsyQuotesWsj = () => dispatch => getOtrTsyQuotesWsj()
     .then(response => dispatch(receiveOtrTsyQuotesWsj(response)))
