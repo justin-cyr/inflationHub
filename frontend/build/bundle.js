@@ -3893,6 +3893,7 @@ const benchmarkTsys = ['US 1M', 'US 3M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US
 const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
 const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
 const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
+const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
 
 class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -3968,6 +3969,10 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
+    }, standardName in this.props.quotes.daily.tsys.otr.cme ? this.props.quotes.daily.tsys.otr.cme[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
     }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : '')));
     data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
@@ -4040,6 +4045,14 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       }
     }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
       src: mwLogo,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cmeLogo,
       width: "30",
       height: "30"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {

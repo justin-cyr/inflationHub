@@ -22,6 +22,7 @@ const benchmarkTsys = [
 const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
 const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
 const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
+const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
 
 class MarketData extends React.Component {
 
@@ -74,7 +75,8 @@ class MarketData extends React.Component {
                         ? this.state.downColor
                         : this.state.upColor
                 }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''}</td>
-                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''}</td>           
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cme) ? this.props.quotes.daily.tsys.otr.cme[standardName].price.toFixed(3) : ''}</td>           
                 <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : ''}</td>                               
             </tr>
         );
@@ -110,6 +112,9 @@ class MarketData extends React.Component {
                     </th>
                     <th style={{ textAlign: 'center' }}>Price
                         <img src={mwLogo} width="30" height="30"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={cmeLogo} width="30" height="30"></img>
                     </th>
                     <th style={{ textAlign: 'center' }}>Timestamp</th>
                 </tr>
