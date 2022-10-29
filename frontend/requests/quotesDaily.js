@@ -28,3 +28,10 @@ export const getOtrTsyQuotesMw = () => (
         method: 'GET'
     })
 );
+
+export const getOtrTsyQuotesCme = () => (
+    $.ajax({
+        url: '/data/CME US Treasury Prices (intraday)',
+        method: 'GET'
+    })
+);

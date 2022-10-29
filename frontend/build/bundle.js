@@ -2296,10 +2296,12 @@ function useWindow() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CME": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CME),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CNBC": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CNBC),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_MW": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_MW),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_WSJ": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_WSJ),
 /* harmony export */   "RECEIVE_TIPS_PRICES": () => (/* binding */ RECEIVE_TIPS_PRICES),
+/* harmony export */   "updateOtrTsyQuotesCme": () => (/* binding */ updateOtrTsyQuotesCme),
 /* harmony export */   "updateOtrTsyQuotesCnbc": () => (/* binding */ updateOtrTsyQuotesCnbc),
 /* harmony export */   "updateOtrTsyQuotesMw": () => (/* binding */ updateOtrTsyQuotesMw),
 /* harmony export */   "updateOtrTsyQuotesWsj": () => (/* binding */ updateOtrTsyQuotesWsj),
@@ -2311,6 +2313,7 @@ const RECEIVE_TIPS_PRICES = 'RECEIVE_TIPS_PRICES';
 const RECEIVE_OTR_TSY_QUOTES_WSJ = 'RECEIVE_OTR_TSY_QUOTES_WSJ';
 const RECEIVE_OTR_TSY_QUOTES_CNBC = 'RECEIVE_OTR_TSY_QUOTES_CNBC';
 const RECEIVE_OTR_TSY_QUOTES_MW = 'RECEIVE_OTR_TSY_QUOTES_MW';
+const RECEIVE_OTR_TSY_QUOTES_CME = 'RECEIVE_OTR_TSY_QUOTES_CME';
 const quoteUpdateFreq = 10000;
 
 const receiveTipsPrices = response => ({
@@ -2333,6 +2336,11 @@ const receiveOtrTsyQuotesMw = response => ({
   response
 });
 
+const receiveOtrTsyQuotesCme = response => ({
+  type: RECEIVE_OTR_TSY_QUOTES_CME,
+  response
+});
+
 const updateTipsPrices = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getTipsPrices)().then(response => dispatch(receiveTipsPrices(response)));
 const updateOtrTsyQuotesWsj = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesWsj)().then(response => dispatch(receiveOtrTsyQuotesWsj(response))).then(() => {
   setTimeout(() => dispatch(updateOtrTsyQuotesWsj()), quoteUpdateFreq);
@@ -2342,6 +2350,9 @@ const updateOtrTsyQuotesCnbc = () => dispatch => (0,_requests_quotesDaily__WEBPA
 });
 const updateOtrTsyQuotesMw = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesMw)().then(response => dispatch(receiveOtrTsyQuotesMw(response))).then(() => {
   setTimeout(() => dispatch(updateOtrTsyQuotesMw()), quoteUpdateFreq);
+});
+const updateOtrTsyQuotesCme = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesCme)().then(response => dispatch(receiveOtrTsyQuotesCme(response))).then(() => {
+  setTimeout(() => dispatch(updateOtrTsyQuotesCme()), quoteUpdateFreq);
 });
 
 /***/ }),
@@ -4206,6 +4217,7 @@ class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.props.updateOtrTsyQuotesCnbc();
     this.props.updateOtrTsyQuotesWsj();
     this.props.updateOtrTsyQuotesMw();
+    this.props.updateOtrTsyQuotesCme();
   }
 
   render() {
@@ -4249,6 +4261,7 @@ const mapDispatchToProps = dispatch => ({
   updateOtrTsyQuotesWsj: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesWsj)()),
   updateOtrTsyQuotesCnbc: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesCnbc)()),
   updateOtrTsyQuotesMw: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesMw)()),
+  updateOtrTsyQuotesCme: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesCme)()),
   updateTipsCusips: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsCusips)()),
   updateTipsRefData: cusip => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsRefData)(cusip)),
   updateTsyRefData: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTsyRefData)())
@@ -4823,6 +4836,29 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
   }
 
   return newOtrTsys;
+};
+
+const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
+  const data = responseData;
+  let newOtrTsys = {}; // Update quotes for the first time or replace older quotes
+
+  for (let record of data) {
+    const quoteTime = new Date(record.timestamp);
+
+    if (!(record.standardName in currentOtrTsys) || quoteTime > currentOtrTsys[record.standardName].timestamp) {
+      newOtrTsys[record.standardName] = {
+        price: Number(record.price),
+        displayPrice: record.displayPrice,
+        timestamp: quoteTime,
+        volume: record.volume
+      };
+    } else {
+      // keep existing quote
+      newOtrTsys[record.standardName] = currentOtrTsys[record.standardName];
+    }
+  }
+
+  return newOtrTsys;
 }; // Daily quotes reducer
 
 
@@ -4875,6 +4911,20 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
             tsys: { ...state.daily.tsys,
               otr: { ...state.daily.tsys.otr,
                 mw: newOtrTsys
+              }
+            }
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TSY_QUOTES_CME:
+      {
+        const newOtrTsys = newOtrTsyQuotesCme(state.daily.tsys.otr.cme, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tsys: { ...state.daily.tsys,
+              otr: { ...state.daily.tsys.otr,
+                cme: newOtrTsys
               }
             }
           }
@@ -5014,6 +5064,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getOtrTsyQuotesCme": () => (/* binding */ getOtrTsyQuotesCme),
 /* harmony export */   "getOtrTsyQuotesCnbc": () => (/* binding */ getOtrTsyQuotesCnbc),
 /* harmony export */   "getOtrTsyQuotesMw": () => (/* binding */ getOtrTsyQuotesMw),
 /* harmony export */   "getOtrTsyQuotesWsj": () => (/* binding */ getOtrTsyQuotesWsj),
@@ -5037,6 +5088,10 @@ const getOtrTsyQuotesCnbc = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().
 });
 const getOtrTsyQuotesMw = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
   url: '/data/MW US Treasury Yields (intraday)',
+  method: 'GET'
+});
+const getOtrTsyQuotesCme = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/CME US Treasury Prices (intraday)',
   method: 'GET'
 });
 

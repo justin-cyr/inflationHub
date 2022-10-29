@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { updateTipsPrices, updateOtrTsyQuotesWsj, updateOtrTsyQuotesCnbc, updateOtrTsyQuotesMw } from '../../actions/quotesDaily';
+import { updateTipsPrices, updateOtrTsyQuotesWsj, updateOtrTsyQuotesCnbc, updateOtrTsyQuotesMw, updateOtrTsyQuotesCme } from '../../actions/quotesDaily';
 import { updateTipsCusips, updateTipsRefData, updateTsyRefData } from '../../actions/referenceData';
 import StateLoader from './state_loader';
 
@@ -12,6 +12,7 @@ const mapDispatchToProps = dispatch => ({
     updateOtrTsyQuotesWsj: () => dispatch(updateOtrTsyQuotesWsj()),
     updateOtrTsyQuotesCnbc: () => dispatch(updateOtrTsyQuotesCnbc()),
     updateOtrTsyQuotesMw: () => dispatch(updateOtrTsyQuotesMw()),
+    updateOtrTsyQuotesCme: () => dispatch(updateOtrTsyQuotesCme()),
     updateTipsCusips: () => dispatch(updateTipsCusips()),
     updateTipsRefData: cusip => dispatch(updateTipsRefData(cusip)),
     updateTsyRefData: () => dispatch(updateTsyRefData())
