@@ -10,6 +10,7 @@ class StateLoader extends React.Component {
             .then(() => {this.props.referenceData.tips.cusips.map(cusip => this.props.updateTipsRefData(cusip)) });
         this.props.updateTipsPrices();
         this.props.updateTsyRefData();
+        this.props.updateOtrTsyQuotesCnbc();
         this.props.updateOtrTsyQuotesWsj();
     }
 

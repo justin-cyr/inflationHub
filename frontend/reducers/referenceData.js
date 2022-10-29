@@ -1,4 +1,5 @@
 import { RECEIVE_TIPS_CUSIPS, RECEIVE_TIPS_REF_DATA, RECEIVE_TSY_REF_DATA } from "../actions/referenceData";
+import { RECEIVE_OTR_TSY_QUOTES_CNBC } from "../actions/quotesDaily";
 
 // default state
 const _emptyState = {
@@ -42,6 +43,37 @@ export default (state = _emptyState, action) => {
                     bonds: action.response.referenceData.bonds
                 }
             }
+
+        case RECEIVE_OTR_TSY_QUOTES_CNBC:
+        {
+            const data = action.response.data;
+            let newOtrTsys = {};
+
+            for (let record of data) {
+                const quoteTime = new Date(record.timestamp)
+                if (!state.tsys.otr[record.standardName] ||
+                    (quoteTime > state.tsys.otr[record.standardName].timestamp)) {
+                    newOtrTsys[record.standardName] = {
+                        name: record.name,
+                        maturityDate: record.maturityDate,
+                        coupon: Number(record.coupon),
+                        timestamp: quoteTime
+                    }
+                }
+                else {
+                    // keep existing quote
+                    newOtrTsys = state.tsys.otr;
+                }
+            }
+
+            return {
+                ...state,
+                tsys: {
+                    ...state.tsys,
+                    otr: newOtrTsys
+                }
+            }
+        }
 
         default:
             return state;
