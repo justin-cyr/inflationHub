@@ -3942,6 +3942,10 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
+    }, standardName in this.props.quotes.daily.tsys.otr.mw ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
     }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].yieldChange : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
         textAlign: 'center'
@@ -3992,6 +3996,14 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       src: "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg",
       width: "42",
       height: "28"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413",
+      width: "30",
+      height: "30"
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
       style: {
         textAlign: 'center'
