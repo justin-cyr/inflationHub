@@ -3915,24 +3915,7 @@ const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg
 class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
-    const today = new Date();
-    const year = today.getFullYear().toString();
-    const month = (1 + today.getMonth()).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    const todayStr = year + '-' + month + '-' + day;
-    this._isMounted = false;
-    this.state = {
-      wsjTreasuryYields: []
-    };
     this.getChangeColor = this.getChangeColor.bind(this);
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   getChangeColor(quoteObj, key, field) {

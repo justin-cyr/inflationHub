@@ -39,28 +39,9 @@ class MarketData extends React.Component {
     constructor(props) {
         super(props);
 
-        const today = new Date();
-        const year = today.getFullYear().toString();
-        const month = (1 + today.getMonth()).toString().padStart(2, '0');
-        const day = today.getDate().toString().padStart(2, '0');
-        const todayStr = year + '-' + month + '-' + day;
-
-        this._isMounted = false;
-        this.state = {
-            wsjTreasuryYields: [],
-        }
-
         this.getChangeColor = this.getChangeColor.bind(this);
     }
     
-    componentDidMount() {
-        this._isMounted = true;
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
-
     getChangeColor(quoteObj, key, field) {
         if ((key in quoteObj) && (field in quoteObj[key])) {
             if (quoteObj[key][field] > 0) {
