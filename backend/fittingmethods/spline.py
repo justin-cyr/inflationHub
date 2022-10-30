@@ -78,6 +78,7 @@ class Spline(FittingMethod):
 class PiecewiseConstantLeftCts(Spline):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
+        self.hessian = None
 
     def __repr__(self):
         return f'PiecewiseConstantLeftCts({self.domain_pair})'
@@ -98,9 +99,31 @@ class PiecewiseConstantLeftCts(Spline):
     def dydx(self, x):
         return 0.0
 
+    def grad(self, x):
+        vec = [0.0 for _ in self.pairs]
+        if x <= self.x_min:
+            vec[0] = 1.0
+            return vec
+        if x > self.x_max:
+            vec[-1] = 1.0
+            return vec
+        
+        i = self.find_node_index_above(x)
+        vec[i] = 1.0
+        return vec
+
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = len(self.pairs)
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian
+
 class PiecewiseConstantRightCts(Spline):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
+        self.hessian = None
 
     def __repr__(self):
         return f'PiecewiseConstantRightCts({self.domain_pair})'
@@ -121,10 +144,32 @@ class PiecewiseConstantRightCts(Spline):
     def dydx(self, x):
         return 0.0
 
+    def grad(self, x):
+        vec = [0.0 for _ in self.pairs]
+        if x <= self.x_min:
+            vec[0] = 1.0
+            return vec
+        if x > self.x_max:
+            vec[-1] = 1.0
+            return vec
+        
+        i = self.find_node_index_below(x)
+        vec[i] = 1.0
+        return vec
+
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = len(self.pairs)
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian
+
 class PiecewiseLinear(Spline):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
         self.slopes = None
+        self.hessian = None
 
     def __repr__(self):
         return f'PiecewiseLinear({self.domain_pair})'
@@ -166,3 +211,29 @@ class PiecewiseLinear(Spline):
         # linear interpolation
         i = self.find_node_index_below(x)
         return self.slopes[i]
+
+    def grad(self, x):
+        if x < self.x_min:
+            i = 0
+        elif x >= self.x_max:
+            i = len(self.pairs) - 2
+        else:
+            i = self.find_node_index_below(x)
+        
+        xi, _ = self.pairs[i]
+        xiplus1, _ = self.pairs[i + 1]
+        run = xiplus1 - xi
+
+        vec = [0.0 for _ in self.pairs]
+        vec[i] = (xiplus1 - x) / run
+        vec[i + 1] = (x - xi) / run
+
+        return vec
+
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = len(self.pairs)
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian

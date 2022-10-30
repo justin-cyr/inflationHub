@@ -5,7 +5,9 @@ class BestFitConstant(FittingMethod):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
         self.constant = None
-
+        self.training_len = None
+        self.gradient = None
+        self.hessian = None
 
     def __repr__(self):
         return f'BestFitConstant({self.domain_pair.domainY})'
@@ -17,7 +19,8 @@ class BestFitConstant(FittingMethod):
         if not ys:
             raise ValueError('BestFitConstant.fit: ys must be list of at least 1 point.')
 
-        self.constant = sum(ys) / len(ys)
+        self.training_len = len(ys)
+        self.constant = sum(ys) / self.training_len
 
 
     @FittingMethod.check_is_fit
@@ -27,11 +30,30 @@ class BestFitConstant(FittingMethod):
     def dydx(self, x):
         return 0.0
 
+    def grad(self, x):
+        if self.gradient:
+            return self.gradient
+        
+        self.gradient = [1.0 / self.training_len for _ in range(self.training_len)]
+        return self.gradient
+
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = self.training_len
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian
+
 
 class BestFitLinear(FittingMethod):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
         self.linear_regression = None
+        self.training_len = None
+        self.xs = None
+        self.pinv = None
+        self.hessian = None
 
     def __repr__(self):
         return f'BestFitLinear({self.domain_pair})'
@@ -42,6 +64,8 @@ class BestFitLinear(FittingMethod):
         "Use OLS linear regression for best-fit line."
         import numpy as np
         from sklearn.linear_model import LinearRegression
+        self.xs = xs
+        self.training_len = len(self.xs)
         xs = np.array(xs).reshape(-1, 1)
         ys = np.array(ys)
         self.linear_regression = LinearRegression().fit(xs, ys)
@@ -56,3 +80,21 @@ class BestFitLinear(FittingMethod):
 
     def dydx(self, x):
         return self.linear_regression.coef_[0]
+
+    def grad(self, x):
+        if self.pinv:
+            return list(x * self.pinv[0] + self.pinv[1])
+        
+        # gradient is found using the Moore-Penrose pseudoinverse of the predictor variables
+        from scipy.linalg import pinv
+        predict_vars = [[pt, 1.0] for pt in self.xs]
+        self.pinv = pinv(predict_vars)
+        return list(x * self.pinv[0] + self.pinv[1])
+    
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = self.training_len
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian
