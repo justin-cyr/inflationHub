@@ -1,125 +1,211 @@
 import React from 'react';
-import $, { merge } from 'jquery';
 
+import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
+const upColor = '#198754';  // green
+const downColor = '#dc3545';  // red
+const unchColor = '#bdbdbd'; // default text color
+
+const benchmarkTsys = [
+    'US 1M',
+    'US 3M',
+    'US 6M',
+    'US 1Y',
+    'US 2Y',
+    'US 3Y',
+    'US 5Y',
+    'US 7Y',
+    'US 10Y',
+    'US 20Y',
+    'US 30Y'
+];
+
+const benchmarkTips = [
+    'TIPS 5Y',
+    'TIPS 10Y',
+    'TIPS 30Y'
+];
+
+const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
+const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
+const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
+const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
 
 class MarketData extends React.Component {
 
     constructor(props) {
         super(props);
 
-        const today = new Date();
-        const year = today.getFullYear().toString();
-        const month = (1 + today.getMonth()).toString().padStart(2, '0');
-        const day = today.getDate().toString().padStart(2, '0');
-        const todayStr = year + '-' + month + '-' + day;
-
-        this._isMounted = false;
-        this.state = {
-            wsjTreasuryYields: [],
-            // styles
-            upColor:    '#198754',  // green
-            downColor:  '#dc3545',  // red
-        }
-
-        this.getTreasuryYieldfromWSJ = this.getTreasuryYieldfromWSJ.bind(this);
-    }
-
-    getTreasuryYieldfromWSJ() {
-        // Request Market price data
-        $.ajax({
-            url: '/data/WSJ US Treasury Yields (intraday)',
-            method: 'GET',
-
-            complete: () => {
-                // schedule the next request only when the current one is complete
-                if (this._isMounted) {
-                    setTimeout(this.getTreasuryYieldfromWSJ, 10000);
-                }
-            },
-
-
-            success: (response) => {
-                const wsjTreasuryYields = response.data;
-
-                this._isMounted && this.setState({
-                    wsjTreasuryYields: wsjTreasuryYields
-                });
-            }
-
-
-        });
+        this.getChangeColor = this.getChangeColor.bind(this);
     }
     
-    componentDidMount() {
-        this._isMounted = true;
-        this.getTreasuryYieldfromWSJ();
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
+    getChangeColor(quoteObj, key, field) {
+        if ((key in quoteObj) && (field in quoteObj[key])) {
+            if (quoteObj[key][field] > 0) {
+                return upColor;
+            }
+            else if (quoteObj[key][field] < 0) {
+                return downColor;
+            }
+        }
+        return unchColor;
     }
 
     render() {
         // Reference data table
-        let data_table = <center>{'... Loading data ...'}</center>;
+        const loading_data_table = <center>{'... Loading data ...'}</center>;;
         
-        // if wsjTreasuryYields(dict) is defined
-        if (this.state.wsjTreasuryYields) {
-            const table_rows = this.state.wsjTreasuryYields.length === 0
-                ? <tr key={'empty'}><td colSpan="7"><center>{'... Loading data ...'}</center></td></tr>
-                : this.state.wsjTreasuryYields.map(record => 
-                    <tr key={record['name']}>
-                        <td style={{ textAlign: 'center' }}>{record['standardName']}</td> 
-                        <td style={{ textAlign: 'center' }}>{Number(record['coupon']).toFixed(3) + '%'}</td> 
-                        <td style={{ textAlign: 'center',
-                                     color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor  
-                                                         }}>{Number(record['price']).toFixed(3)}</td>    
-                        <td style={{ textAlign: 'center' }}>{record['priceChange']}</td>                
-                        <td style={{ textAlign: 'center' }}>{record['yield']}</td>        
-                        <td style={{ textAlign: 'center' }}>{record['yieldChange']}</td>  
-                        <td style={{ textAlign: 'center' }}>{(new Date(record['timestamp'])).toLocaleTimeString()}</td>                               
-                    </tr>
-                );
-    
+        // Tsys benchmark table
+        let tsy_data_table = loading_data_table;
+        const tsy_table_rows = benchmarkTsys.map(standardName =>
+            <tr key={standardName}>
+                <td style={{ textAlign: 'center' }}>{standardName}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''}</td> 
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tsys.otr) ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''}</td> 
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3): ''}</td>                
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].price.toFixed(3) : ''}</td>   
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.wsj) ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.mw) ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cme, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tsys.otr.cme) ? this.props.quotes.daily.tsys.otr.cme[standardName].price.toFixed(3) : ''}</td>           
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tsys.otr.cnbc) ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : ''}</td>                               
+            </tr>
+        );
 
-        data_table = <div
-                style={{ height: '500px', overflow: 'auto' }}
+
+    tsy_data_table = <div
+            style={{ height: '500px', overflow: 'auto' }}
+        >
+        <Table
+            id="tsys-benchmark-table"
+            responsive
+            hover
+        >
+            <thead>
+                <tr style={{ color: unchColor }}>
+                    <th style={{ textAlign: 'center' }}>Name</th>
+                    <th style={{ textAlign: 'center' }}>Maturity</th>
+                    <th style={{ textAlign: 'center' }}>Coupon</th>
+                    <th style={{ textAlign: 'center' }}>YTM
+                        <img src={cnbcLogo} width="36" height="24"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>YTM
+                        <img src={wsjLogo} width="42" height="28"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>YTM
+                        <img src={mwLogo} width="30" height="30"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={cnbcLogo} width="36" height="24"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={wsjLogo} width="42" height="28"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={mwLogo} width="30" height="30"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Price
+                        <img src={cmeLogo} width="30" height="30"></img>
+                    </th>
+                    <th style={{ textAlign: 'center' }}>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody
+                style={{ color: unchColor }}
             >
+                {tsy_table_rows}
+            </tbody>
+        </Table>
+        </div>;
+
+        // TIPS benchmark table
+        let tips_data_table = loading_data_table;
+        const tips_table_rows = benchmarkTips.map(standardName =>
+            <tr key={standardName}>
+                <td style={{ textAlign: 'center' }}>{standardName}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tips.otr) ? this.props.referenceData.tips.otr[standardName].maturityDate : ''}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.referenceData.tips.otr) ? this.props.referenceData.tips.otr[standardName].coupon.toFixed(3) + '%' : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tips.otr.cnbc, standardName, 'yieldChange')
+                }}>{(standardName in this.props.quotes.daily.tips.otr.cnbc) ? this.props.quotes.daily.tips.otr.cnbc[standardName].yield.toFixed(3) : ''}</td>
+                <td style={{
+                    textAlign: 'center',
+                    color: this.getChangeColor(this.props.quotes.daily.tips.otr.cnbc, standardName, 'priceChange')
+                }}>{(standardName in this.props.quotes.daily.tips.otr.cnbc) ? this.props.quotes.daily.tips.otr.cnbc[standardName].price.toFixed(3) : ''}</td>
+                <td style={{ textAlign: 'center' }}>{(standardName in this.props.quotes.daily.tips.otr.cnbc) ? this.props.quotes.daily.tips.otr.cnbc[standardName].timestamp.toLocaleTimeString() : ''}</td>
+            </tr>
+        );
+
+
+        tips_data_table = <div
+            style={{ height: '250px', width: '600px', overflow: 'auto' }}
+        >
             <Table
-                id="market-data-table"
+                id="tips-benchmark-table"
                 responsive
                 hover
             >
                 <thead>
-                    <tr style={{ color: '#bdbdbd'}}>
+                    <tr style={{ color: unchColor }}>
                         <th style={{ textAlign: 'center' }}>Name</th>
+                        <th style={{ textAlign: 'center' }}>Maturity</th>
                         <th style={{ textAlign: 'center' }}>Coupon</th>
-                        <th style={{ textAlign: 'center' }}>Price</th>
-                        <th style={{ textAlign: 'center' }}>Price Change</th>
-                        <th style={{ textAlign: 'center' }}>YTM</th>
-                        <th style={{ textAlign: 'center' }}>YTM Change</th>
+                        <th style={{ textAlign: 'center' }}>YTM
+                            <img src={cnbcLogo} width="36" height="24"></img>
+                        </th>
+                        <th style={{ textAlign: 'center' }}>Price
+                            <img src={cnbcLogo} width="36" height="24"></img>
+                        </th>
                         <th style={{ textAlign: 'center' }}>Timestamp</th>
                     </tr>
                 </thead>
                 <tbody
-                    style={{ color: '#bdbdbd' }}
+                    style={{ color: unchColor }}
                 >
-                    {table_rows}
+                    {tips_table_rows}
                 </tbody>
             </Table>
-            </div>;
-        }
-        // if we do not comment off the following line, the table will auto update secondly 
-        //this.getTreasuryYieldfromWSJ();
+        </div>;
+
         return (
             <Container fluid>
                 <Row>
-                    {/* Table */}
-                    {data_table}
+                    {/* Tsys benchmark table */}
+                    {tsy_data_table}
+                </Row>
+                <Row
+                    style={{ paddingTop: '25px' }}
+                >
+                    <Col>
+                        {/* Tips benchmark table */}
+                        {tips_data_table}
+                    </Col>
                 </Row>
             </Container>
         );

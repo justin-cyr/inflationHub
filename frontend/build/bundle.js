@@ -2287,6 +2287,130 @@ function useWindow() {
 
 /***/ }),
 
+/***/ "./actions/quotesDaily.js":
+/*!********************************!*\
+  !*** ./actions/quotesDaily.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RECEIVE_OTR_TIPS_QUOTES_CNBC": () => (/* binding */ RECEIVE_OTR_TIPS_QUOTES_CNBC),
+/* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CME": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CME),
+/* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CNBC": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CNBC),
+/* harmony export */   "RECEIVE_OTR_TSY_QUOTES_MW": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_MW),
+/* harmony export */   "RECEIVE_OTR_TSY_QUOTES_WSJ": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_WSJ),
+/* harmony export */   "RECEIVE_TIPS_PRICES": () => (/* binding */ RECEIVE_TIPS_PRICES),
+/* harmony export */   "updateOtrTipsQuotesCnbc": () => (/* binding */ updateOtrTipsQuotesCnbc),
+/* harmony export */   "updateOtrTsyQuotesCme": () => (/* binding */ updateOtrTsyQuotesCme),
+/* harmony export */   "updateOtrTsyQuotesCnbc": () => (/* binding */ updateOtrTsyQuotesCnbc),
+/* harmony export */   "updateOtrTsyQuotesMw": () => (/* binding */ updateOtrTsyQuotesMw),
+/* harmony export */   "updateOtrTsyQuotesWsj": () => (/* binding */ updateOtrTsyQuotesWsj),
+/* harmony export */   "updateTipsPrices": () => (/* binding */ updateTipsPrices)
+/* harmony export */ });
+/* harmony import */ var _requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../requests/quotesDaily */ "./requests/quotesDaily.js");
+
+const RECEIVE_TIPS_PRICES = 'RECEIVE_TIPS_PRICES';
+const RECEIVE_OTR_TIPS_QUOTES_CNBC = 'RECEIVE_OTR_TIPS_QUOTES_CNBC';
+const RECEIVE_OTR_TSY_QUOTES_WSJ = 'RECEIVE_OTR_TSY_QUOTES_WSJ';
+const RECEIVE_OTR_TSY_QUOTES_CNBC = 'RECEIVE_OTR_TSY_QUOTES_CNBC';
+const RECEIVE_OTR_TSY_QUOTES_MW = 'RECEIVE_OTR_TSY_QUOTES_MW';
+const RECEIVE_OTR_TSY_QUOTES_CME = 'RECEIVE_OTR_TSY_QUOTES_CME';
+const quoteUpdateFreq = 10000;
+
+const receiveTipsPrices = response => ({
+  type: RECEIVE_TIPS_PRICES,
+  response
+});
+
+const receiveOtrTipsQuotesCnbc = response => ({
+  type: RECEIVE_OTR_TIPS_QUOTES_CNBC,
+  response
+});
+
+const receiveOtrTsyQuotesWsj = response => ({
+  type: RECEIVE_OTR_TSY_QUOTES_WSJ,
+  response
+});
+
+const receiveOtrTsyQuotesCnbc = response => ({
+  type: RECEIVE_OTR_TSY_QUOTES_CNBC,
+  response
+});
+
+const receiveOtrTsyQuotesMw = response => ({
+  type: RECEIVE_OTR_TSY_QUOTES_MW,
+  response
+});
+
+const receiveOtrTsyQuotesCme = response => ({
+  type: RECEIVE_OTR_TSY_QUOTES_CME,
+  response
+});
+
+const updateTipsPrices = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getTipsPrices)().then(response => dispatch(receiveTipsPrices(response)));
+const updateOtrTipsQuotesCnbc = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTipsQuotesCnbc)().then(response => dispatch(receiveOtrTipsQuotesCnbc(response))).then(() => {
+  setTimeout(() => dispatch(updateOtrTipsQuotesCnbc()), quoteUpdateFreq);
+});
+const updateOtrTsyQuotesWsj = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesWsj)().then(response => dispatch(receiveOtrTsyQuotesWsj(response))).then(() => {
+  setTimeout(() => dispatch(updateOtrTsyQuotesWsj()), quoteUpdateFreq);
+});
+const updateOtrTsyQuotesCnbc = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesCnbc)().then(response => dispatch(receiveOtrTsyQuotesCnbc(response))).then(() => {
+  setTimeout(() => dispatch(updateOtrTsyQuotesCnbc()), quoteUpdateFreq);
+});
+const updateOtrTsyQuotesMw = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesMw)().then(response => dispatch(receiveOtrTsyQuotesMw(response))).then(() => {
+  setTimeout(() => dispatch(updateOtrTsyQuotesMw()), quoteUpdateFreq);
+});
+const updateOtrTsyQuotesCme = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesCme)().then(response => dispatch(receiveOtrTsyQuotesCme(response))).then(() => {
+  setTimeout(() => dispatch(updateOtrTsyQuotesCme()), quoteUpdateFreq);
+});
+
+/***/ }),
+
+/***/ "./actions/referenceData.js":
+/*!**********************************!*\
+  !*** ./actions/referenceData.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RECEIVE_TIPS_CUSIPS": () => (/* binding */ RECEIVE_TIPS_CUSIPS),
+/* harmony export */   "RECEIVE_TIPS_REF_DATA": () => (/* binding */ RECEIVE_TIPS_REF_DATA),
+/* harmony export */   "RECEIVE_TSY_REF_DATA": () => (/* binding */ RECEIVE_TSY_REF_DATA),
+/* harmony export */   "updateTipsCusips": () => (/* binding */ updateTipsCusips),
+/* harmony export */   "updateTipsRefData": () => (/* binding */ updateTipsRefData),
+/* harmony export */   "updateTsyRefData": () => (/* binding */ updateTsyRefData)
+/* harmony export */ });
+/* harmony import */ var _requests_referenceData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../requests/referenceData */ "./requests/referenceData.js");
+
+const RECEIVE_TIPS_CUSIPS = 'RECEIVE_TIPS_CUSIPS';
+const RECEIVE_TIPS_REF_DATA = 'RECEIVE_TIPS_REF_DATA';
+const RECEIVE_TSY_REF_DATA = 'RECEIVE_TSY_REF_DATA';
+
+const receiveTipsCusips = response => ({
+  type: RECEIVE_TIPS_CUSIPS,
+  response
+});
+
+const receiveTipsRefData = response => ({
+  type: RECEIVE_TIPS_REF_DATA,
+  response
+});
+
+const receiveTsyRefData = response => ({
+  type: RECEIVE_TSY_REF_DATA,
+  response
+});
+
+const updateTipsCusips = () => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTipsCusips)().then(response => dispatch(receiveTipsCusips(response)));
+const updateTipsRefData = cusip => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTipsRefData)(cusip).then(response => dispatch(receiveTipsRefData(response)));
+const updateTsyRefData = cusip => dispatch => (0,_requests_referenceData__WEBPACK_IMPORTED_MODULE_0__.getTsyRefData)(cusip).then(response => dispatch(receiveTsyRefData(response)));
+
+/***/ }),
+
 /***/ "./components/app.jsx":
 /*!****************************!*\
   !*** ./components/app.jsx ***!
@@ -2299,7 +2423,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router/esm/react-router.js");
 /* harmony import */ var _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./nav_bar/nav_bar_container */ "./components/nav_bar/nav_bar_container.js");
 /* harmony import */ var _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data_viewer/data_viewer_container */ "./components/data_viewer/data_viewer_container.js");
 /* harmony import */ var _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tips_data/tips_data_container */ "./components/tips_data/tips_data_container.js");
@@ -2307,6 +2431,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./knowledge_center/knowledge_center_container */ "./components/knowledge_center/knowledge_center_container.js");
 /* harmony import */ var _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./footer/footer_container */ "./components/footer/footer_container.js");
 /* harmony import */ var _market_data_market_data_container__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./market_data/market_data_container */ "./components/market_data/market_data_container.js");
+/* harmony import */ var _state_loader_state_loader_container__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./state_loader/state_loader_container */ "./components/state_loader/state_loader_container.js");
 
 
 
@@ -2316,33 +2441,37 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
+  path: "/",
+  component: _state_loader_state_loader_container__WEBPACK_IMPORTED_MODULE_8__["default"]
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/",
   component: _nav_bar_nav_bar_container__WEBPACK_IMPORTED_MODULE_1__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/data_viewer",
   component: _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/tips_data",
   component: _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/market_data",
   component: _market_data_market_data_container__WEBPACK_IMPORTED_MODULE_7__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/curve_builder",
   component: _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   exact: true,
   path: "/knowledge_center",
   component: _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_8__.Route, {
+}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/",
   component: _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__["default"]
 })));
@@ -3761,160 +3890,285 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
 
 
 
 
 
+const upColor = '#198754'; // green
+
+const downColor = '#dc3545'; // red
+
+const unchColor = '#bdbdbd'; // default text color
+
+const benchmarkTsys = ['US 1M', 'US 3M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
+const benchmarkTips = ['TIPS 5Y', 'TIPS 10Y', 'TIPS 30Y'];
+const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
+const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
+const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
+const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
 
 class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
-    const today = new Date();
-    const year = today.getFullYear().toString();
-    const month = (1 + today.getMonth()).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    const todayStr = year + '-' + month + '-' + day;
-    this._isMounted = false;
-    this.state = {
-      wsjTreasuryYields: [],
-      // styles
-      upColor: '#198754',
-      // green
-      downColor: '#dc3545' // red
-
-    };
-    this.getTreasuryYieldfromWSJ = this.getTreasuryYieldfromWSJ.bind(this);
+    this.getChangeColor = this.getChangeColor.bind(this);
   }
 
-  getTreasuryYieldfromWSJ() {
-    // Request Market price data
-    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
-      url: '/data/WSJ US Treasury Yields (intraday)',
-      method: 'GET',
-      complete: () => {
-        // schedule the next request only when the current one is complete
-        if (this._isMounted) {
-          setTimeout(this.getTreasuryYieldfromWSJ, 10000);
-        }
-      },
-      success: response => {
-        const wsjTreasuryYields = response.data;
-        this._isMounted && this.setState({
-          wsjTreasuryYields: wsjTreasuryYields
-        });
+  getChangeColor(quoteObj, key, field) {
+    if (key in quoteObj && field in quoteObj[key]) {
+      if (quoteObj[key][field] > 0) {
+        return upColor;
+      } else if (quoteObj[key][field] < 0) {
+        return downColor;
       }
-    });
-  }
+    }
 
-  componentDidMount() {
-    this._isMounted = true;
-    this.getTreasuryYieldfromWSJ();
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
+    return unchColor;
   }
 
   render() {
     // Reference data table
-    let data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'); // if wsjTreasuryYields(dict) is defined
+    const loading_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...');
+    ; // Tsys benchmark table
 
-    if (this.state.wsjTreasuryYields) {
-      const table_rows = this.state.wsjTreasuryYields.length === 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        key: 'empty'
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        colSpan: "7"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'))) : this.state.wsjTreasuryYields.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        key: record['name']
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, record['standardName']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, Number(record['coupon']).toFixed(3) + '%'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center',
-          color: record['priceChange'][0] === '-' ? this.state.downColor : this.state.upColor
-        }
-      }, Number(record['price']).toFixed(3)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, record['priceChange']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, record['yield']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, record['yieldChange']), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center'
-        }
-      }, new Date(record['timestamp']).toLocaleTimeString())));
-      data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          height: '500px',
-          overflow: 'auto'
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        id: "market-data-table",
-        responsive: true,
-        hover: true
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        style: {
-          color: '#bdbdbd'
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Price"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Price Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "YTM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "YTM Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Timestamp"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
-        style: {
-          color: '#bdbdbd'
-        }
-      }, table_rows)));
-    } // if we do not comment off the following line, the table will auto update secondly 
-    //this.getTreasuryYieldfromWSJ();
+    let tsy_data_table = loading_data_table;
+    const tsy_table_rows = benchmarkTsys.map(standardName => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      key: standardName
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'yieldChange')
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'yieldChange')
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'yieldChange')
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.mw ? this.props.quotes.daily.tsys.otr.mw[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cnbc, standardName, 'priceChange')
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.wsj, standardName, 'priceChange')
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.wsj ? this.props.quotes.daily.tsys.otr.wsj[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.mw, standardName, 'priceChange')
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.mw ? this.props.quotes.daily.tsys.otr.mw[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tsys.otr.cme, standardName, 'priceChange')
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.cme ? this.props.quotes.daily.tsys.otr.cme[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.quotes.daily.tsys.otr.cnbc ? this.props.quotes.daily.tsys.otr.cnbc[standardName].timestamp.toLocaleTimeString() : '')));
+    tsy_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: '500px',
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      id: "tsys-benchmark-table",
+      responsive: true,
+      hover: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Maturity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cnbcLogo,
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: wsjLogo,
+      width: "42",
+      height: "28"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: mwLogo,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cnbcLogo,
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: wsjLogo,
+      width: "42",
+      height: "28"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: mwLogo,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cmeLogo,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Timestamp"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+      style: {
+        color: unchColor
+      }
+    }, tsy_table_rows))); // TIPS benchmark table
 
-
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    let tips_data_table = loading_data_table;
+    const tips_table_rows = benchmarkTips.map(standardName => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      key: standardName
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.referenceData.tips.otr ? this.props.referenceData.tips.otr[standardName].maturityDate : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.referenceData.tips.otr ? this.props.referenceData.tips.otr[standardName].coupon.toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tips.otr.cnbc, standardName, 'yieldChange')
+      }
+    }, standardName in this.props.quotes.daily.tips.otr.cnbc ? this.props.quotes.daily.tips.otr.cnbc[standardName].yield.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.quotes.daily.tips.otr.cnbc, standardName, 'priceChange')
+      }
+    }, standardName in this.props.quotes.daily.tips.otr.cnbc ? this.props.quotes.daily.tips.otr.cnbc[standardName].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, standardName in this.props.quotes.daily.tips.otr.cnbc ? this.props.quotes.daily.tips.otr.cnbc[standardName].timestamp.toLocaleTimeString() : '')));
+    tips_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: '250px',
+        width: '600px',
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      id: "tips-benchmark-table",
+      responsive: true,
+      hover: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Maturity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Coupon"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "YTM", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cnbcLogo,
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cnbcLogo,
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Timestamp"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+      style: {
+        color: unchColor
+      }
+    }, tips_table_rows)));
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, data_table));
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      style: {
+        paddingTop: '25px'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, tips_data_table)));
   }
 
 }
@@ -3934,9 +4188,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _market_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./market_data */ "./components/market_data/market_data.jsx");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _market_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./market_data */ "./components/market_data/market_data.jsx");
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_market_data__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+const mapStateToProps = state => ({
+  referenceData: state.referenceData,
+  quotes: state.quotes
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps)(_market_data__WEBPACK_IMPORTED_MODULE_1__["default"]));
 
 /***/ }),
 
@@ -4042,6 +4304,90 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./components/state_loader/state_loader.jsx":
+/*!**************************************************!*\
+  !*** ./components/state_loader/state_loader.jsx ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    this.props.updateTipsCusips().then(() => {
+      this.props.referenceData.tips.cusips.map(cusip => this.props.updateTipsRefData(cusip));
+    });
+    this.props.updateTipsPrices();
+    this.props.updateOtrTipsQuotesCnbc();
+    this.props.updateTsyRefData();
+    this.props.updateOtrTsyQuotesCnbc();
+    this.props.updateOtrTsyQuotesWsj();
+    this.props.updateOtrTsyQuotesMw();
+    this.props.updateOtrTsyQuotesCme();
+  }
+
+  render() {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "stateLoader"
+    });
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (StateLoader);
+
+/***/ }),
+
+/***/ "./components/state_loader/state_loader_container.js":
+/*!***********************************************************!*\
+  !*** ./components/state_loader/state_loader_container.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../actions/quotesDaily */ "./actions/quotesDaily.js");
+/* harmony import */ var _actions_referenceData__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../actions/referenceData */ "./actions/referenceData.js");
+/* harmony import */ var _state_loader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state_loader */ "./components/state_loader/state_loader.jsx");
+
+
+
+
+
+const mapStateToProps = state => ({
+  referenceData: state.referenceData
+});
+
+const mapDispatchToProps = dispatch => ({
+  updateTipsPrices: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateTipsPrices)()),
+  updateOtrTipsQuotesCnbc: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTipsQuotesCnbc)()),
+  updateOtrTsyQuotesWsj: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesWsj)()),
+  updateOtrTsyQuotesCnbc: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesCnbc)()),
+  updateOtrTsyQuotesMw: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesMw)()),
+  updateOtrTsyQuotesCme: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesCme)()),
+  updateTipsCusips: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsCusips)()),
+  updateTipsRefData: cusip => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsRefData)(cusip)),
+  updateTsyRefData: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTsyRefData)())
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps, mapDispatchToProps)(_state_loader__WEBPACK_IMPORTED_MODULE_3__["default"]));
+
+/***/ }),
+
 /***/ "./components/tips_data/tips_data.jsx":
 /*!********************************************!*\
   !*** ./components/tips_data/tips_data.jsx ***!
@@ -4077,12 +4423,29 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     const month = (1 + today.getMonth()).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     const todayStr = year + '-' + month + '-' + day;
+    let referenceData = Object.values(this.props.referenceData.tips.bonds);
+    referenceData = referenceData.sort((a, b) => a.tenor - b.tenor);
+    const priceData = this.props.quotes.daily.tipsPrices.priceData;
+
+    for (let i = 0; i < referenceData.length; ++i) {
+      referenceData[i] = this.mergePriceToReferenceData(priceData, referenceData[i]);
+    }
+
+    const series = {
+      x: priceData.map(record => record.TENOR),
+      y: priceData.map(record => record.YIELD / 100),
+      text: priceData.map(record => record.MATURITY),
+      type: 'scatter',
+      mode: 'markers',
+      showlegend: false,
+      name: 'Real Yields'
+    };
     this._isMounted = false;
     this.state = {
-      chartData: [],
-      cusips: [],
+      chartData: [series],
+      cusips: this.props.referenceData.tips.cusips,
       priceData: [],
-      referenceData: [],
+      referenceData: referenceData,
       yieldData: [],
       todayStr: todayStr,
       showModal: false,
@@ -4109,20 +4472,12 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   getTipsCusips() {
     // Request TIPS CUSIPs
-    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
-      url: '/tips_cusips',
-      method: 'GET',
-      success: response => {
-        this._isMounted && this.setState({
-          cusips: response.cusips
-        }, // get reference data for each cusip in callback 
-        () => {
-          this.state.cusips.map(cusip => {
-            this.getTipsData(cusip);
-            this.getTipsYields(cusip);
-          });
-        });
-      }
+    this.state.cusips.map(cusip => {
+      this.getTipsYields(cusip);
+    });
+    const newReferenceData = this.state.referenceData.map(refData => this.mergePriceToReferenceData(this.state.priceData, refData));
+    this._isMounted && this.setState({
+      referenceData: newReferenceData
     });
   }
 
@@ -4532,9 +4887,325 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _tips_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./tips_data */ "./components/tips_data/tips_data.jsx");
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _tips_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tips_data */ "./components/tips_data/tips_data.jsx");
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_tips_data__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+const mapStateToProps = state => ({
+  quotes: state.quotes,
+  referenceData: state.referenceData
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps)(_tips_data__WEBPACK_IMPORTED_MODULE_1__["default"]));
+
+/***/ }),
+
+/***/ "./reducers/quotes.js":
+/*!****************************!*\
+  !*** ./reducers/quotes.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/quotesDaily */ "./actions/quotesDaily.js");
+ // default state
+
+const _emptyState = {
+  daily: {
+    tipsPrices: {
+      priceData: []
+    },
+    tips: {
+      otr: {
+        cnbc: {}
+      }
+    },
+    tsys: {
+      otr: {
+        wsj: {},
+        cnbc: {},
+        mw: {},
+        cme: {}
+      }
+    }
+  }
+}; // helper for updating OTR quotes
+
+const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
+  const data = responseData;
+  let newOtrTsys = {}; // Update quotes for the first time or replace older quotes
+
+  for (let record of data) {
+    const quoteTime = new Date(record.timestamp);
+
+    if (!(record.standardName in currentOtrTsys) || quoteTime > currentOtrTsys[record.standardName].timestamp) {
+      let priceChange = 0;
+      let yieldChange = 0;
+
+      if (record.standardName in currentOtrTsys) {
+        priceChange = record.price - currentOtrTsys[record.standardName].price;
+        yieldChange = record.yield - currentOtrTsys[record.standardName].yield;
+      }
+
+      newOtrTsys[record.standardName] = {
+        price: Number(record.price),
+        priceChange: priceChange,
+        timestamp: quoteTime,
+        yield: Number(record.yield),
+        yieldChange: yieldChange
+      };
+    } else {
+      // keep existing quote
+      newOtrTsys[record.standardName] = currentOtrTsys[record.standardName];
+
+      if (quoteTime.getTime() === currentOtrTsys[record.standardName].timestamp.getTime()) {
+        // set changes back to 0
+        newOtrTsys[record.standardName].priceChange = 0;
+        newOtrTsys[record.standardName].yieldChange = 0;
+      }
+    }
+  }
+
+  return newOtrTsys;
+};
+
+const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
+  const data = responseData;
+  let newOtrTsys = {}; // Update quotes for the first time or replace older quotes
+
+  for (let record of data) {
+    const quoteTime = new Date(record.timestamp);
+
+    if (!(record.standardName in currentOtrTsys) || quoteTime > currentOtrTsys[record.standardName].timestamp) {
+      let priceChange = 0;
+
+      if (record.standardName in currentOtrTsys) {
+        priceChange = record.price - currentOtrTsys[record.standardName].price;
+      }
+
+      newOtrTsys[record.standardName] = {
+        price: Number(record.price),
+        priceChange: priceChange,
+        displayPrice: record.displayPrice,
+        timestamp: quoteTime,
+        volume: record.volume
+      };
+    } else {
+      // keep existing quote
+      newOtrTsys[record.standardName] = currentOtrTsys[record.standardName];
+
+      if (quoteTime.getTime() === currentOtrTsys[record.standardName].timestamp.getTime()) {
+        // set changes back to 0
+        newOtrTsys[record.standardName].priceChange = 0;
+      }
+    }
+  }
+
+  return newOtrTsys;
+}; // Daily quotes reducer
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((state = _emptyState, action) => {
+  Object.freeze(state);
+
+  switch (action.type) {
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_PRICES:
+      return { ...state,
+        daily: { ...state.daily,
+          tipsPrices: { ...state.daily.tipsPrices,
+            priceData: action.response.priceData
+          }
+        }
+      };
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TIPS_QUOTES_CNBC:
+      {
+        const newOtrTips = newOtrTsyQuotes(state.daily.tips.otr.cnbc, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tips: { ...state.daily.tips,
+              otr: { ...state.daily.tips.otr,
+                cnbc: newOtrTips
+              }
+            }
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TSY_QUOTES_WSJ:
+      {
+        const newOtrTsys = newOtrTsyQuotes(state.daily.tsys.otr.wsj, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tsys: { ...state.daily.tsys,
+              otr: { ...state.daily.tsys.otr,
+                wsj: newOtrTsys
+              }
+            }
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TSY_QUOTES_CNBC:
+      {
+        const newOtrTsys = newOtrTsyQuotes(state.daily.tsys.otr.cnbc, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tsys: { ...state.daily.tsys,
+              otr: { ...state.daily.tsys.otr,
+                cnbc: newOtrTsys
+              }
+            }
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TSY_QUOTES_MW:
+      {
+        const newOtrTsys = newOtrTsyQuotes(state.daily.tsys.otr.mw, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tsys: { ...state.daily.tsys,
+              otr: { ...state.daily.tsys.otr,
+                mw: newOtrTsys
+              }
+            }
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TSY_QUOTES_CME:
+      {
+        const newOtrTsys = newOtrTsyQuotesCme(state.daily.tsys.otr.cme, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tsys: { ...state.daily.tsys,
+              otr: { ...state.daily.tsys.otr,
+                cme: newOtrTsys
+              }
+            }
+          }
+        };
+      }
+
+    default:
+      return state;
+  }
+});
+
+/***/ }),
+
+/***/ "./reducers/referenceData.js":
+/*!***********************************!*\
+  !*** ./reducers/referenceData.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/referenceData */ "./actions/referenceData.js");
+/* harmony import */ var _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../actions/quotesDaily */ "./actions/quotesDaily.js");
+
+ // default state
+
+const _emptyState = {
+  tips: {
+    cusips: [],
+    otr: {},
+    bonds: {}
+  },
+  tsys: {
+    cusips: [],
+    otr: {},
+    bonds: {}
+  }
+}; // helper function for OTR reference data update
+
+const newOtrBondRefData = (currentOtrBonds, responseData) => {
+  const data = responseData;
+  let newOtrBonds = {}; // Update quotes for the first time or replace older quotes
+
+  for (let record of data) {
+    const quoteTime = new Date(record.timestamp);
+
+    if (!(record.standardName in currentOtrBonds) || quoteTime > currentOtrBonds[record.standardName].timestamp) {
+      newOtrBonds[record.standardName] = {
+        name: record.name,
+        maturityDate: record.maturityDate,
+        coupon: Number(record.coupon),
+        timestamp: quoteTime
+      };
+    } else {
+      // keep existing quote
+      newOtrBonds[record.standardName] = currentOtrBonds[record.standardName];
+    }
+  }
+
+  return newOtrBonds;
+}; // Reference data reducer
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((state = _emptyState, action) => {
+  Object.freeze(state);
+
+  switch (action.type) {
+    case _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_CUSIPS:
+      return { ...state,
+        tips: { ...state.tips,
+          cusips: action.response.cusips
+        }
+      };
+
+    case _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_REF_DATA:
+      const cusip = action.response.referenceData.cusip;
+      return { ...state,
+        tips: { ...state.tips,
+          bonds: { ...state.tips.bonds,
+            [cusip]: action.response.referenceData
+          }
+        }
+      };
+
+    case _actions_referenceData__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TSY_REF_DATA:
+      return { ...state,
+        tsys: { ...state.tsys,
+          cusips: action.response.referenceData.cusips,
+          bonds: action.response.referenceData.bonds
+        }
+      };
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.RECEIVE_OTR_TSY_QUOTES_CNBC:
+      {
+        const newOtrTsys = newOtrBondRefData(state.tsys.otr, action.response.data);
+        return { ...state,
+          tsys: { ...state.tsys,
+            otr: newOtrTsys
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.RECEIVE_OTR_TIPS_QUOTES_CNBC:
+      {
+        const newOtrTips = newOtrBondRefData(state.tips.otr, action.response.data);
+        return { ...state,
+          tips: { ...state.tips,
+            otr: newOtrTips
+          }
+        };
+      }
+
+    default:
+      return state;
+  }
+});
 
 /***/ }),
 
@@ -4549,7 +5220,95 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (() => {});
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
+/* harmony import */ var _quotes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./quotes */ "./reducers/quotes.js");
+/* harmony import */ var _referenceData__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./referenceData */ "./reducers/referenceData.js");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,redux__WEBPACK_IMPORTED_MODULE_2__.combineReducers)({
+  quotes: _quotes__WEBPACK_IMPORTED_MODULE_0__["default"],
+  referenceData: _referenceData__WEBPACK_IMPORTED_MODULE_1__["default"]
+}));
+
+/***/ }),
+
+/***/ "./requests/quotesDaily.js":
+/*!*********************************!*\
+  !*** ./requests/quotesDaily.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getOtrTipsQuotesCnbc": () => (/* binding */ getOtrTipsQuotesCnbc),
+/* harmony export */   "getOtrTsyQuotesCme": () => (/* binding */ getOtrTsyQuotesCme),
+/* harmony export */   "getOtrTsyQuotesCnbc": () => (/* binding */ getOtrTsyQuotesCnbc),
+/* harmony export */   "getOtrTsyQuotesMw": () => (/* binding */ getOtrTsyQuotesMw),
+/* harmony export */   "getOtrTsyQuotesWsj": () => (/* binding */ getOtrTsyQuotesWsj),
+/* harmony export */   "getTipsPrices": () => (/* binding */ getTipsPrices)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+const getTipsPrices = () => // Request TIPS price data
+jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/tips_prices',
+  method: 'GET'
+});
+const getOtrTsyQuotesWsj = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/WSJ US Treasury Yields (intraday)',
+  method: 'GET'
+});
+const getOtrTsyQuotesCnbc = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/CNBC US Treasury Yields (intraday)',
+  method: 'GET'
+});
+const getOtrTsyQuotesMw = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/MW US Treasury Yields (intraday)',
+  method: 'GET'
+});
+const getOtrTsyQuotesCme = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/CME US Treasury Prices (intraday)',
+  method: 'GET'
+});
+const getOtrTipsQuotesCnbc = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/CNBC TIPS Yields (intraday)',
+  method: 'GET'
+});
+
+/***/ }),
+
+/***/ "./requests/referenceData.js":
+/*!***********************************!*\
+  !*** ./requests/referenceData.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getTipsCusips": () => (/* binding */ getTipsCusips),
+/* harmony export */   "getTipsRefData": () => (/* binding */ getTipsRefData),
+/* harmony export */   "getTsyRefData": () => (/* binding */ getTsyRefData)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+const getTipsCusips = () => // Request TIPS CUSIPs
+jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/tips_cusips',
+  method: 'GET'
+});
+const getTipsRefData = cusip => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/tips_reference_data/' + cusip,
+  method: 'GET'
+});
+const getTsyRefData = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/all_tsy_reference_data',
+  method: 'GET'
+});
 
 /***/ }),
 
@@ -6837,7 +7596,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#market-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#market-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -63223,6 +63982,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const root = document.getElementById("root");
   let preloadedState = {};
   const store = (0,_store_store__WEBPACK_IMPORTED_MODULE_2__["default"])(preloadedState);
+  window.getState = store.getState;
+  window.dispatch = store.dispatch;
   react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_root__WEBPACK_IMPORTED_MODULE_3__["default"], {
     store: store
   }), root);

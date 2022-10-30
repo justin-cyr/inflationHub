@@ -1,3 +1,10 @@
+import { connect } from 'react-redux';
+
 import TipsData from './tips_data';
 
-export default TipsData;
+const mapStateToProps = state => ({
+    quotes: state.quotes,
+    referenceData: state.referenceData
+});
+
+export default connect(mapStateToProps)(TipsData);
