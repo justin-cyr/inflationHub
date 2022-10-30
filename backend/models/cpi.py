@@ -211,6 +211,50 @@ class CpiModel(Model):
             return (dydt / y) - instantaneous_seasonality
 
 
+    def cpi_gradient(self, date, clamp_date=False):
+        """Return the gradient of the cpi curve w.r.t. the training data y values."""
+        domainY = self.build_settings.domainY
+        time = self.clamped_time(date, clamp_date)
+        grad = self.fitting_method.grad(time)
+
+        if domainY == domains.CPI_LEVEL:
+            return grad
+        
+        c = self.cpi_trend(date, clamp_date=clamp_date)
+        if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
+            return [c * g for g in grad]
+        
+        elif domainY == domains.ZERO_RATE:
+            return [c * time * g for g in grad]
+        
+        else:
+            raise ValueError(f'CpiModel.cpi_trend: unsupported domain {domainY}.')
+
+
+    def cpi_hessian(self, date, clamp_date=False):
+        """Return the Hessian matrix of the cpi curve w.r.t. the training data y values."""
+        domainY = self.build_settings.domainY
+        time = self.clamped_time(date, clamp_date)
+        hessian = self.fitting_method.hess(time)
+
+        if domainY == domains.CPI_LEVEL:
+            return hessian
+        
+        c = self.cpi_trend(date, clamp_date=clamp_date)
+        grad = self.fitting_method.grad(time)
+
+        if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
+            scale = 1.0
+        elif domainY == domains.ZERO_RATE:
+            scale = time
+        else:
+            raise ValueError(f'CpiModel.cpi_trend: unsupported domain {domainY}.')
+
+        gradTgrad = [[ gi * gj for gj in grad] for gi in grad]
+        m = [[ scale * c * (scale * g + h)  for g, h in zip(grow, hrow)] for grow, hrow in zip(gradTgrad, hessian)]
+        return m
+        
+
     def get_all_results(self, **kwargs):
         """Return a dict of all CpiModel output."""
         # optional arguments

@@ -200,6 +200,41 @@ class BondModel(Model):
             # dy/dt is the zero rate time derivative
             return y + time * dydt
     
+    def df_gradient(self, date):
+        """Return the gradient of the discount factor w.r.t. training data y values."""
+        time = self.curve_time(date) 
+        df = self.df(date)
+        domainY = self.build_settings.domainY
+
+        if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
+            scale = 1.0
+        elif domainY == domains.ZERO_RATE:
+            scale = time
+        else:
+            raise ValueError(f'{self.__class__.__name__}.df: unsupported domain {domainY}.')
+        
+        return [(-df * scale) * g for g in self.fitting_method.grad(time)]
+
+    def df_hessian(self, date):
+        """Return the Hessian matrix of the discount factor w.r.t. training data y values."""
+        time = self.curve_time(date) 
+        df = self.df(date)
+        domainY = self.build_settings.domainY
+
+        if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
+            scale = 1.0
+        elif domainY == domains.ZERO_RATE:
+            scale = time
+        else:
+            raise ValueError(f'{self.__class__.__name__}.df: unsupported domain {domainY}.')
+        
+        grad = self.df_gradient(date)
+        hessian = self.fitting_method.hess(time)
+
+        gradTgrad = [[ gi * gj for gj in grad] for gi in grad]
+        m = [[ -scale * df * (-scale * g + h)  for g, h in zip(grow, hrow)] for grow, hrow in zip(gradTgrad, hessian)]
+        return m
+
 
     def get_all_results(self, **kwargs):
         """Return a dict of all BondModel output."""
