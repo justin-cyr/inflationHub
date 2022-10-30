@@ -183,7 +183,7 @@ class MarketData extends React.Component {
 
 
         tips_data_table = <div
-            style={{ height: '250px', width: '600px', overflow: 'auto', paddingTop: '25px' }}
+            style={{ height: '250px', width: '600px', overflow: 'auto' }}
         >
             <Table
                 id="tips-benchmark-table"
@@ -218,7 +218,9 @@ class MarketData extends React.Component {
                     {/* Tsys benchmark table */}
                     {tsy_data_table}
                 </Row>
-                <Row>
+                <Row
+                    style={{ paddingTop: '25px' }}
+                >
                     <Col>
                         {/* Tips benchmark table */}
                         {tips_data_table}

@@ -4132,8 +4132,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         height: '250px',
         width: '600px',
-        overflow: 'auto',
-        paddingTop: '25px'
+        overflow: 'auto'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
       id: "tips-benchmark-table",
@@ -4182,7 +4181,11 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     }, tips_table_rows)));
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, tips_data_table)));
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      style: {
+        paddingTop: '25px'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, tips_data_table)));
   }
 
 }
