@@ -1,4 +1,6 @@
 
+import numpy as np
+
 from .fittingmethod import FittingMethod
 
 class Spline(FittingMethod):
@@ -110,14 +112,14 @@ class PiecewiseConstantLeftCts(Spline):
         
         i = self.find_node_index_above(x)
         vec[i] = 1.0
-        return vec
+        return np.array(vec)
 
     def hess(self, x):
-        if self.hessian:
+        if self.hessian is not None:
             return self.hessian
 
         dim = len(self.pairs)
-        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        self.hessian = np.zeros((dim, dim))
         return self.hessian
 
 class PiecewiseConstantRightCts(Spline):
@@ -151,18 +153,18 @@ class PiecewiseConstantRightCts(Spline):
             return vec
         if x > self.x_max:
             vec[-1] = 1.0
-            return vec
+            return np.array(vec)
         
         i = self.find_node_index_below(x)
         vec[i] = 1.0
         return vec
 
     def hess(self, x):
-        if self.hessian:
+        if self.hessian is not None:
             return self.hessian
 
         dim = len(self.pairs)
-        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        self.hessian = np.zeros((dim, dim))
         return self.hessian
 
 class PiecewiseLinear(Spline):
@@ -228,12 +230,12 @@ class PiecewiseLinear(Spline):
         vec[i] = (xiplus1 - x) / run
         vec[i + 1] = (x - xi) / run
 
-        return vec
+        return np.array(vec)
 
     def hess(self, x):
-        if self.hessian:
+        if self.hessian is not None:
             return self.hessian
 
         dim = len(self.pairs)
-        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        self.hessian = np.zeros((dim, dim))
         return self.hessian

@@ -1,4 +1,6 @@
 
+import numpy as np
+
 from .fittingmethod import FittingMethod
 
 class BestFitConstant(FittingMethod):
@@ -31,14 +33,14 @@ class BestFitConstant(FittingMethod):
         return 0.0
 
     def grad(self, x):
-        if self.gradient:
+        if self.gradient is not None:
             return self.gradient
         
-        self.gradient = [1.0 / self.training_len for _ in range(self.training_len)]
+        self.gradient = np.array([1.0 / self.training_len for _ in range(self.training_len)])
         return self.gradient
 
     def hess(self, x):
-        if self.hessian:
+        if self.hessian is not None:
             return self.hessian
 
         dim = self.training_len
@@ -82,17 +84,17 @@ class BestFitLinear(FittingMethod):
         return self.linear_regression.coef_[0]
 
     def grad(self, x):
-        if self.pinv:
-            return list(x * self.pinv[0] + self.pinv[1])
+        if self.pinv is not None:
+            return x * self.pinv[0] + self.pinv[1]
         
         # gradient is found using the Moore-Penrose pseudoinverse of the predictor variables
         from scipy.linalg import pinv
         predict_vars = [[pt, 1.0] for pt in self.xs]
         self.pinv = pinv(predict_vars)
-        return list(x * self.pinv[0] + self.pinv[1])
+        return x * self.pinv[0] + self.pinv[1]
     
     def hess(self, x):
-        if self.hessian:
+        if self.hessian is not None:
             return self.hessian
 
         dim = self.training_len
