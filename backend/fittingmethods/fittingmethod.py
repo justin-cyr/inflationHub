@@ -79,3 +79,7 @@ class FittingMethod(object):
     def grad(self, x):
         """Return the gradient vector (df(x)/dy_1,...,df(x)/dy_n)"""
         raise NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class.')
+
+    def hess(self, x):
+        """Return the Hessian matrix [d^2f(x)/dy_idy_j]"""
+        raise NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class.')

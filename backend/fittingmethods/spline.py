@@ -78,6 +78,7 @@ class Spline(FittingMethod):
 class PiecewiseConstantLeftCts(Spline):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
+        self.hessian = None
 
     def __repr__(self):
         return f'PiecewiseConstantLeftCts({self.domain_pair})'
@@ -111,9 +112,18 @@ class PiecewiseConstantLeftCts(Spline):
         vec[i] = 1.0
         return vec
 
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = len(self.pairs)
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian
+
 class PiecewiseConstantRightCts(Spline):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
+        self.hessian = None
 
     def __repr__(self):
         return f'PiecewiseConstantRightCts({self.domain_pair})'
@@ -147,10 +157,19 @@ class PiecewiseConstantRightCts(Spline):
         vec[i] = 1.0
         return vec
 
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = len(self.pairs)
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian
+
 class PiecewiseLinear(Spline):
     def __init__(self, domainX, domainY):
         super().__init__(domainX, domainY)
         self.slopes = None
+        self.hessian = None
 
     def __repr__(self):
         return f'PiecewiseLinear({self.domain_pair})'
@@ -197,7 +216,7 @@ class PiecewiseLinear(Spline):
         if x < self.x_min:
             i = 0
         elif x >= self.x_max:
-            i = len(self.pairs) - 1
+            i = len(self.pairs) - 2
         else:
             i = self.find_node_index_below(x)
         
@@ -210,3 +229,11 @@ class PiecewiseLinear(Spline):
         vec[i + 1] = (x - xi) / run
 
         return vec
+
+    def hess(self, x):
+        if self.hessian:
+            return self.hessian
+
+        dim = len(self.pairs)
+        self.hessian = [[0.0 for _ in range(dim)] for _ in range(dim)]
+        return self.hessian
