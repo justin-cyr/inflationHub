@@ -92,6 +92,8 @@ class DataAPI(object):
             self.data_parser = IntradayUSTQuoteWsjParser()
         elif data_parser == 'MarketWatchBondQuoteParser':
             self.data_parser = MarketWatchBondQuoteParser()
+        elif data_parser == 'CmeTsyQuoteJsonParser':
+            self.data_parser = CmeTsyQuoteJsonParser()
         elif data_parser == 'TwHtmlUSTYieldParser':
             self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'CmeFuturesQuoteJsonParser':
@@ -190,6 +192,15 @@ class Parser(object):
         'U.S. 10 Year Treasury Note': 'US 10Y',
         'U.S. 20 Year Treasury Bond': 'US 20Y',
         'U.S. 30 Year Treasury Bond': 'US 30Y',
+        ####
+        # CME BrokerTec
+        'UB02': 'US 2Y',
+        'UB03': 'US 3Y',
+        'UB05': 'US 5Y',
+        'UB07': 'US 7Y',
+        'UB10': 'US 10Y',
+        'UB20': 'US 20Y',
+        'UB30': 'US 30Y',
     # TIPS
         # CNBC
         'UST 5-Yr. TIPS':    'TIPS 5Y',
@@ -373,7 +384,7 @@ class CnbcJsonQuoteParser(Parser):
 
         for record in quote_list:
             yield_num = float(self.chop_pct(record.get('last')))
-            coupon = float(self.chop_pct(record.get('last')))
+            coupon = float(self.chop_pct(record.get('coupon')))
             name = record.get('name')
             standard_name = Parser.standard_name(name)
 
@@ -444,6 +455,33 @@ class IntradayUSTQuoteWsjParser(Parser):
                             'timestamp': inst.get('timestamp')[:19]
                         }
                     )
+        return res
+
+
+class CmeTsyQuoteJsonParser(Parser):
+    """Parser for intraday CME BrokerTec US Treasury note and bond quotes."""
+    def parse(self, response):
+        self.validate_response(response)
+        response_data = response.json()
+        res = []
+
+        for q in response_data:
+            name =  q.get('asset')
+            standard_name = Parser.standard_name(name)
+            if 'volume' in q:
+                volume = int(''.join(q['volume'].split(',')))
+            else:
+                volume = None
+            
+            res.append({
+                'standardName': standard_name,
+                'name': name,
+                'price': q.get('lastprice'),
+                'displayPrice': q.get('lastdisplayprice'),
+                'timestamp': q.get('transacttime'),
+                'volume': volume
+            })
+        
         return res
 
 

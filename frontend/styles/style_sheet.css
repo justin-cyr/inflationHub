@@ -64,7 +64,7 @@ body {
 
 /* Market Data */
 
-#market-data-table {
+#tsys-benchmark-table, #tips-benchmark-table {
     --bs-table-hover-color: #6bcbff;
     --bs-table-hover-bg: #121729;
 }
