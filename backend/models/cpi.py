@@ -220,12 +220,12 @@ class CpiModel(Model):
         if domainY == domains.CPI_LEVEL:
             return grad
         
-        c = self.cpi_trend(date, clamp_date=clamp_date)
+        c = self.cpi_trend(date, clamp_date)
         if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
-            return [c * g for g in grad]
+            return c * grad
         
         elif domainY == domains.ZERO_RATE:
-            return [c * time * g for g in grad]
+            return (c * time) * grad
         
         else:
             raise ValueError(f'CpiModel.cpi_trend: unsupported domain {domainY}.')
@@ -240,7 +240,7 @@ class CpiModel(Model):
         if domainY == domains.CPI_LEVEL:
             return hessian
         
-        c = self.cpi_trend(date, clamp_date=clamp_date)
+        c = self.cpi_trend(date, clamp_date)
         grad = self.fitting_method.grad(time)
 
         if domainY == domains.TIME_WEIGHTED_ZERO_RATE:
@@ -250,8 +250,9 @@ class CpiModel(Model):
         else:
             raise ValueError(f'CpiModel.cpi_trend: unsupported domain {domainY}.')
 
-        gradTgrad = [[ gi * gj for gj in grad] for gi in grad]
-        m = [[ scale * c * (scale * g + h)  for g, h in zip(grow, hrow)] for grow, hrow in zip(gradTgrad, hessian)]
+        gradTgrad = grad.reshape(grad.size, 1) * grad
+        m = scale * c * (scale * gradTgrad + hessian)
+        #m = [[ scale * c * (scale * g + h)  for g, h in zip(grow, hrow)] for grow, hrow in zip(gradTgrad, hessian)]
         return m
         
 

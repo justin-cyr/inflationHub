@@ -213,7 +213,8 @@ class BondModel(Model):
         else:
             raise ValueError(f'{self.__class__.__name__}.df: unsupported domain {domainY}.')
         
-        return [(-df * scale) * g for g in self.fitting_method.grad(time)]
+        grad = self.fitting_method.grad(time)
+        return (-df * scale) * grad
 
     def df_hessian(self, date):
         """Return the Hessian matrix of the discount factor w.r.t. training data y values."""
@@ -231,8 +232,9 @@ class BondModel(Model):
         grad = self.df_gradient(date)
         hessian = self.fitting_method.hess(time)
 
-        gradTgrad = [[ gi * gj for gj in grad] for gi in grad]
-        m = [[ -scale * df * (-scale * g + h)  for g, h in zip(grow, hrow)] for grow, hrow in zip(gradTgrad, hessian)]
+        gradTgrad = grad.reshape(grad.size, 1) * grad
+        m = (-scale * df) *(-scale * gradTgrad + hessian)
+        #m = [[ -scale * df * (-scale * g + h)  for g, h in zip(grow, hrow)] for grow, hrow in zip(gradTgrad, hessian)]
         return m
 
 
