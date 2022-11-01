@@ -127,31 +127,36 @@ class Date(object):
 
     # Overload binary operators
     def __lt__(self, rhs):
-        rhs = Date(rhs)
+        if not isinstance(rhs, Date):
+            rhs = Date(rhs)
         return self.date < rhs.date
 
     def __le__(self, rhs):
-        rhs = Date(rhs)
+        if not isinstance(rhs, Date):
+            rhs = Date(rhs)
         return self.date <= rhs.date
 
     def __gt__(self, rhs):
-        rhs = Date(rhs)
+        if not isinstance(rhs, Date):
+            rhs = Date(rhs)
         return self.date > rhs.date
 
-    def __gt__(self, rhs):
-        rhs = Date(rhs)
+    def __ge__(self, rhs):
+        if not isinstance(rhs, Date):
+            rhs = Date(rhs)
         return self.date >= rhs.date
 
     def __eq__(self, rhs):
-        rhs = Date(rhs)
-        return self.date == rhs.date
+        # compare as strings to save a constructor call
+        return str(self.date) == str(rhs)
 
     def __ne__(self, rhs):
-        rhs = Date(rhs)
-        return self.date != rhs.date
+        # compare as strings to save a constructor call
+        return str(self.date) != str(rhs)
 
     def __sub__(self, rhs):
-        rhs = Date(rhs)
+        if not isinstance(rhs, Date):
+            rhs = Date(rhs)
         return self.date - rhs.date
 
     @classmethod

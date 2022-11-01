@@ -17,7 +17,10 @@ class Cashflows(object):
             raise ValueError(f'Cashflows: len(payment_dates)={len(payment_dates)} and len(amounts)={len(amounts)} don\'t match.')
         
         try:
-            payment_date_objs = [Date(d) for d in payment_dates]
+            if all([isinstance(d, Date) for d in payment_dates]):
+                payment_date_objs = payment_dates
+            else:
+                payment_date_objs = [Date(d) for d in payment_dates]
         except Exception as e:
             raise ValueError(f'Cashflows: payment_dates cannot be converted to Date type, {e}')
 
