@@ -234,7 +234,6 @@ class BondModel(Model):
 
         gradTgrad = grad.reshape(grad.size, 1) * grad
         m = (-scale * df) *(-scale * gradTgrad + hessian)
-        #m = [[ -scale * df * (-scale * g + h)  for g, h in zip(grow, hrow)] for grow, hrow in zip(gradTgrad, hessian)]
         return m
 
 
