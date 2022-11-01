@@ -36,7 +36,7 @@ class Cashflows(object):
         this_schedule = []
         for d in self.payment_dates:
             record = {
-                'payment_date': str(d),
+                'payment_date': d,
                 'type': 'Cashflow'
             }
             if 'amount_map' in self.__dict__:
@@ -68,7 +68,7 @@ class MultiLegCashflows(Cashflows):
         self.legs = cashflows_list
 
         payment_dates, merged_schedule = self.merge_legs()
-        self.payment_dates = [Date(d) for d in payment_dates]
+        self.payment_dates = payment_dates
         self.merged_schedule = merged_schedule
 
         self.nonzero_leg_map = defaultdict(list)
@@ -76,7 +76,7 @@ class MultiLegCashflows(Cashflows):
             self.nonzero_leg_map[record['payment_date']].append(record['leg_index'])
 
     def __repr__(self):
-        return f'MergedCashflows({self.schedule()})'
+        return f'MultiLegCashflows({self.schedule()})'
 
     def schedule(self):
         return self.merged_schedule
@@ -168,8 +168,8 @@ class CouponCashflows(Cashflows):
             if 'day_count' in self.__dict__:
                 record['day_count'] = str(self.day_count)
             if 'period_dates' in self.__dict__:
-                record['start_date'] = str(self.period_dates[i][0])
-                record['end_date'] = str(self.period_dates[i][1])
+                record['start_date'] = self.period_dates[i][0]
+                record['end_date'] = self.period_dates[i][1]
             this_schedule.append(record)
         return this_schedule
 
