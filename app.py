@@ -1,4 +1,5 @@
 from flask import Flask, send_from_directory, request
+from flask_caching import Cache
 import logging
 
 # Backend API
@@ -6,6 +7,8 @@ from backend import config as cfg
 from backend import data
 
 app = Flask(__name__, static_url_path='', static_folder='frontend/build')
+cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
+cache.init_app(app)
 
 # configure logger
 app.logger.setLevel(logging.DEBUG)
