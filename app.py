@@ -35,6 +35,7 @@ def get_all_data_names():
     return dict(names=sorted([k for k in data.DATA_CONFIG.keys() if data.DATA_CONFIG[k]['DataViewer']]))
 
 @app.route('/data/<name>')
+# do not cache data, since same route is used for intraday
 def get_data(name):
     try:
         app.logger.info('Request get_data(\'' + name + '\')')
@@ -46,6 +47,7 @@ def get_data(name):
         return dict(errors=str(e))
 
 @app.route('/tips_cusips')
+@cache.cached(timeout=1800)
 def get_tips_cusips():
     try:
         from backend.tips_data import get_tips_cusips
@@ -57,6 +59,7 @@ def get_tips_cusips():
         return dict(errors=str(e))
 
 @app.route('/all_tsy_reference_data')
+@cache.cached(timeout=1800)
 def get_all_tsy_reference_data():
     try:
         from backend.tips_data import get_all_tsy_reference_data
@@ -70,6 +73,7 @@ def get_all_tsy_reference_data():
         return dict(errors=str(e))
 
 @app.route('/tips_reference_data/<cusip>')
+@cache.cached(timeout=1800)
 def get_tips_reference_data(cusip):
     try:
         from backend.tips_data import get_treasury_reference_data
@@ -81,6 +85,7 @@ def get_tips_reference_data(cusip):
         return dict(errors=str(e))
 
 @app.route('/tips_yield_data/<cusip>')
+@cache.cached(timeout=1800)
 def get_tips_yield_data(cusip):
     try:
         from backend.tips_data import get_tips_yield_data_by_cusip
@@ -91,6 +96,7 @@ def get_tips_yield_data(cusip):
 
 
 @app.route('/tips_prices')
+@cache.cached(timeout=1800)
 def get_tips_prices():
     try:
         from backend.tips_data import get_tips_prices_wsj as get_prices
