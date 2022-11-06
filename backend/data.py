@@ -44,6 +44,7 @@ class DataAPI(object):
         self.type = data_config.get('Type')
         self.url = data_config.get('URL')
         self.description = data_config.get('Description')
+        self.cache = data_config.get('Cache', True)
         self.icon = data_config.get('Icon')
         self.source = data_config.get('Source')
         

@@ -41,10 +41,20 @@ def get_data(name):
         app.logger.info('Request get_data(\'' + name + '\')')
         data_api = data.DataAPI(name)
         app.logger.debug('DataAPI(\''+ name + '\') returned ' + str(data_api))
-        return data_api.get_and_parse_data()
+        if data_api.cache:
+            return get_cached_data(data_api)
+        else:
+            return get_uncached_data(data_api)
     except Exception as e:
         app.logger.error(str(e))
         return dict(errors=str(e))
+
+@cache.cached(timeout=3600)
+def get_cached_data(data_api):
+    return data_api.get_and_parse_data()
+
+def get_uncached_data(data_api):
+    return data_api.get_and_parse_data()
 
 @app.route('/tips_cusips')
 @cache.cached(timeout=1800)
