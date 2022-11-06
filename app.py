@@ -22,6 +22,11 @@ def process_form_data(form, json_str_keys):
             form_data[key] = loads(form_data[key])
     return form_data
 
+def get_model(handle):
+    """Return a Model object from the cache given a cache handle."""
+    model = cache.get(handle)
+    return model
+
 @app.route('/')
 def serve():
     return send_from_directory(app.static_folder,'index.html')
@@ -122,8 +127,14 @@ def build_model():
     try:
         from backend.models.modelfactory import ModelFactory
         params = process_form_data(request.form, ['model_data'])
+        handle = params.get('handle', 'TempModel')
         model = ModelFactory.build(params)
-        app.logger.info(f'Built model {model}')
+        app.logger.info(f'Built model {handle}: {model}')
+
+        # cache model
+        is_set = cache.set(handle, model)
+        if not is_set:
+            raise RuntimeError(f'ModelFactory.build_and_cache: failed to set {model} in cache.')
 
         # gather results
         results_options = params.get('results_options') or {}
