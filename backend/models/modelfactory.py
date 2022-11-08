@@ -14,7 +14,7 @@ class ModelFactory(object):
 
         model_type = params.get('model_type')
         base_date = params.get('base_date')
-        if 'model_data' in params:
+        if 'model_data' in params and params['model_data']:
             model_data = params['model_data']
         else:
             model_data = ModelFactory.get_model_data(params)
