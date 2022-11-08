@@ -3905,6 +3905,8 @@ const downColor = '#dc3545'; // red
 
 const unchColor = '#bdbdbd'; // default text color
 
+const bbgColor = '#ff6600'; // orange
+
 const benchmarkTsys = ['US 1M', 'US 3M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
 const benchmarkTips = ['TIPS 5Y', 'TIPS 10Y', 'TIPS 30Y'];
 const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
@@ -3940,15 +3942,18 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       key: standardName
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: bbgColor
       }
     }, standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: bbgColor
       }
     }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].maturityDate : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: bbgColor
       }
     }, standardName in this.props.referenceData.tsys.otr ? this.props.referenceData.tsys.otr[standardName].coupon.toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
@@ -4086,15 +4091,18 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       key: standardName
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: bbgColor
       }
     }, standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: bbgColor
       }
     }, standardName in this.props.referenceData.tips.otr ? this.props.referenceData.tips.otr[standardName].maturityDate : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
-        textAlign: 'center'
+        textAlign: 'center',
+        color: bbgColor
       }
     }, standardName in this.props.referenceData.tips.otr ? this.props.referenceData.tips.otr[standardName].coupon.toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
