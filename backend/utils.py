@@ -29,6 +29,10 @@ class BumpDirection(StrEnum):
     FORWARD = auto()
     BACKWARD = auto()
 
+class EomRule(StrEnum):
+    LAST = auto()
+    SAME = auto()
+
 class DateFrequency(StrEnum):
     DAILY = auto()
     WEEKLY = auto()
@@ -224,7 +228,7 @@ class Date(object):
         day = self.day if not self.isLeapDay() else 28
         return Date(datetime.date(self.year + sign, self.month, day))
 
-    def addMonths(self, months):
+    def addMonths(self, months, eom_rule):
         """Return a new Date that is months ahead/behind this date."""
         year = self.year
         month = self.month + months
@@ -237,14 +241,20 @@ class Date(object):
             year -= 1
             month += 12
         
+        # Use eom_rule to determine day number.
         day = min(self.day, Date.class_daysInMonth(month, year))
+        if eom_rule == EomRule.LAST:
+            if self.day == Date.class_daysInMonth(self.month, self.year):
+                # stay at end of shifted month
+                day = Date.class_daysInMonth(month, year)
+        
         return Date(datetime.date(year, month, day))
 
     def addDays(self, days):
         """Return a new Date that is days ahead of this date."""
         return Date(self.date + datetime.timedelta(days=days))
 
-    def addTenor(self, tenor):
+    def addTenor(self, tenor, eom_rule=EomRule.LAST):
         """Return a new Date that is tenor ahead of this date."""
         tenor = Tenor(tenor)
         date_frequency = DateFrequency.tenor_unit_to_frequency(tenor.unit)
@@ -252,10 +262,10 @@ class Date(object):
         iterations = abs(tenor.size)
         shifted_date = self
         for _ in range(iterations):
-            shifted_date = shifted_date.shiftDate(date_frequency, direction)
+            shifted_date = shifted_date.shiftDate(date_frequency, direction, eom_rule)
         return shifted_date
 
-    def shiftDate(self, date_frequency, bump_direction):
+    def shiftDate(self, date_frequency, bump_direction, eom_rule=EomRule.LAST):
         """Return a new Date that is ahead/behind this date by the date_frequency."""
         sign = 1 if bump_direction == BumpDirection.FORWARD else -1
 
@@ -264,11 +274,11 @@ class Date(object):
         if date_frequency == DateFrequency.WEEKLY:
             return self.addDays(sign * 7)
         if date_frequency == DateFrequency.MONTHLY:
-            return self.addMonths(sign)
+            return self.addMonths(sign, eom_rule)
         if date_frequency == DateFrequency.QUARTERLY:
-            return self.addMonths(sign * 3)
+            return self.addMonths(sign * 3, eom_rule)
         if date_frequency == DateFrequency.SEMIANNUALLY:
-            return self.addMonths(sign * 6)
+            return self.addMonths(sign * 6, eom_rule)
         if date_frequency == DateFrequency.YEARLY:
             return self.addOneYear(sign)
 

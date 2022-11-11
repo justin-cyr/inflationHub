@@ -90,6 +90,42 @@ def run_with_profiler(test_fun):
 
 # TESTS
 
+def test_otr_bond_schedules():
+    params = [
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2022-12-06'}, # 1M
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-02-09'}, # 3M
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-05-11'}, # 6M
+        {'Convention': 'USTBill', 'notional': 100, 'maturity_date': '2023-11-02'}, # 1Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04375, 'maturity_date': '2024-10-31', 'tenor': '2Y'}, # 2Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04500, 'maturity_date': '2025-11-15', 'tenor': '3Y'}, # 3Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04125, 'maturity_date': '2027-10-31', 'tenor': '5Y'}, # 5Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04000, 'maturity_date': '2029-10-31', 'tenor': '7Y'}, # 7Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.04125, 'maturity_date': '2032-11-15', 'tenor': '10Y'}, # 10Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03375, 'maturity_date': '2042-08-15', 'tenor': '20Y'}, # 20Y
+        {'Convention': 'USTBond', 'notional': 100, 'rate': 0.03000, 'maturity_date': '2052-08-15', 'tenor': '30Y'}  # 30Y
+    ]
+    bonds = [Bond.create_bond(**p) for p in params]
+
+    # ZeroCouponBonds
+    assert str(bonds[0].maturity_date) == '2022-12-06'
+    assert str(bonds[1].maturity_date) == '2023-02-09'
+    assert str(bonds[2].maturity_date) == '2023-05-11'
+    assert str(bonds[3].maturity_date) == '2023-11-02'
+
+    # FixedRateBonds
+    assert [str(d) for d in bonds[4].coupon_schedule.unadj_start_dates] == [
+        '2022-10-31', '2023-04-30',
+        '2023-10-31', '2024-04-30'
+        ]
+    assert [str(d) for d in bonds[5].coupon_schedule.unadj_start_dates] == [
+        '2022-11-15', '2023-05-15',
+        '2023-11-15', '2024-05-15',
+        '2024-11-15', '2025-05-15'
+        ]
+    assert [str(d) for d in bonds[10].coupon_schedule.unadj_start_dates[:2]] == [
+        '2022-08-15', '2023-02-15',
+    ]
+
 def test_fixtures(otr_nominal_bonds):
     assert all([isinstance(b, Bond) for b in otr_nominal_bonds])
 

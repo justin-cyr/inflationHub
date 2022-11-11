@@ -1,6 +1,6 @@
 
 from .calendar import CalendarUtil
-from ..utils import Date, BumpDirection, DateFrequency, DayCount, day_count_fraction
+from ..utils import Date, BumpDirection, DateFrequency, EomRule, day_count_fraction
 
 # A CouponSchedule is a collection of lists of ascending coupon and payment Dates generated using some rule.
 class CouponSchedule(object):
@@ -13,7 +13,8 @@ class CouponSchedule(object):
                 payment_days=0,
                 payment_calendars=[],
                 pay_dates_relative_to_adj=False,
-                force_start_and_end=False
+                force_start_and_end=False,
+                eom_rule=EomRule.LAST
             ):
         # start of first coupon period and end of last coupon period
         self.unadj_start_date = Date(unadj_start_date)
@@ -37,7 +38,7 @@ class CouponSchedule(object):
         # Generate unadjusted dates using frequency, no calendars
         if self.direction == BumpDirection.FORWARD:
             s_date = self.unadj_start_date
-            e_date = s_date.shiftDate(self.payment_frequency, self.direction)
+            e_date = s_date.shiftDate(self.payment_frequency, self.direction, eom_rule)
 
             # Use inputs if shift is too large
             if e_date > self.unadj_end_date:
@@ -48,7 +49,7 @@ class CouponSchedule(object):
                 self.unadj_start_dates.append(s_date)
                 self.unadj_end_dates.append(e_date)
                 s_date = e_date
-                e_date = s_date.shiftDate(self.payment_frequency, self.direction)
+                e_date = s_date.shiftDate(self.payment_frequency, self.direction, eom_rule)
 
             # Force end date
             if self.force_start_and_end:
@@ -56,7 +57,8 @@ class CouponSchedule(object):
 
         elif self.direction == BumpDirection.BACKWARD:
             e_date = self.unadj_end_date
-            s_date = e_date.shiftDate(self.payment_frequency, self.direction)
+            s_date = e_date.shiftDate(
+                self.payment_frequency, self.direction, eom_rule)
 
             # Use inputs if shift is too large
             if s_date < self.unadj_start_date:
@@ -67,7 +69,7 @@ class CouponSchedule(object):
                 self.unadj_end_dates.append(e_date)
                 self.unadj_start_dates.append(s_date)
                 e_date = s_date
-                s_date = e_date.shiftDate(self.payment_frequency, self.direction)
+                s_date = e_date.shiftDate(self.payment_frequency, self.direction, eom_rule)
 
             # Force end date
             if self.force_start_and_end:

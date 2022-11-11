@@ -2,7 +2,7 @@
 from ast import Yield
 from backend.products.cashflows import Cashflows, FixedCouponCashflows, MultiLegCashflows, PrincipalCashflows
 from backend.products.projectedcashflows import ProjectedCashflows
-from ..utils import BumpDirection, Date, DateFrequency, DayCount, StrEnum, Tenor, YieldConvention
+from ..utils import BumpDirection, Date, DateFrequency, DayCount, EomRule, StrEnum, Tenor, YieldConvention
 from ..utilities.calendar import CalendarUtil
 from ..utilities.couponschedule import CouponSchedule
 
@@ -87,6 +87,7 @@ class Bond(object):
             day_count = kwargs.get('day_count')
             coupon_convention = kwargs.get('coupon_convention')
             accrued_interest_day_count = kwargs.get('accrued_interest_day_count')
+            eom_rule = kwargs.get('eom_rule')
             yield_convention = kwargs.get('yield_convention')
         
         else:
@@ -107,6 +108,7 @@ class Bond(object):
             day_count = bond_conventions.get('CouponDayCount')
             coupon_convention = bond_conventions.get('CouponConvention')
             accrued_interest_day_count = bond_conventions.get('AccruedInterestDayCount')
+            eom_rule = bond_conventions.get('EomRule')
             yield_convention = bond_conventions.get('YieldConvention')
 
         # Convert types of optional arguments
@@ -114,6 +116,7 @@ class Bond(object):
         payment_frequency = DateFrequency.from_str(payment_frequency) if payment_frequency else None
         day_count = DayCount.from_str(day_count) if day_count else None
         accrued_interest_day_count = DayCount.from_str(accrued_interest_day_count) if accrued_interest_day_count else None
+        eom_rule = EomRule.from_str(eom_rule) if eom_rule else None
         yield_convention = YieldConvention.from_str(yield_convention) if yield_convention else None
 
         # Delegate to constructor based on type
@@ -128,6 +131,7 @@ class Bond(object):
                     coupon_convention,
                     yield_convention,
                     accrued_interest_day_count,
+                    eom_rule,
                     dated_date=dated_date,
                     tenor=tenor,
                     settlement_days=settlement_days,
@@ -296,6 +300,7 @@ class FixedRateBond(Bond):
             coupon_convention,
             yield_convention,
             accrued_interest_day_count,
+            eom_rule,
             dated_date=None,
             tenor=None,
             settlement_days=0,
@@ -318,7 +323,8 @@ class FixedRateBond(Bond):
             'coupon_convention': coupon_convention,
             'payment_frequency': payment_frequency,
             'yield_convention': yield_convention,
-            'accrued_interest_day_count': accrued_interest_day_count
+            'accrued_interest_day_count': accrued_interest_day_count,
+            'eom_rule': eom_rule
         }
 
         for name, val in required_arguments.items():
@@ -361,7 +367,8 @@ class FixedRateBond(Bond):
             payment_days=self.payment_days,
             payment_calendars=self.payment_calendars,
             pay_dates_relative_to_adj=False,
-            force_start_and_end=False
+            force_start_and_end=False,
+            eom_rule=eom_rule
         )
 
         # Determine coupon day count fractions
