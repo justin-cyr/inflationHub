@@ -256,12 +256,7 @@ class CpiModel(Model):
         
 
     def get_all_results(self, **kwargs):
-        """Return a dict of all CpiModel output."""
-        # optional arguments
-        tenor = kwargs.get('tenor') or '5Y'
-        start_date = Date(kwargs.get('startDate') or self.t0_date)
-        end_date = kwargs.get('endDate') or start_date.addTenor(tenor)
-        
+        """Return a dict of all CpiModel output."""        
         # calculate results
         res = defaultdict(list)
         results_key_to_func = {
@@ -272,16 +267,12 @@ class CpiModel(Model):
             'instantaneous_forward_rate': self.instantaneous_forward_rate
         }
 
-        d = start_date
-        while d <= end_date:
-
+        for d in self.get_curve_result_dates():
             for key, func in results_key_to_func.items():
                 try:
                     value = func(d)
                     res[key].append((str(d), value))
                 except Exception as e:
                     app.logger.error(f'CpiModel.get_all_results: failed to calculate {key} on {d} because {e}.')
-            
-            d = d.addTenor('1D')
 
         return res

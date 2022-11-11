@@ -1,6 +1,6 @@
 
 from ..curveconstruction.curvedata import CurveDataPointFactory
-from ..utils import Date
+from ..utils import Date, EomRule
 from ..fittingmethods.fittingmethodfactory import FittingMethodFactory
 
 class Model(object):
@@ -36,3 +36,26 @@ class Model(object):
     def get_all_results(self, **kwargs):
         """Return a dict of all model output."""
         raise NotImplementedError('Model.get_all_results: not implemented in base class.')
+
+    def get_curve_result_dates(self):
+        """Return a list of Dates to evaluate model results."""
+        start_date = self.base_date
+        daily_end_date = start_date.addTenor('3Y')
+        weekly_end_date = start_date.addTenor('10Y')
+        monthly_end_date = start_date.addTenor('31Y')
+
+        dates = []
+        d = start_date
+        while d <= daily_end_date:
+            dates.append(d)
+            d = d.addDays(1)
+        
+        while d <= weekly_end_date:
+            dates.append(d)
+            d = d.addDays(7)
+
+        while d <= monthly_end_date:
+            dates.append(d)
+            d = d.addMonths(1, EomRule.LAST)
+
+        return dates
