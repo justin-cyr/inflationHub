@@ -68,6 +68,7 @@ class BuildSettingsCPICurve(BuildSettings):
                 ],
             fitting_method_str=[
                 fm.PiecewiseLinear,
+                fm.CubicSpline,
                 fm.BestFitLinear,
                 fm.BestFitConstant,
                 fm.PiecewiseConstantLeftCts,
