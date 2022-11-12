@@ -1,5 +1,6 @@
 
 import numpy as np
+from scipy.interpolate import CubicSpline as scipyCubicSpline
 
 from .fittingmethod import FittingMethod
 
@@ -239,3 +240,29 @@ class PiecewiseLinear(Spline):
         dim = len(self.pairs)
         self.hessian = np.zeros((dim, dim))
         return self.hessian
+
+
+class CubicSpline(Spline):
+    def __init__(self, domainX, domainY):
+        super().__init__(domainX, domainY)
+        self.interpolator = None
+        self.interpolator_prime = None
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.domain_pair})'
+    
+    @FittingMethod.set_is_fit
+    def fit(self, xs, ys):
+        super().fit(xs, ys)
+        xs = np.array([p[0] for p in self.pairs])
+        ys = np.array([p[1] for p in self.pairs])
+        self.interpolator = scipyCubicSpline(xs, ys, bc_type='not-a-knot', extrapolate=True)
+
+    @FittingMethod.check_is_fit
+    def predict(self, x):
+        return self.interpolator(x)
+    
+    def dydx(self, x):
+        if self.interpolator_prime is None:
+            self.interpolator_prime = self.interpolator.derivative(1)
+        return float(np.asscalar(self.interpolator_prime(x)))

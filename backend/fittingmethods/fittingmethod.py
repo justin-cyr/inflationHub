@@ -4,6 +4,7 @@ from ..curveconstruction.domains import DomainPair
 # String constants for fitting method names
 BestFitConstant = 'BestFitConstant'
 BestFitLinear = 'BestFitLinear'
+CubicSpline = 'CubicSpline'
 PiecewiseLinear = 'PiecewiseLinear'
 PiecewiseConstantLeftCts = 'PiecewiseConstantLeftCts'
 PiecewiseConstantRightCts = 'PiecewiseConstantRightCts'

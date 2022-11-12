@@ -11,6 +11,9 @@ class FittingMethodFactory(object):
         if t == 'PiecewiseLinear':
             return PiecewiseLinear(domainX, domainY)
 
+        if t == 'CubicSpline':
+            return CubicSpline(domainX, domainY)
+
         elif t == 'PiecewiseConstantLeftCts':
             return PiecewiseConstantLeftCts(domainX, domainY)
 

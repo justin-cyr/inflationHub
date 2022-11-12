@@ -119,6 +119,7 @@ class BuildSettingsBondCurve(BuildSettings):
                 domains.ZERO_RATE
                 ],
             fitting_method_str=[
+                fm.CubicSpline,
                 fm.PiecewiseLinear,
                 fm.BestFitLinear,
                 fm.BestFitConstant,
