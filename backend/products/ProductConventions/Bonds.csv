@@ -1,3 +1,3 @@
 Convention,Type,SettlementDays,SettlementCalendars,PaymentDays,PaymentCalendars,PaymentFrequency,CouponDayCount,CouponConvention,AccruedInterestDayCount,YieldConvention,EomRule
-USTBill,ZeroCouponBond,1,NYB,0,NYB,,,,,,
+USTBill,ZeroCouponBond,1,NYB,0,NYB,,,,,US_Tbill,
 USTBond,FixedRateBond,1,NYB,0,NYB,SemiAnnually,,Uniform,ACT_ACT,US_Street,LAST

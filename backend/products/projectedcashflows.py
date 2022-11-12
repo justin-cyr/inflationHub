@@ -41,6 +41,12 @@ class ProjectedCashflows(object):
             payment_times = self.payment_times[self.next_payment_index:]
             self.yield_calculator = TrueYieldCalculator(unrealized_amounts, payment_times)
 
+        elif self.yield_convention == YieldConvention.US_TBILL:
+            if self.coupon_frac <= 0.5:
+                self.yield_calculator = TbillUnder6mYieldCalculator(unrealized_amounts, self.coupon_frac)
+            else:
+                self.yield_calculator = TbillOver6mYieldCalculator(unrealized_amounts, self.coupon_frac)
+        
         elif self.yield_convention == YieldConvention.US_STREET: 
             self.yield_calculator = USStreetYieldCalculator(unrealized_amounts, self.periods_per_year, self.coupon_frac)
         
@@ -251,6 +257,65 @@ class USStreetYieldCalculator(YieldCalculator):
 
     def annual_yield_to_ctsly_compounded(self, y):
         return self.periods_per_year * math.log(1.0 + y / self.periods_per_year)
+
+
+class TbillYieldCalculator(YieldCalculator):
+    def __init__(self, projected_amounts, dcf):
+        super().__init__()
+        if len(projected_amounts) != 1:
+            raise ValueError(f'TbillYieldCalculator: must have exactly 1 cashflow.')
+        self.final_amount = projected_amounts[-1]
+        self.dcf = dcf
+
+    def compound_factor(self, y):
+        raise NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class.')
+
+    def compound_factor_prime(self, y):
+        raise NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class.')
+
+    def compound_factor_prime2(self, y):
+        raise NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class.')
+
+    def yield_to_pv(self, y):
+        return self.final_amount / self.compound_factor(y)
+    
+    def yield_to_pv_prime(self, y):
+        f = self.compound_factor(y)
+        return - self.final_amount * self.compound_factor_prime(y) / (f * f)
+
+    def yield_to_pv_prime2(self, y):
+        f = self.compound_factor(y)
+        f_prime = self.compound_factor_prime(y)
+        return (- self.final_amount) * (f * self.compound_factor_prime2(y) -  (f_prime * f_prime)) / (f * f * f)
+
+    def annual_yield_to_ctsly_compounded(self, y):
+        return math.log(self.compound_factor(y)) / self.dcf
+
+class TbillUnder6mYieldCalculator(TbillYieldCalculator):
+    def __init__(self, projected_amounts, dcf):
+        super().__init__(projected_amounts, dcf)
+
+    def compound_factor(self, y):
+        return 1.0 + self.dcf * y
+
+    def compound_factor_prime(self, y):
+        return self.dcf
+
+    def compound_factor_prime2(self, y):
+        return 0.0
+    
+class TbillOver6mYieldCalculator(TbillYieldCalculator):
+    def __init__(self, projected_amounts, dcf):
+        super().__init__(projected_amounts, dcf)
+
+    def compound_factor(self, y):
+        return (1.0 + self.dcf * 0.5 * y) * (1.0 + 0.5 * y)
+
+    def compound_factor_prime(self, y):
+        return (1.0 + self.dcf) * 0.5 + self.dcf * 0.5 * y
+
+    def compound_factor_prime2(self, y):
+        return self.dcf * 0.
 
 class TrueYieldCalculator(YieldCalculator):
     def __init__(self, projected_amounts, payment_times):

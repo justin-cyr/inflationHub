@@ -121,7 +121,15 @@ class Bond(object):
 
         # Delegate to constructor based on type
         if bond_type == ZeroCouponBond.__name__:
-            return ZeroCouponBond(notional, maturity_date, payment_days, payment_calendars)
+            return ZeroCouponBond(
+                notional,
+                maturity_date,
+                yield_convention,
+                settlement_days=settlement_days,
+                settlement_calendars=settlement_calendars,
+                payment_days=payment_days,
+                payment_calendars=payment_calendars
+            )
         elif bond_type == FixedRateBond.__name__:
             return FixedRateBond(
                     notional,
@@ -139,7 +147,7 @@ class Bond(object):
                     payment_days=payment_days,
                     payment_calendars=payment_calendars,
                     day_count=day_count
-                    )
+                )
         else:
             raise NotImplementedError(f'Bond.create_bond: does not support bond type {bond_type}.')
 
@@ -165,8 +173,8 @@ class Bond(object):
     def get_projected_cashflows(self, base_date=Date.today()):
         if self.is_fixed and isinstance(self.cashflows, MultiLegCashflows):
             projection_function = [None for _ in self.cashflows.legs]
-            if self.__dict__.get('yield_convention') == YieldConvention.US_STREET and isinstance(self, FixedRateBond):
-                settlement_date = self.get_settlement_date(base_date)
+            settlement_date = self.get_settlement_date(base_date)
+            if self.yield_convention == YieldConvention.US_STREET and isinstance(self, FixedRateBond):
                 return ProjectedCashflows(
                         self.cashflows,
                         projection_function,
@@ -175,6 +183,15 @@ class Bond(object):
                         periods_per_year=self.periods_per_year,
                         coupon_frac=1.0 - self.next_coupon_frac(settlement_date)
                     )
+            elif self.yield_convention == YieldConvention.US_TBILL and isinstance(self, ZeroCouponBond):
+                denom = (settlement_date.addOneYear() - settlement_date).days
+                return ProjectedCashflows(
+                    self.cashflows,
+                    projection_function,
+                    base_date,
+                    yield_convention=self.yield_convention,
+                    coupon_frac=(self.maturity_date - settlement_date).days / denom
+                )
             else:
                 return ProjectedCashflows(
                         self.cashflows,
@@ -282,9 +299,25 @@ class Bond(object):
 
 
 class ZeroCouponBond(Bond):
-    def __init__(self, notional, maturity_date, payment_days=0, payment_calendars=[]):
-        super().__init__(notional, maturity_date, payment_days=payment_days, payment_calendars=payment_calendars)
+    def __init__(self,
+            notional,
+            maturity_date,
+            yield_convention,
+            settlement_days=0,
+            settlement_calendars=[],
+            payment_days=0,
+            payment_calendars=[]
+        ):
+        super().__init__(
+            notional,
+            maturity_date,
+            settlement_days=settlement_days,
+            settlement_calendars=settlement_calendars,
+            payment_days=payment_days,
+            payment_calendars=payment_calendars
+        )
         self.is_fixed = True
+        self.yield_convention = yield_convention
         self.cashflows = MultiLegCashflows([self.principal_flows])
         
     def accrued_interest_per_100(self, base_date=Date.today()):

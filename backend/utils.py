@@ -78,6 +78,7 @@ class DateFrequency(StrEnum):
 class YieldConvention(StrEnum):
     TRUE_YIELD = auto()
     US_STREET = auto()
+    US_TBILL = auto()
 
 class Date(object):
     # wraps datetime.date but allows conversion from string types in constructor
