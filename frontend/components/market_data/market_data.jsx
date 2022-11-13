@@ -5,6 +5,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
+import FuturesTable from './futures_table';
+
 const upColor = '#198754';  // green
 const downColor = '#dc3545';  // red
 const unchColor = '#bdbdbd'; // default text color
@@ -57,7 +59,7 @@ class MarketData extends React.Component {
 
     render() {
         // Reference data table
-        const loading_data_table = <center>{'... Loading data ...'}</center>;;
+        const loading_data_table = <center>{'... Loading data ...'}</center>;
         
         // Tsys benchmark table
         let tsy_data_table = loading_data_table;
@@ -180,7 +182,7 @@ class MarketData extends React.Component {
 
 
         tips_data_table = <div
-            style={{ height: '250px', width: '600px', overflow: 'auto' }}
+            style={{ height: '200px', width: '600px', overflow: 'auto' }}
         >
             <Table
                 id="tips-benchmark-table"
@@ -213,6 +215,7 @@ class MarketData extends React.Component {
             <Container fluid>
                 <Row>
                     {/* Tsys benchmark table */}
+                    <h2>Treasuries</h2>
                     {tsy_data_table}
                 </Row>
                 <Row
@@ -220,7 +223,140 @@ class MarketData extends React.Component {
                 >
                     <Col>
                         {/* Tips benchmark table */}
+                        <h2>TIPS</h2>
                         {tips_data_table}
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        {/* Bond futures table */}
+                        <h2>Bond Futures</h2>
+                        <FuturesTable 
+                            title="CME 2Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                        <FuturesTable
+                            title="CME 3Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 3Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                        <FuturesTable
+                            title="CME 5Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 5Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                        <FuturesTable
+                            title="CME 10Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 10Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                        <FuturesTable
+                            title="CME Ultra-10Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME Ultra-10Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                        <FuturesTable
+                            title="CME 20Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 20Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                        <FuturesTable
+                            title="CME 30Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 30Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                        <FuturesTable
+                            title="CME Ultra-30Y UST Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="200px"
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        {/* Micro-yield futures table */}
+                        <h2>Micro Yield Futures</h2>
+                        <FuturesTable
+                            title="CME 2Y Micro-yield Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="150px"
+                        />
+                        <FuturesTable
+                            title="CME 5Y Micro-yield Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 5Y Micro-yield Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="150px"
+                        />
+                        <FuturesTable
+                            title="CME 10Y Micro-yield Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 10Y Micro-yield Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="150px"
+                        />
+                        <FuturesTable
+                            title="CME 30Y Micro-yield Futures (intraday)"
+                            data={this.props.quotes.daily.futures['CME 30Y Micro-yield Futures (intraday)']}
+                            sourceLogo={cmeLogo}
+                            upColor={upColor}
+                            downColor={downColor}
+                            unchColor={unchColor}
+                            bbgColor={bbgColor}
+                            height="150px"
+                        />
                     </Col>
                 </Row>
             </Container>

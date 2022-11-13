@@ -108,6 +108,7 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
                 [record.ticker]: {
                     price: record.price,
                     priceChange: priceChange,
+                    productName: record.productName,
                     timestamp: quoteTime,
                     volume: record.volume,
                     last: record.last,

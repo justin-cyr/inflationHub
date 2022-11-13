@@ -4051,6 +4051,168 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./components/market_data/futures_table.jsx":
+/*!**************************************************!*\
+  !*** ./components/market_data/futures_table.jsx ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+
+
+
+class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+    /* expect these props:
+        title: (string) name of the data
+        data: (Object) { ticker: { ticker, month, last, price, priorSettle, priceChange, productName, volume, expirationDate, timestamp }}
+        sourceLogo: (string) link to source logo
+        upColor: (string) color for increase
+        downColor: (string) color for decrease
+        unchColor: (string) color for unchanged
+        bbgColor: (string) color for static fields
+        height: (string) componet height in px
+        logoWidth: (string) logo width in px
+        logoHeight: (string) logo height in px
+    */
+  }
+
+  getChangeColor(quoteObj, key, field) {
+    if (key in quoteObj && field in quoteObj[key]) {
+      if (quoteObj[key][field] > 0) {
+        return this.props.upColor;
+      } else if (quoteObj[key][field] < 0) {
+        return this.props.downColor;
+      }
+    }
+
+    return this.props.unchColor;
+  }
+
+  render() {
+    const loading_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...');
+    let data_table = loading_data_table;
+
+    if (this.props.data) {
+      let data = Object.values(this.props.data);
+      data.sort((a, b) => Number(a.expirationDate) - Number(b.expirationDate));
+      const table_rows = data.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        key: record.ticker
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.props.bbgColor
+        }
+      }, record.productName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.props.bbgColor
+        }
+      }, record.month), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.props.bbgColor
+        }
+      }, record.ticker), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.getChangeColor(this.props.data, record.ticker, 'priceChange')
+        }
+      }, record.price), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.getChangeColor(this.props.data, record.ticker, 'priceChange')
+        }
+      }, record.last), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.props.unchColor
+        }
+      }, record.priorSettle), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.props.unchColor
+        }
+      }, record.volume), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.props.unchColor
+        }
+      }, record.timestamp.toLocaleTimeString())));
+      const table_heading = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        style: {
+          color: this.props.unchColor
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Month"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Ticker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+        src: this.props.sourceLogo,
+        width: this.props.logoWidth || 30,
+        height: this.props.logoHeight || 30
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Last"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Prior Settle"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Volume"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Timestamp"));
+      data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        id: this.props.title,
+        responsive: true,
+        hover: true
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+        style: {
+          color: this.props.unchColor
+        }
+      }, table_rows));
+    }
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: this.props.height,
+        width: '1100px',
+        overflow: 'auto'
+      }
+    }, data_table);
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (FuturesTable);
+
+/***/ }),
+
 /***/ "./components/market_data/market_data.jsx":
 /*!************************************************!*\
   !*** ./components/market_data/market_data.jsx ***!
@@ -4063,10 +4225,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var _futures_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./futures_table */ "./components/market_data/futures_table.jsx");
+
 
 
 
@@ -4107,8 +4271,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   render() {
     // Reference data table
-    const loading_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...');
-    ; // Tsys benchmark table
+    const loading_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'); // Tsys benchmark table
 
     let tsy_data_table = loading_data_table;
     const tsy_table_rows = benchmarkTsys.map(standardName => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
@@ -4173,7 +4336,7 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         height: '500px',
         overflow: 'auto'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "tsys-benchmark-table",
       responsive: true,
       hover: true
@@ -4294,11 +4457,11 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     }, standardName in this.props.quotes.daily.tips.otr.cnbc ? this.props.quotes.daily.tips.otr.cnbc[standardName].timestamp.toLocaleTimeString() : '')));
     tips_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        height: '250px',
+        height: '200px',
         width: '600px',
         overflow: 'auto'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "tips-benchmark-table",
       responsive: true,
       hover: true
@@ -4343,13 +4506,121 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         color: unchColor
       }
     }, tips_table_rows)));
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Treasuries"), tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], {
       style: {
         paddingTop: '25px'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, tips_data_table)));
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "TIPS"), tips_data_table)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Bond Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 2Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 3Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 3Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 5Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 5Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 10Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 10Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME Ultra-10Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME Ultra-10Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 20Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 20Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 30Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 30Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME Ultra-30Y UST Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "200px"
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Micro Yield Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 2Y Micro-yield Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "150px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 5Y Micro-yield Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 5Y Micro-yield Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "150px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 10Y Micro-yield Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 10Y Micro-yield Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "150px"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "CME 30Y Micro-yield Futures (intraday)",
+      data: this.props.quotes.daily.futures['CME 30Y Micro-yield Futures (intraday)'],
+      sourceLogo: cmeLogo,
+      upColor: upColor,
+      downColor: downColor,
+      unchColor: unchColor,
+      bbgColor: bbgColor,
+      height: "150px"
+    }))));
   }
 
 }
@@ -5223,6 +5494,7 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
         [record.ticker]: {
           price: record.price,
           priceChange: priceChange,
+          productName: record.productName,
           timestamp: quoteTime,
           volume: record.volume,
           last: record.last,
