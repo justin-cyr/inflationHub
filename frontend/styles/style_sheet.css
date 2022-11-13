@@ -64,7 +64,7 @@ body {
 
 /* Market Data */
 
-#tsys-benchmark-table, #tips-benchmark-table {
+#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table {
     --bs-table-hover-color: #6bcbff;
     --bs-table-hover-bg: #121729;
 }

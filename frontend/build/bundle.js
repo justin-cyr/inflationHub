@@ -4063,9 +4063,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
 
 
+const upColor = '#198754'; // green
+
+const downColor = '#dc3545'; // red
+
+const unchColor = '#bdbdbd'; // default text color
+
+const bbgColor = '#ff6600'; // orange
 
 class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -4073,52 +4079,60 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     /* expect these props:
         title: (string) name of the data
         data: (Object) { ticker: { ticker, month, last, price, priorSettle, priceChange, productName, volume, expirationDate, timestamp }}
-        sourceLogo: (string) link to source logo
         upColor: (string) color for increase
         downColor: (string) color for decrease
         unchColor: (string) color for unchanged
         bbgColor: (string) color for static fields
-        height: (string) componet height in px
-        logoWidth: (string) logo width in px
-        logoHeight: (string) logo height in px
     */
+
+    this.state = {
+      upColor: this.props.upColor || upColor,
+      downColor: this.props.downColor || downColor,
+      unchColor: this.props.unchColor || unchColor,
+      bbgColor: this.props.bbgColor || bbgColor
+    };
   }
 
   getChangeColor(quoteObj, key, field) {
     if (key in quoteObj && field in quoteObj[key]) {
       if (quoteObj[key][field] > 0) {
-        return this.props.upColor;
+        return this.state.upColor;
       } else if (quoteObj[key][field] < 0) {
-        return this.props.downColor;
+        return this.state.downColor;
       }
     }
 
-    return this.props.unchColor;
+    return this.state.unchColor;
   }
 
   render() {
-    const loading_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...');
-    let data_table = loading_data_table;
+    let table_rows = [/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      key: this.props.title
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      colSpan: "7",
+      style: {
+        textAlign: 'center',
+        color: 'yellowgreen'
+      }
+    }, this.props.title))];
 
     if (this.props.data) {
       let data = Object.values(this.props.data);
       data.sort((a, b) => Number(a.expirationDate) - Number(b.expirationDate));
-      const table_rows = data.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        key: record.ticker
+      table_rows = table_rows.concat(data.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        key: record.ticker,
+        style: {
+          color: unchColor
+        }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center',
-          color: this.props.bbgColor
-        }
-      }, record.productName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center',
-          color: this.props.bbgColor
+          color: this.state.bbgColor
         }
       }, record.month), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center',
-          color: this.props.bbgColor
+          color: this.state.bbgColor
         }
       }, record.ticker), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
@@ -4132,79 +4146,20 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
       }, record.last), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'center',
-          color: this.props.unchColor
+          textAlign: 'center'
         }
       }, record.priorSettle), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'center',
-          color: this.props.unchColor
+          textAlign: 'center'
         }
       }, record.volume), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'center',
-          color: this.props.unchColor
-        }
-      }, record.timestamp.toLocaleTimeString())));
-      const table_heading = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        style: {
-          color: this.props.unchColor
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
           textAlign: 'center'
         }
-      }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Month"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Ticker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-        src: this.props.sourceLogo,
-        width: this.props.logoWidth || 30,
-        height: this.props.logoHeight || 30
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Last"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Prior Settle"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Volume"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Timestamp"));
-      data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-        id: this.props.title,
-        responsive: true,
-        hover: true
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
-        style: {
-          color: this.props.unchColor
-        }
-      }, table_rows));
+      }, record.timestamp.toLocaleTimeString()))));
     }
 
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        height: this.props.height,
-        width: '1100px',
-        overflow: 'auto'
-      }
-    }, data_table);
+    return table_rows;
   }
 
 }
@@ -4506,121 +4461,106 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         color: unchColor
       }
     }, tips_table_rows)));
+    const bond_futures_table_heading = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Month"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Ticker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: cmeLogo,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Last"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Prior Settle"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Volume"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Timestamp"));
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Treasuries"), tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], {
       style: {
         paddingTop: '25px'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "TIPS"), tips_data_table)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Bond Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 2Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "TIPS"), tips_data_table)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Bond Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: this.props.height,
+        width: '1100px',
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      id: "bond-futures-table",
+      responsive: true,
+      hover: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, bond_futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "2Y UST Futures",
+      data: this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 3Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 3Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
+      title: "3Y UST Futures",
+      data: this.props.quotes.daily.futures['CME 3Y UST Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 5Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 5Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
+      title: "5Y UST Futures",
+      data: this.props.quotes.daily.futures['CME 5Y UST Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 10Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 10Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
+      title: "10Y UST Futures",
+      data: this.props.quotes.daily.futures['CME 10Y UST Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME Ultra-10Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME Ultra-10Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
+      title: "Ultra-10Y UST Futures",
+      data: this.props.quotes.daily.futures['CME Ultra-10Y UST Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 20Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 20Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
+      title: "20Y UST Futures",
+      data: this.props.quotes.daily.futures['CME 20Y UST Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 30Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 30Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
+      title: "30Y UST Futures",
+      data: this.props.quotes.daily.futures['CME 30Y UST Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME Ultra-30Y UST Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "200px"
-    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Micro Yield Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 2Y Micro-yield Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "150px"
+      title: "Ultra-30Y UST Futures",
+      data: this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)']
+    })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Micro Yield Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: this.props.height,
+        width: '1100px',
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      id: "micro-yield-futures-table",
+      responsive: true,
+      hover: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, bond_futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "Micro 2Y-yield Futures",
+      data: this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 5Y Micro-yield Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 5Y Micro-yield Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "150px"
+      title: "Micro 5Y-yield Futures",
+      data: this.props.quotes.daily.futures['CME 5Y Micro-yield Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 10Y Micro-yield Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 10Y Micro-yield Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "150px"
+      title: "Micro 10Y-yield Futures",
+      data: this.props.quotes.daily.futures['CME 10Y Micro-yield Futures (intraday)']
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      title: "CME 30Y Micro-yield Futures (intraday)",
-      data: this.props.quotes.daily.futures['CME 30Y Micro-yield Futures (intraday)'],
-      sourceLogo: cmeLogo,
-      upColor: upColor,
-      downColor: downColor,
-      unchColor: unchColor,
-      bbgColor: bbgColor,
-      height: "150px"
-    }))));
+      title: "Micro 30Y-yield Futures",
+      data: this.props.quotes.daily.futures['CME 30Y Micro-yield Futures (intraday)']
+    })))))));
   }
 
 }
@@ -8120,7 +8060,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
