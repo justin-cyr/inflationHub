@@ -98,7 +98,7 @@ class DataAPI(object):
         elif data_parser == 'TwHtmlUSTYieldParser':
             self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'CmeFuturesQuoteJsonParser':
-            self.data_parser = CmeFuturesQuoteJsonParser()
+            self.data_parser = CmeFuturesQuoteJsonParser(self.name)
         elif data_parser == 'YahooQuoteJsonParser':
             self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -488,25 +488,55 @@ class CmeTsyQuoteJsonParser(Parser):
 
 class CmeFuturesQuoteJsonParser(Parser):
     """Parser for intraday CME futures quotes."""
+    def __init__(self, name):
+        self.name = name
+
     def parse(self, response):
         self.validate_response(response)
         response_data = response.json()
         res = []
         if 'quotes' in response_data:
             for q in response_data['quotes']:
+                last = q['last']
+                price = '-'
+                if last != '-':
+                    last_split = last.split('\'')
+                    try:
+                        int_part = float(last_split[0])
+                        frac_part = 0.0
+                        if len(last_split) > 1:
+                            frac_str = last_split[1]
+                            if len(frac_str) >= 3:
+                                frac_part = float(frac_str) / (320.0)
+                            else:
+                                frac_part = float(frac_str) / (32.0)
+                        price = int_part + frac_part
+                    except:
+                        pass
+                
+                # Convert 'updated' time to an Eastern time timestamp
+                updated_date = q['updated'].split('> ')[-1]
+                updated_time = q['updated'].split(' CT')[0]
+                updated_datetime_central = DateTime(updated_time + ' ' + updated_date).datetime
+                updated_datetime_eastern = updated_datetime_central + datetime.timedelta(hours=1)
+                timestamp = updated_datetime_eastern.strftime('%Y-%m-%dT%H:%M:%S')
+
                 res.append(
                     {
                         'ticker':       q['quoteCode'],
                         'productName':  q['productName'],
+                        'expirationDate': q['expirationDate'],
                         'month':        q['expirationMonth'],
-                        'last':         q['last'],
+                        'last':         last,
+                        'price':        price,
                         'change':       q['percentageChange'],
                         'open':         q['open'],
                         'high':         q['high'],
                         'low':          q['low'],
                         'priorSettle':  q['priorSettle'],
                         'volume':       q['volume'],
-                        'timestamp':    q['lastUpdated']
+                        'timestamp':    timestamp,
+                        'dataName':     self.name
                     }
                 )
         return res

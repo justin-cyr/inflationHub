@@ -1,11 +1,12 @@
-import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME } from "../actions/quotesDaily";
+import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME, RECEIVE_BOND_FUTURES_QUOTES_CME } from "../actions/quotesDaily";
 
 // default state
 const _emptyState = {
     daily: {
         tipsPrices: { priceData: [] },
         tips: { otr: { cnbc: {} } },
-        tsys: { otr: { wsj: {}, cnbc: {}, mw: {}, cme: {} } }
+        tsys: { otr: { wsj: {}, cnbc: {}, mw: {}, cme: {} } },
+        futures: {}
     }
 }
 
@@ -85,6 +86,49 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
     }
 
     return newOtrTsys;
+};
+
+const newBondFuturesQuotesCme = (currentFutures, responseData) => {
+    const data = responseData;
+    let newFutures = currentFutures;
+
+    // Update quotes for the first time or replace older quotes
+    for (let record of data) {
+        const quoteTime = new Date(record.timestamp);
+        if (!(record.dataName in currentFutures) || !(record.ticker in currentFutures[record.dataName]) ||
+            (quoteTime > currentFutures[record.dataName][record.ticker].timestamp)) {
+            
+            let priceChange = 0;
+            if ((record.dataName in currentFutures) && (record.ticker in currentFutures[record.dataName]) && record.price != '-') {
+                priceChange = record.price - currentFutures[record.dataName][record.ticker].price;
+            }
+
+            newFutures[record.dataName] = {
+                ...newFutures[record.dataName],
+                [record.ticker]: {
+                    price: record.price,
+                    priceChange: priceChange,
+                    timestamp: quoteTime,
+                    volume: record.volume,
+                    last: record.last,
+                    priorSettle: record.priorSettle,
+                    ticker: record.ticker,
+                    month: record.month,
+                    expirationDate: record.expirationDate
+                } 
+            }
+        }
+        else {
+            // keep existing quote
+            newFutures[record.dataName][record.ticker] = currentFutures[record.dataName][record.ticker];
+            if (quoteTime.getTime() === currentFutures[record.dataName][record.ticker].timestamp.getTime()) {
+                // set changes back to 0
+                newFutures[record.dataName][record.ticker].priceChange = 0;
+            }
+        }
+    }
+
+    return newFutures;
 };
 
 // Daily quotes reducer
@@ -194,6 +238,19 @@ export default (state = _emptyState, action) => {
                             cme: newOtrTsys
                         }
                     }
+                }
+            };
+        }
+
+        case RECEIVE_BOND_FUTURES_QUOTES_CME:
+        {
+            const newFutures = newBondFuturesQuotesCme(state.daily.futures, action.response.data);
+
+            return {
+                ...state,
+                daily: {
+                    ...state.daily,
+                    futures: newFutures
                 }
             };
         }

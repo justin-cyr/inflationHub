@@ -2296,12 +2296,14 @@ function useWindow() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "RECEIVE_BOND_FUTURES_QUOTES_CME": () => (/* binding */ RECEIVE_BOND_FUTURES_QUOTES_CME),
 /* harmony export */   "RECEIVE_OTR_TIPS_QUOTES_CNBC": () => (/* binding */ RECEIVE_OTR_TIPS_QUOTES_CNBC),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CME": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CME),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CNBC": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CNBC),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_MW": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_MW),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_WSJ": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_WSJ),
 /* harmony export */   "RECEIVE_TIPS_PRICES": () => (/* binding */ RECEIVE_TIPS_PRICES),
+/* harmony export */   "updateBondFuturesQuotesCme": () => (/* binding */ updateBondFuturesQuotesCme),
 /* harmony export */   "updateOtrTipsQuotesCnbc": () => (/* binding */ updateOtrTipsQuotesCnbc),
 /* harmony export */   "updateOtrTsyQuotesCme": () => (/* binding */ updateOtrTsyQuotesCme),
 /* harmony export */   "updateOtrTsyQuotesCnbc": () => (/* binding */ updateOtrTsyQuotesCnbc),
@@ -2317,6 +2319,7 @@ const RECEIVE_OTR_TSY_QUOTES_WSJ = 'RECEIVE_OTR_TSY_QUOTES_WSJ';
 const RECEIVE_OTR_TSY_QUOTES_CNBC = 'RECEIVE_OTR_TSY_QUOTES_CNBC';
 const RECEIVE_OTR_TSY_QUOTES_MW = 'RECEIVE_OTR_TSY_QUOTES_MW';
 const RECEIVE_OTR_TSY_QUOTES_CME = 'RECEIVE_OTR_TSY_QUOTES_CME';
+const RECEIVE_BOND_FUTURES_QUOTES_CME = 'RECEIVE_BOND_FUTURES_QUOTES_CME';
 const quoteUpdateFreq = 10000;
 
 const receiveTipsPrices = response => ({
@@ -2349,6 +2352,11 @@ const receiveOtrTsyQuotesCme = response => ({
   response
 });
 
+const receiveBondFuturesQuotesCme = response => ({
+  type: RECEIVE_BOND_FUTURES_QUOTES_CME,
+  response
+});
+
 const updateTipsPrices = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getTipsPrices)().then(response => dispatch(receiveTipsPrices(response)));
 const updateOtrTipsQuotesCnbc = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTipsQuotesCnbc)().then(response => dispatch(receiveOtrTipsQuotesCnbc(response))).then(() => {
   setTimeout(() => dispatch(updateOtrTipsQuotesCnbc()), quoteUpdateFreq);
@@ -2364,6 +2372,9 @@ const updateOtrTsyQuotesMw = () => dispatch => (0,_requests_quotesDaily__WEBPACK
 });
 const updateOtrTsyQuotesCme = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTsyQuotesCme)().then(response => dispatch(receiveOtrTsyQuotesCme(response))).then(() => {
   setTimeout(() => dispatch(updateOtrTsyQuotesCme()), quoteUpdateFreq);
+});
+const updateBondFuturesQuotesCme = dataName => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getBondFuturesQuotesCme)(dataName).then(response => dispatch(receiveBondFuturesQuotesCme(response))).then(() => {
+  setTimeout(() => dispatch(updateBondFuturesQuotesCme(dataName)), quoteUpdateFreq);
 });
 
 /***/ }),
@@ -4503,7 +4514,19 @@ class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.props.updateOtrTsyQuotesCnbc();
     this.props.updateOtrTsyQuotesWsj();
     this.props.updateOtrTsyQuotesMw();
-    this.props.updateOtrTsyQuotesCme();
+    this.props.updateOtrTsyQuotesCme(); // Bond futures quotes
+
+    this.props.updateBondFuturesQuotesCme('CME 2Y UST Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 3Y UST Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 5Y UST Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 10Y UST Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 20Y UST Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 30Y UST Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME Ultra-10Y UST Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME Ultra-30Y UST Futures (intraday)'); //this.props.updateBondFuturesQuotesCme('CME 2Y Micro-yield Futures (intraday)');
+    //this.props.updateBondFuturesQuotesCme('CME 5Y Micro-yield Futures (intraday)');
+    //this.props.updateBondFuturesQuotesCme('CME 10Y Micro-yield Futures (intraday)');
+    //this.props.updateBondFuturesQuotesCme('CME 30Y Micro-yield Futures (intraday)');
   }
 
   render() {
@@ -4549,6 +4572,7 @@ const mapDispatchToProps = dispatch => ({
   updateOtrTsyQuotesCnbc: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesCnbc)()),
   updateOtrTsyQuotesMw: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesMw)()),
   updateOtrTsyQuotesCme: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesCme)()),
+  updateBondFuturesQuotesCme: dataName => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateBondFuturesQuotesCme)(dataName)),
   updateTipsCusips: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsCusips)()),
   updateTipsRefData: cusip => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsRefData)(cusip)),
   updateTsyRefData: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTsyRefData)())
@@ -5102,7 +5126,8 @@ const _emptyState = {
         mw: {},
         cme: {}
       }
-    }
+    },
+    futures: {}
   }
 }; // helper for updating OTR quotes
 
@@ -5177,6 +5202,47 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
   }
 
   return newOtrTsys;
+};
+
+const newBondFuturesQuotesCme = (currentFutures, responseData) => {
+  const data = responseData;
+  let newFutures = currentFutures; // Update quotes for the first time or replace older quotes
+
+  for (let record of data) {
+    const quoteTime = new Date(record.timestamp);
+
+    if (!(record.dataName in currentFutures) || !(record.ticker in currentFutures[record.dataName]) || quoteTime > currentFutures[record.dataName][record.ticker].timestamp) {
+      let priceChange = 0;
+
+      if (record.dataName in currentFutures && record.ticker in currentFutures[record.dataName] && record.price != '-') {
+        priceChange = record.price - currentFutures[record.dataName][record.ticker].price;
+      }
+
+      newFutures[record.dataName] = { ...newFutures[record.dataName],
+        [record.ticker]: {
+          price: record.price,
+          priceChange: priceChange,
+          timestamp: quoteTime,
+          volume: record.volume,
+          last: record.last,
+          priorSettle: record.priorSettle,
+          ticker: record.ticker,
+          month: record.month,
+          expirationDate: record.expirationDate
+        }
+      };
+    } else {
+      // keep existing quote
+      newFutures[record.dataName][record.ticker] = currentFutures[record.dataName][record.ticker];
+
+      if (quoteTime.getTime() === currentFutures[record.dataName][record.ticker].timestamp.getTime()) {
+        // set changes back to 0
+        newFutures[record.dataName][record.ticker].priceChange = 0;
+      }
+    }
+  }
+
+  return newFutures;
 }; // Daily quotes reducer
 
 
@@ -5259,6 +5325,16 @@ const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
                 cme: newOtrTsys
               }
             }
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_BOND_FUTURES_QUOTES_CME:
+      {
+        const newFutures = newBondFuturesQuotesCme(state.daily.futures, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            futures: newFutures
           }
         };
       }
@@ -5412,6 +5488,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getBondFuturesQuotesCme": () => (/* binding */ getBondFuturesQuotesCme),
 /* harmony export */   "getOtrTipsQuotesCnbc": () => (/* binding */ getOtrTipsQuotesCnbc),
 /* harmony export */   "getOtrTsyQuotesCme": () => (/* binding */ getOtrTsyQuotesCme),
 /* harmony export */   "getOtrTsyQuotesCnbc": () => (/* binding */ getOtrTsyQuotesCnbc),
@@ -5445,6 +5522,10 @@ const getOtrTsyQuotesCme = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().a
 });
 const getOtrTipsQuotesCnbc = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
   url: '/data/CNBC TIPS Yields (intraday)',
+  method: 'GET'
+});
+const getBondFuturesQuotesCme = dataName => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/' + dataName,
   method: 'GET'
 });
 

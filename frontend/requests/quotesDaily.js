@@ -42,3 +42,10 @@ export const getOtrTipsQuotesCnbc = () => (
         method: 'GET'
     })
 );
+
+export const getBondFuturesQuotesCme = (dataName) => (
+    $.ajax({
+        url: '/data/' + dataName,
+        method: 'GET'
+    })
+);

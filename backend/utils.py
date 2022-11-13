@@ -95,7 +95,8 @@ class Date(object):
                 '%Y-%m-%d', # 2022-04-01
                 '%Y%m%d',   # 20220401
                 '%Y-%m',    # 2022-04
-                '%Y %b'     # 2022 Apr
+                '%Y %b',    # 2022 Apr
+                '%d %b %Y'  # 01 Apr 2022
             ]
             date_obj = None
             for fmt in supported_formats:
@@ -299,11 +300,13 @@ class DateTime(object):
                 '%Y%m%d%H%M%S',         # 20220401170435
                 '%Y-%m-%d %H:%M:%S',    # 2022-04-01 17:04:35
                 '%Y-%m-%d %H:%M:%S.%f', # 2022-04-01 17:04:35.987654
+                '%H:%M:%S %d %b %Y',    # 17:04:35 01 Apr 2022
                 # Date formats
                 '%Y-%m-%d', # 2022-04-01
                 '%Y%m%d',   # 20220401
                 '%Y-%m',    # 2022-04
-                '%Y %b'     # 2022 Apr
+                '%Y %b',     # 2022 Apr
+                '%d %b %Y'  # 01 Apr 2022
             ]
             date_obj = None
             for fmt in supported_formats:
@@ -331,7 +334,7 @@ class DateTime(object):
 
     
     def __repr__(self):
-        return self.datetime.strftime('%Y-%m-%d %H:%M:%S')
+        return self.datetime.strftime('%Y-%m-%dT%H:%M:%S')
 
     # use self.datetime to access the underlying datetime.datetime
 
