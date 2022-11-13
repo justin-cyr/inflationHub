@@ -497,6 +497,10 @@ class CmeFuturesQuoteJsonParser(Parser):
         res = []
         if 'quotes' in response_data:
             for q in response_data['quotes']:
+                if q['updated'] == '-':
+                    # there is a record but no useful data
+                    continue
+
                 last = q['last']
                 price = '-'
                 if last != '-':
