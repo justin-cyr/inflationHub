@@ -252,6 +252,7 @@ class MarketData extends React.Component {
                                 id="bond-futures-table"
                                 responsive
                                 hover
+                                style={{ color: unchColor }}
                             >
                                 <thead>
                                     {bond_futures_table_heading}
@@ -305,6 +306,7 @@ class MarketData extends React.Component {
                                 id="micro-yield-futures-table"
                                 responsive
                                 hover
+                                style={{ color: unchColor }}
                             >
                                 <thead>
                                     {bond_futures_table_heading}

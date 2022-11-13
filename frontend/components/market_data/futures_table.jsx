@@ -42,7 +42,7 @@ class FuturesTable extends React.Component {
     }
 
     render() {
-        let table_rows = [<tr key={this.props.title}>
+        let table_rows = [<tr key={this.props.title} style={{ color: this.state.unchColor }}>
             <td colSpan="7" style={{
                 textAlign: 'center',
                 color: 'yellowgreen'
@@ -54,7 +54,7 @@ class FuturesTable extends React.Component {
             data.sort((a, b) => Number(a.expirationDate) - Number(b.expirationDate));
 
             table_rows = table_rows.concat(data.map(record =>
-                <tr key={record.ticker} style={{ color: unchColor }}>
+                <tr key={record.ticker}>
                     <td style={{
                         textAlign: 'center',
                         color: this.state.bbgColor

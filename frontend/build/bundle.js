@@ -4107,7 +4107,10 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   render() {
     let table_rows = [/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-      key: this.props.title
+      key: this.props.title,
+      style: {
+        color: this.state.unchColor
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       colSpan: "7",
       style: {
@@ -4120,10 +4123,7 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       let data = Object.values(this.props.data);
       data.sort((a, b) => Number(a.expirationDate) - Number(b.expirationDate));
       table_rows = table_rows.concat(data.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-        key: record.ticker,
-        style: {
-          color: unchColor
-        }
+        key: record.ticker
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center',
@@ -4513,7 +4513,10 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "bond-futures-table",
       responsive: true,
-      hover: true
+      hover: true,
+      style: {
+        color: unchColor
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, bond_futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
       title: "2Y UST Futures",
       data: this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)']
@@ -4547,7 +4550,10 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "micro-yield-futures-table",
       responsive: true,
-      hover: true
+      hover: true,
+      style: {
+        color: unchColor
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, bond_futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
       title: "Micro 2Y-yield Futures",
       data: this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)']
