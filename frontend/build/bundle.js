@@ -5351,7 +5351,7 @@ const _emptyState = {
 
 const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
   const data = responseData;
-  let newOtrTsys = {}; // Update quotes for the first time or replace older quotes
+  let newOtrTsys = currentOtrTsys; // Update quotes for the first time or replace older quotes
 
   for (let record of data) {
     const quoteTime = new Date(record.timestamp);
@@ -5389,7 +5389,7 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
 
 const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
   const data = responseData;
-  let newOtrTsys = {}; // Update quotes for the first time or replace older quotes
+  let newOtrTsys = currentOtrTsys; // Update quotes for the first time or replace older quotes
 
   for (let record of data) {
     const quoteTime = new Date(record.timestamp);
@@ -5596,7 +5596,7 @@ const _emptyState = {
 
 const newOtrBondRefData = (currentOtrBonds, responseData) => {
   const data = responseData;
-  let newOtrBonds = {}; // Update quotes for the first time or replace older quotes
+  let newOtrBonds = currentOtrBonds; // Update quotes for the first time or replace older quotes
 
   for (let record of data) {
     const quoteTime = new Date(record.timestamp);

@@ -13,7 +13,7 @@ const _emptyState = {
 // helper for updating OTR quotes
 const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
     const data = responseData;
-    let newOtrTsys = {};
+    let newOtrTsys = currentOtrTsys;
 
     // Update quotes for the first time or replace older quotes
     for (let record of data) {
@@ -53,7 +53,7 @@ const newOtrTsyQuotes = (currentOtrTsys, responseData) => {
 
 const newOtrTsyQuotesCme = (currentOtrTsys, responseData) => {
     const data = responseData;
-    let newOtrTsys = {};
+    let newOtrTsys = currentOtrTsys;
 
     // Update quotes for the first time or replace older quotes
     for (let record of data) {

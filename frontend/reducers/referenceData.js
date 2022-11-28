@@ -10,7 +10,7 @@ const _emptyState = {
 // helper function for OTR reference data update
 const newOtrBondRefData = (currentOtrBonds, responseData) => {
     const data = responseData;
-    let newOtrBonds = {};
+    let newOtrBonds = currentOtrBonds;
 
     // Update quotes for the first time or replace older quotes
     for (let record of data) {
