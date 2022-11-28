@@ -384,24 +384,27 @@ class CnbcJsonQuoteParser(Parser):
         res = []
 
         for record in quote_list:
-            yield_num = float(self.chop_pct(record.get('last')))
-            coupon = float(self.chop_pct(record.get('coupon')))
-            name = record.get('name')
-            standard_name = Parser.standard_name(name)
+            try:
+                yield_num = float(self.chop_pct(record.get('last')))
+                coupon = float(self.chop_pct(record.get('coupon')))
+                name = record.get('name')
+                standard_name = Parser.standard_name(name)
 
-            res.append(
-                {
-                    'standardName': standard_name,
-                    'name': name,
-                    'coupon': coupon,
-                    'price': record.get('bond_last_price'),
-                    'priceChange': record.get('bond_change_price'),
-                    'yield': yield_num,
-                    'yieldChange': record.get('change_pct'),
-                    'timestamp': record.get('last_time')[:19],
-                    'maturityDate': record.get('maturity_date')
-                }
-            )
+                res.append(
+                    {
+                        'standardName': standard_name,
+                        'name': name,
+                        'coupon': coupon,
+                        'price': record.get('bond_last_price'),
+                        'priceChange': record.get('bond_change_price'),
+                        'yield': yield_num,
+                        'yieldChange': record.get('change_pct'),
+                        'timestamp': record.get('last_time')[:19],
+                        'maturityDate': record.get('maturity_date')
+                    }
+                )
+            except Exception as e:
+                app.logger.error(f'{__class__.__name__}: failed to parse {record}\n\t\tReason: {e}')
         return res
 
 class TimeSeriesStatCanXmlParser(Parser):
@@ -441,21 +444,24 @@ class IntradayUSTQuoteWsjParser(Parser):
         res = []
         if 'data' in response_data and 'instruments' in response_data['data']:
             for inst in response_data['data']['instruments']:
-                if 'bond' in inst:
-                    name = inst.get('formattedName')
-                    standard_name = Parser.standard_name(name)
-                    res.append(
-                        {
-                            'standardName': standard_name,
-                            'name': name,
-                            'coupon': inst['bond'].get('couponRate'),
-                            'price': inst['bond'].get('tradePrice'),
-                            'priceChange': inst['bond'].get('formattedTradePriceChange'),
-                            'yield': inst['bond'].get('yield'),
-                            'yieldChange': inst['bond'].get('yieldChange'),
-                            'timestamp': inst.get('timestamp')[:19]
-                        }
-                    )
+                try:
+                    if 'bond' in inst:
+                        name = inst.get('formattedName')
+                        standard_name = Parser.standard_name(name)
+                        res.append(
+                            {
+                                'standardName': standard_name,
+                                'name': name,
+                                'coupon': inst['bond'].get('couponRate'),
+                                'price': inst['bond'].get('tradePrice'),
+                                'priceChange': inst['bond'].get('formattedTradePriceChange'),
+                                'yield': inst['bond'].get('yield'),
+                                'yieldChange': inst['bond'].get('yieldChange'),
+                                'timestamp': inst.get('timestamp')[:19]
+                            }
+                        )
+                except Exception as e:
+                    app.logger.error(f'{__class__.__name__}: failed to parse {inst}\n\t\tReason: {e}')
         return res
 
 
@@ -467,22 +473,24 @@ class CmeTsyQuoteJsonParser(Parser):
         res = []
 
         for q in response_data:
-            name =  q.get('asset')
-            standard_name = Parser.standard_name(name)
-            if 'volume' in q:
-                volume = int(''.join(q['volume'].split(',')))
-            else:
-                volume = None
-            
-            res.append({
-                'standardName': standard_name,
-                'name': name,
-                'price': q.get('lastprice'),
-                'displayPrice': q.get('lastdisplayprice'),
-                'timestamp': q.get('transacttime'),
-                'volume': volume
-            })
-        
+            try:
+                name =  q.get('asset')
+                standard_name = Parser.standard_name(name)
+                if 'volume' in q:
+                    volume = int(''.join(q['volume'].split(',')))
+                else:
+                    volume = None
+                
+                res.append({
+                    'standardName': standard_name,
+                    'name': name,
+                    'price': q.get('lastprice'),
+                    'displayPrice': q.get('lastdisplayprice'),
+                    'timestamp': q.get('transacttime'),
+                    'volume': volume
+                })
+            except Exception as e:
+                app.logger.error(f'{__class__.__name__}: failed to parse {q}\n\t\tReason: {e}')
         return res
 
 
@@ -497,52 +505,55 @@ class CmeFuturesQuoteJsonParser(Parser):
         res = []
         if 'quotes' in response_data:
             for q in response_data['quotes']:
-                if q['updated'] == '-':
-                    # there is a record but no useful data
-                    continue
+                try:
+                    if q['updated'] == '-':
+                        # there is a record but no useful data
+                        continue
 
-                last = q['last']
-                price = '-'
-                if last != '-':
-                    last_split = last.split('\'')
-                    try:
-                        int_part = float(last_split[0])
-                        frac_part = 0.0
-                        if len(last_split) > 1:
-                            frac_str = last_split[1]
-                            if len(frac_str) >= 3:
-                                frac_part = float(frac_str) / (320.0)
-                            else:
-                                frac_part = float(frac_str) / (32.0)
-                        price = int_part + frac_part
-                    except:
-                        pass
-                
-                # Convert 'updated' time to an Eastern time timestamp
-                updated_date = q['updated'].split('> ')[-1]
-                updated_time = q['updated'].split(' CT')[0]
-                updated_datetime_central = DateTime(updated_time + ' ' + updated_date).datetime
-                updated_datetime_eastern = updated_datetime_central + datetime.timedelta(hours=1)
-                timestamp = updated_datetime_eastern.strftime('%Y-%m-%dT%H:%M:%S')
+                    last = q['last']
+                    price = '-'
+                    if last != '-':
+                        last_split = last.split('\'')
+                        try:
+                            int_part = float(last_split[0])
+                            frac_part = 0.0
+                            if len(last_split) > 1:
+                                frac_str = last_split[1]
+                                if len(frac_str) >= 3:
+                                    frac_part = float(frac_str) / (320.0)
+                                else:
+                                    frac_part = float(frac_str) / (32.0)
+                            price = int_part + frac_part
+                        except:
+                            pass
+                    
+                    # Convert 'updated' time to an Eastern time timestamp
+                    updated_date = q['updated'].split('> ')[-1]
+                    updated_time = q['updated'].split(' CT')[0]
+                    updated_datetime_central = DateTime(updated_time + ' ' + updated_date).datetime
+                    updated_datetime_eastern = updated_datetime_central + datetime.timedelta(hours=1)
+                    timestamp = updated_datetime_eastern.strftime('%Y-%m-%dT%H:%M:%S')
 
-                res.append(
-                    {
-                        'ticker':       q['quoteCode'],
-                        'productName':  q['productName'],
-                        'expirationDate': q['expirationDate'],
-                        'month':        q['expirationMonth'],
-                        'last':         last,
-                        'price':        price,
-                        'change':       q['percentageChange'],
-                        'open':         q['open'],
-                        'high':         q['high'],
-                        'low':          q['low'],
-                        'priorSettle':  q['priorSettle'],
-                        'volume':       q['volume'],
-                        'timestamp':    timestamp,
-                        'dataName':     self.name
-                    }
-                )
+                    res.append(
+                        {
+                            'ticker':       q['quoteCode'],
+                            'productName':  q['productName'],
+                            'expirationDate': q['expirationDate'],
+                            'month':        q['expirationMonth'],
+                            'last':         last,
+                            'price':        price,
+                            'change':       q['percentageChange'],
+                            'open':         q['open'],
+                            'high':         q['high'],
+                            'low':          q['low'],
+                            'priorSettle':  q['priorSettle'],
+                            'volume':       q['volume'],
+                            'timestamp':    timestamp,
+                            'dataName':     self.name
+                        }
+                    )
+                except Exception as e:
+                    app.logger.error(f'{__class__.__name__}: failed to parse {q}\n\t\tReason: {e}')
         return res
 
 
@@ -554,16 +565,19 @@ class YahooQuoteJsonParser(Parser):
         res = []
         if 'quoteResponse' in response_data and 'result' in response_data['quoteResponse']:
             for q in response_data['quoteResponse']['result']:
-                name = q['longName'] if 'longName' in q else q['shortName']
-                res.append(
-                    {
-                        'name': name,
-                        'quote': q['regularMarketPrice'],
-                        'change': q['regularMarketChange'],
-                        'changePct': q['regularMarketChangePercent'],
-                        'unixTimestamp': q['regularMarketTime']
-                    }
-                )
+                try:
+                    name = q['longName'] if 'longName' in q else q['shortName']
+                    res.append(
+                        {
+                            'name': name,
+                            'quote': q['regularMarketPrice'],
+                            'change': q['regularMarketChange'],
+                            'changePct': q['regularMarketChangePercent'],
+                            'unixTimestamp': q['regularMarketTime']
+                        }
+                    )
+                except Exception as e:
+                    app.logger.error(f'{__class__.__name__}: failed to parse {q}\n\t\tReason: {e}')
         return res
 
 
@@ -575,34 +589,37 @@ class MarketWatchBondQuoteParser(Parser):
         res = []
         if 'InstrumentResponses' in response_data:
             for record in response_data['InstrumentResponses']:
-                if 'Matches' in record and record['Matches']:
-                    match = record['Matches'][0]
-                    res_record = {}
+                try:
+                    if 'Matches' in record and record['Matches']:
+                        match = record['Matches'][0]
+                        res_record = {}
 
-                    # Name
-                    if 'Instrument' in match:
-                        res_record['name'] = match['Instrument'].get('CommonName')
-                        res_record['standardName'] = Parser.standard_name(res_record['name'])
+                        # Name
+                        if 'Instrument' in match:
+                            res_record['name'] = match['Instrument'].get('CommonName')
+                            res_record['standardName'] = Parser.standard_name(res_record['name'])
 
-                    # Price
-                    if 'BondSpecific' in match:
-                        bond_specific = match['BondSpecific']
-                        res_record['coupon'] = bond_specific.get('CouponRate')
-                        res_record['price'] = bond_specific['TradePrice']['Value'] if 'TradePrice' in bond_specific and 'Value' in bond_specific['TradePrice'] else None
-                        res_record['priceChange'] = bond_specific.get('TradeChangePercent')
-                        res_record['yieldChange'] = bond_specific.get('YieldChangePercent')
-                        res_record['maturityDate'] = bond_specific.get('MaturityDate')[:10]
+                        # Price
+                        if 'BondSpecific' in match:
+                            bond_specific = match['BondSpecific']
+                            res_record['coupon'] = bond_specific.get('CouponRate')
+                            res_record['price'] = bond_specific['TradePrice']['Value'] if 'TradePrice' in bond_specific and 'Value' in bond_specific['TradePrice'] else None
+                            res_record['priceChange'] = bond_specific.get('TradeChangePercent')
+                            res_record['yieldChange'] = bond_specific.get('YieldChangePercent')
+                            res_record['maturityDate'] = bond_specific.get('MaturityDate')[:10]
 
-                    # Yield
-                    if 'CompositeTrading' in match:
-                        composite_trading = match['CompositeTrading']
-                        if 'Last' in composite_trading:
-                            last = composite_trading['Last']
-                            res_record['timestamp'] = last.get('Time')
-                            if 'Price' in last:
-                                res_record['yield'] = last['Price'].get('Value')
+                        # Yield
+                        if 'CompositeTrading' in match:
+                            composite_trading = match['CompositeTrading']
+                            if 'Last' in composite_trading:
+                                last = composite_trading['Last']
+                                res_record['timestamp'] = last.get('Time')
+                                if 'Price' in last:
+                                    res_record['yield'] = last['Price'].get('Value')
 
-                    res.append(res_record)
+                        res.append(res_record)
+                except Exception as e:
+                    app.logger.error(f'{__class__.__name__}: failed to parse {record}\n\t\tReason: {e}')
         return res
 
 
