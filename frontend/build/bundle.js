@@ -2439,7 +2439,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _data_viewer_data_viewer_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./data_viewer/data_viewer_container */ "./components/data_viewer/data_viewer_container.js");
 /* harmony import */ var _tips_data_tips_data_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tips_data/tips_data_container */ "./components/tips_data/tips_data_container.js");
 /* harmony import */ var _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./curve_builder/curve_builder_container */ "./components/curve_builder/curve_builder_container.jsx");
-/* harmony import */ var _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./knowledge_center/knowledge_center_container */ "./components/knowledge_center/knowledge_center_container.js");
+/* harmony import */ var _curve_viewer_curve_viewer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./curve_viewer/curve_viewer */ "./components/curve_viewer/curve_viewer.jsx");
 /* harmony import */ var _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./footer/footer_container */ "./components/footer/footer_container.js");
 /* harmony import */ var _market_data_market_data_container__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./market_data/market_data_container */ "./components/market_data/market_data_container.js");
 /* harmony import */ var _state_loader_state_loader_container__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./state_loader/state_loader_container */ "./components/state_loader/state_loader_container.js");
@@ -2479,9 +2479,8 @@ __webpack_require__.r(__webpack_exports__);
   path: "/curve_builder",
   component: _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__["default"]
 }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
-  exact: true,
-  path: "/knowledge_center",
-  component: _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__["default"]
+  path: "/curve_viewer",
+  component: _curve_viewer_curve_viewer__WEBPACK_IMPORTED_MODULE_5__["default"]
 }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/",
   component: _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__["default"]
@@ -3571,6 +3570,42 @@ class CpiModelResults extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
 /***/ }),
 
+/***/ "./components/curve_viewer/curve_viewer.jsx":
+/*!**************************************************!*\
+  !*** ./components/curve_viewer/curve_viewer.jsx ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+
+
+
+
+
+class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      fluid: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"], null, "Curve viewer"));
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CurveViewer);
+
+/***/ }),
+
 /***/ "./components/data_viewer/data_viewer.jsx":
 /*!************************************************!*\
   !*** ./components/data_viewer/data_viewer.jsx ***!
@@ -3989,65 +4024,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _footer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./footer */ "./components/footer/footer.jsx");
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_footer__WEBPACK_IMPORTED_MODULE_0__["default"]);
-
-/***/ }),
-
-/***/ "./components/knowledge_center/knowledge_center.jsx":
-/*!**********************************************************!*\
-  !*** ./components/knowledge_center/knowledge_center.jsx ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-
-
-
-
-
-class KnowledgeCenter extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  componentDidMount() {// Request default data
-  }
-
-  render() {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
-      fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, "This is the KnowledgeCenter."));
-  }
-
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (KnowledgeCenter);
-
-/***/ }),
-
-/***/ "./components/knowledge_center/knowledge_center_container.js":
-/*!*******************************************************************!*\
-  !*** ./components/knowledge_center/knowledge_center_container.js ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _knowledge_center__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./knowledge_center */ "./components/knowledge_center/knowledge_center.jsx");
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_knowledge_center__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -4645,8 +4621,8 @@ __webpack_require__.r(__webpack_exports__);
   }, "Curve Builder")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], {
     className: "nav-link"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
-    to: "/knowledge_center"
-  }, "Knowledge Center"))));
+    to: "/curve_viewer"
+  }, "Curve Viewer"))));
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", {
     className: "nav_bar"
   }, display);
