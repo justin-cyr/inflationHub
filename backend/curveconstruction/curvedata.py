@@ -19,9 +19,11 @@ def supported_curve_data_point_types(curve_type):
             CpiLevelDataPoint.__name__,
             YoYDataPoint.__name__
         ],
-        cfg.SEASONALITY: [
-            CpiLevelDataPoint.__name__,
+        cfg.ADDITIVE_SEASONALITY: [
             AdditiveSeasonalityDataPoint.__name__
+        ],
+        cfg.HIST_DEV_SEASONALITY: [
+            CpiLevelDataPoint.__name__
         ]
     }
     

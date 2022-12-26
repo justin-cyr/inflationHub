@@ -6,6 +6,7 @@ from ..tips_data import benchmark_bond_yield_data_point
 # Import derived model types for building
 from .cpi import CpiModel
 from .bond import BondModel
+from .seasonality import AdditiveSeasonalityModel, HistoricalDeviationSeasonalityModel
 
 class ModelFactory(object):
 
@@ -46,6 +47,20 @@ class ModelFactory(object):
                     calibration_tolerance=calibration_tolerance,
                     opt_method=opt_method
                 )
+        elif model_type == cfg.ADDITIVE_SEASONALITY:
+            return AdditiveSeasonalityModel.build(
+                base_date,
+                model_data,
+                domainX,
+                domainY
+            )
+        elif model_type == cfg.HIST_DEV_SEASONALITY:
+            return HistoricalDeviationSeasonalityModel.build(
+                base_date,
+                model_data,
+                domainX,
+                domainY
+            )
         else:
             raise ValueError(f'ModelFactory.build: unsupported model type {model_type}.')
 
