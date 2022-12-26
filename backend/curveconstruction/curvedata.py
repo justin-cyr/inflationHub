@@ -3,7 +3,7 @@ import json
 import math
 
 from .. import config as cfg
-from ..utils import Date, Tenor
+from ..utils import Date, Tenor, Month
 from . import convertutils as cu
 from . import domains
 from ..products.bonds import Bond
@@ -20,7 +20,8 @@ def supported_curve_data_point_types(curve_type):
             YoYDataPoint.__name__
         ],
         cfg.SEASONALITY: [
-            CurveDataPoint.__name__
+            CpiLevelDataPoint.__name__,
+            AdditiveSeasonalityDataPoint.__name__
         ]
     }
     
@@ -93,7 +94,8 @@ class CurveDataPointFactory(object):
                                     CpiLevelDataPoint,
                                     YoYDataPoint,
                                     BondPriceDataPoint,
-                                    BondYieldDataPoint
+                                    BondYieldDataPoint,
+                                    AdditiveSeasonalityDataPoint
                                 ]
                             }
         if t not in deserializer_map:
@@ -297,4 +299,23 @@ class BondPriceAndYieldDataPoint(BondDataPoint):
     def ctsly_compounded_yield(self):
         return self.bond.annual_yield_to_ctsly_compounded(self.ytm, self.base_date)
         
+class AdditiveSeasonalityDataPoint(CurveDataPoint):
+    def __init__(self, value, month_str, label=None):
+        # validate month_str
+        month_obj = Month.from_str_slice(month_str)
+        self.month_str = month_obj.__repr__()
+        if not label:
+            label = '_'.join([self.__class__.__name__, self.month_str])
+        super().__init__(value, label)
 
+    def get_month(self):
+        """Return the Month enum for this data point."""
+        return Month.from_str(self.month_str)
+
+    @classmethod
+    def deserialize(cls, d):
+        for key in ['value', 'month_str']:
+            if key not in d:
+                raise KeyError(f'{cls}.{__name__}: dict must contain key {key}.')
+
+        return AdditiveSeasonalityDataPoint(d['value'], d['month_str'], d.get('label'))
