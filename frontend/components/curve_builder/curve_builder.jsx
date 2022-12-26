@@ -20,6 +20,7 @@ import YoYDataPointForm from './data_points/yoydatapoint';
 
 import BondModelResults from './results/bond_model_results';
 import CpiModelResults from './results/cpi_model_results';
+import SeasonalityModelResults from './results/seasonality_model_results';
 
 class CurveBuilder extends React.Component {
 
@@ -46,7 +47,7 @@ class CurveBuilder extends React.Component {
             selectedDomainY: undefined,
             selectedFittingMethod: undefined,
             // selection choices
-            supportedCurveTypes: ['BondCurve', 'CPI', 'Seasonality'],
+            supportedCurveTypes: ['BondCurve', 'CPI', 'AdditiveSeasonality', 'HistDevSeasonality'],
             supportedCurveDataPointTypes: [],
             buildSettingsUsage: { domainX:[], domainY:[], fitting_method_str:[] },
             // results
@@ -261,6 +262,10 @@ class CurveBuilder extends React.Component {
                 break;
             case 'CPI':
                 resultsComponent = <CpiModelResults results={this.state.buildResults} />
+                break;
+            case 'AdditiveSeasonality':
+            case 'HistDevSeasonality':
+                resultsComponent = <SeasonalityModelResults results={this.state.buildResults} />
                 break;
 
             default:
