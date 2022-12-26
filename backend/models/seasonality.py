@@ -2,6 +2,7 @@
 from .model import Model
 from ..config import zero_tolerance_
 from ..utils import Date, Month
+from ..buildsettings.buildsettings import BuildSettingsSeasonality
 from ..curveconstruction.curvedata import CpiLevelDataPoint, AdditiveSeasonalityDataPoint
 
 from collections import defaultdict
@@ -93,6 +94,11 @@ class AdditiveSeasonalityModel(SeasonalityModel):
         seasonals_sum = sum(self.seasonals_map.values())
         if abs(seasonals_sum) > zero_tolerance_:
             raise ValueError(f'{__class__.__name__}: seasonals sum must be 0 but got {seasonals_sum}.')
+
+    @classmethod
+    def build(cls, base_date, curve_data, domainX, domainY):
+        build_settings = BuildSettingsSeasonality(domainX, domainY)
+        return AdditiveSeasonalityModel(base_date, curve_data, build_settings)
 
 
     def __repr__(self):
@@ -186,7 +192,7 @@ class AdditiveSeasonalityModel(SeasonalityModel):
 
 class HistoricalDeviationSeasonalityModel(AdditiveSeasonalityModel):
     def __init__(self, base_date, training_data, build_settings=None):
-        SeasonalityModel.__init__(base_date, training_data, build_settings)
+        SeasonalityModel.__init__(self, base_date, training_data, build_settings)
 
         num_points = len(self.model_data)
         if num_points < 13:
@@ -202,13 +208,12 @@ class HistoricalDeviationSeasonalityModel(AdditiveSeasonalityModel):
         self.training_data = sorted(self.model_data, key=lambda p: p.date)
 
         # calculate MoM CPI growth
-        running_sum = 0.0
         growth_rates = defaultdict(list)
         for last, next in zip(self.training_data[:-1], self.training_data[1:]):
             # is consecutive?
-            if not last.isMonthBefore(next):
-                raise ValueError(f'{__class__.__name__}: requires consecutive months but got gap between {last} and {next}.')
-            growth_rates[last.month].append(math.log(next.value / last.value))
+            if not last.date.isMonthBefore(next.date):
+                raise ValueError(f'{__class__.__name__}: requires consecutive months but got gap between {last.date} and {next.date}.')
+            growth_rates[next.date.month].append(math.log(next.value / last.value))
 
         # calculate avg growth and deviations
         num_years = num_points // 12
@@ -221,8 +226,13 @@ class HistoricalDeviationSeasonalityModel(AdditiveSeasonalityModel):
 
         # initialize as additive seasonality model
         months = [Month.from_num(m) for m in range(1, 13)]
-        data_points = [AdditiveSeasonalityDataPoint(d, m) for d, m in zip(annualized_deviations, months)]
+        data_points = [AdditiveSeasonalityDataPoint(d, m).serialize() for d, m in zip(annualized_deviations, months)]
         super().__init__(self.base_date, data_points, build_settings=self.build_settings)
+
+    @classmethod
+    def build(cls, base_date, curve_data, domainX, domainY):
+        build_settings = BuildSettingsSeasonality(domainX, domainY)
+        return HistoricalDeviationSeasonalityModel(base_date, curve_data, build_settings)
 
 
 def time_measure(date):
