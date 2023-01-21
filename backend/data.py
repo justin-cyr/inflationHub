@@ -387,24 +387,48 @@ class CnbcJsonQuoteParser(Parser):
 
         for record in quote_list:
             try:
-                yield_num = float(self.chop_pct(record.get('last')))
-                coupon = float(self.chop_pct(record.get('coupon')))
                 name = record.get('name')
-                standard_name = Parser.standard_name(name)
+                last = float(self.chop_pct(record.get('last')))
+                change_pct = record.get('change_pct')
+                last_time = record.get('last_time', '')[:19]
 
-                res.append(
-                    {
-                        'standardName': standard_name,
-                        'name': name,
-                        'coupon': coupon,
-                        'price': record.get('bond_last_price'),
-                        'priceChange': record.get('bond_change_price'),
-                        'yield': yield_num,
-                        'yieldChange': record.get('change_pct'),
-                        'timestamp': record.get('last_time')[:19],
-                        'maturityDate': record.get('maturity_date')
-                    }
-                )
+                quote_type = record.get('type')
+                if quote_type == 'BOND':
+                    yield_num = last
+                    coupon = float(self.chop_pct(record.get('coupon')))
+                    standard_name = Parser.standard_name(name)
+
+                    res.append(
+                        {
+                            'standardName': standard_name,
+                            'name': name,
+                            'coupon': coupon,
+                            'price': record.get('bond_last_price'),
+                            'priceChange': record.get('bond_change_price'),
+                            'yield': yield_num,
+                            'yieldChange': change_pct,
+                            'timestamp': last_time,
+                            'maturityDate': record.get('maturity_date')
+                        }
+                    )
+
+                elif quote_type == 'STOCK':
+                    symbol = record.get('symbol')
+
+                    res.append(
+                        {
+                            'standardName': symbol,
+                            'name': name,
+                            'price': last,
+                            'priceChange': change_pct,
+                            'volume': record.get('volume_alt'),
+                            'timestamp': last_time
+                        }
+                    )
+
+                else:
+                    raise NotImplementedError(f'Unsupported quote type {quote_type}')
+
             except Exception as e:
                 app.logger.error(f'{__class__.__name__}: failed to parse {record}\n\t\tReason: {e}')
         return res
