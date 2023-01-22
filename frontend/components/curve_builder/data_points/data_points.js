@@ -13,6 +13,10 @@ export function defaultDataPoint(type) {
             dataPoint = { type: 'YoYDataPoint', start_date: undefined, tenor: undefined, value: undefined, isActive: true };
             break;
 
+        case 'AdditiveSeasonalityDataPoint':
+            dataPoint = { type: 'AdditiveSeasonalityDataPoint', month_str: undefined, value: undefined, isActive: true }
+            break;
+
         default:
             // unexpected
             console.log('Unexpected data point type ' + type);

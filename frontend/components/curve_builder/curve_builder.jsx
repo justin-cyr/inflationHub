@@ -17,6 +17,7 @@ import { List, arrayMove } from 'react-movable';
 import { defaultDataPoint } from './data_points/data_points';
 import CpiLevelDataPointForm from './data_points/cpileveldatapoint';
 import YoYDataPointForm from './data_points/yoydatapoint';
+import AdditiveSeasonalityDataPointForm from './data_points/additiveseasonalitydatapoint';
 
 import BondModelResults from './results/bond_model_results';
 import CpiModelResults from './results/cpi_model_results';
@@ -92,8 +93,22 @@ class CurveBuilder extends React.Component {
         // callback
         () => {
             // clear curve data points
+            const defaultAdditiveSeasonalityDatapoints = [
+                { month_str: 'Jan', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Feb', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Mar', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Apr', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'May', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Jun', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Jul', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Aug', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Sep', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Oct', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Nov', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+                { month_str: 'Dec', value: 0, type: 'AdditiveSeasonalityDataPoint', isActive: true },
+            ];
             this.setState({
-                curveDataPoints: []
+                curveDataPoints: (curveType === 'AdditiveSeasonality') ? defaultAdditiveSeasonalityDatapoints : []
             });
 
             // get supported data tyes
@@ -111,7 +126,8 @@ class CurveBuilder extends React.Component {
             method: 'GET',
             success: (response) => {
                 this._isMounted && this.setState({
-                    supportedCurveDataPointTypes: response.choices
+                    supportedCurveDataPointTypes: response.choices,
+                    curveDataTypeToAdd: response.choices[0]
                 })
             }
         });
@@ -219,6 +235,18 @@ class CurveBuilder extends React.Component {
                     onTenorChange={(t) => { this.handleCurveDataInput(index, 'tenor', t) }}
                     value={curveDataPoint.value}
                     onValueChange={(v) => { this.handleCurveDataInput(index, 'value', v) }}
+                    onBoxCheck={() => { this.flipSwitch(index, 'isActive') }}
+                    onCloseButton={() => { this.removeDataPoint(index) }}
+                />;
+
+            case 'AdditiveSeasonalityDataPoint':
+                return <AdditiveSeasonalityDataPointForm
+                    key={index.toString()}
+                    month_str={curveDataPoint.month_str}
+                    onMonthStrChange={(v) => { this.handleCurveDataInput(index, 'month_str', v) }}
+                    value={curveDataPoint.value}
+                    onValueChange={(v) => { this.handleCurveDataInput(index, 'value', v) }}
+                    isActive={curveDataPoint.isActive}
                     onBoxCheck={() => { this.flipSwitch(index, 'isActive') }}
                     onCloseButton={() => { this.removeDataPoint(index) }}
                 />;
