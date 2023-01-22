@@ -13,7 +13,8 @@ GOOGLE_CHROME_BIN = 'GOOGLE_CHROME_BIN'
 # Model names
 BONDCURVE = 'BondCurve'
 CPI = 'CPI'
-SEASONALITY = 'Seasonality'
+ADDITIVE_SEASONALITY = 'AdditiveSeasonality'
+HIST_DEV_SEASONALITY = 'HistDevSeasonality'
 
 # Numerical constants
 calibration_tolerance_ = 1E-6

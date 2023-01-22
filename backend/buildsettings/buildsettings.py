@@ -8,7 +8,8 @@ def get_usage_by_model(model_str):
     model_usage = {
         cfg.BONDCURVE: BuildSettingsBondCurve.get_usage,
         cfg.CPI: BuildSettingsCPICurve.get_usage,
-        cfg.SEASONALITY: BuildSettingsSeasonality.get_usage
+        cfg.ADDITIVE_SEASONALITY: BuildSettingsSeasonality.get_usage,
+        cfg.HIST_DEV_SEASONALITY: BuildSettingsSeasonality.get_usage
     }
     if model_str not in model_usage:
         raise ValueError(f'get_usage_by_model: unsupported model type {model_str}.')
@@ -79,7 +80,7 @@ class BuildSettingsCPICurve(BuildSettings):
 
 class BuildSettingsSeasonality(BuildSettings):
     def __init__(self, domainX, domainY):
-        super().__init__(domainX, domainY)
+        super().__init__(domainX, domainY, fitting_method_str='PiecewiseConstantLeftCts')
 
         self.validate()
 
@@ -91,7 +92,10 @@ class BuildSettingsSeasonality(BuildSettings):
                 ],
             domainY=[
                 domains.ADDITIVE_SEASONALITY
-                ]
+                ],
+            fitting_method_str = [
+                fm.PiecewiseConstantLeftCts
+            ]
             )
 
 
