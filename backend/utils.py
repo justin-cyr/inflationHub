@@ -80,6 +80,59 @@ class YieldConvention(StrEnum):
     US_STREET = auto()
     US_TBILL = auto()
 
+
+class Month(StrEnum):
+    JAN = auto()
+    FEB = auto()
+    MAR = auto()
+    APR = auto()
+    MAY = auto()
+    JUN = auto()
+    JUL = auto()
+    AUG = auto()
+    SEP = auto()
+    OCT = auto()
+    NOV = auto()
+    DEC = auto()
+
+    def __repr__(self):
+        return self.to_str()
+
+    @classmethod
+    def num_map(cls):
+        return {
+            Month.JAN: 1,
+            Month.FEB: 2,
+            Month.MAR: 3,
+            Month.APR: 4,
+            Month.MAY: 5,
+            Month.JUN: 6,
+            Month.JUL: 7,
+            Month.AUG: 8,
+            Month.SEP: 9,
+            Month.OCT: 10,
+            Month.NOV: 11,
+            Month.DEC: 12
+        }
+
+    @classmethod
+    def from_str_slice(cls, s):
+        if isinstance(s, str):
+            s = s[:3]
+        return cls.from_str(s)
+
+    def to_num(self):
+        return Month.num_map()[self]
+
+    @classmethod
+    def from_num(cls, num):
+        num = int(num)
+        for k, v in Month.num_map().items():
+            if v == num:
+                return k
+        raise ValueError(f'{cls}.{__name__}: invalid month number {num}.')
+
+
 class Date(object):
     # wraps datetime.date but allows conversion from string types in constructor
     def __init__(self, date):
@@ -222,6 +275,10 @@ class Date(object):
         else:
             return daysInMonth[month]
 
+    def endOfMonth(self):
+        """Return the Date that is last in this month."""
+        return Date(datetime.date(self.year, self.month, self.daysInMonth()))
+
     # bump functions
     def addOneYear(self, sign=1):
         """Return a new Date that is 1Y ahead of this date."""
@@ -285,6 +342,12 @@ class Date(object):
         if date_frequency == DateFrequency.YEARLY:
             return self.addOneYear(sign)
 
+    def isMonthBefore(self, rhs):
+        """Return True if this is in the month before the rhs, else False."""
+        if not isinstance(rhs, Date):
+            rhs = Date(rhs)
+        return ((self.year == rhs.year) and (self.month == rhs.month - 1)) or \
+                ((self.year == rhs.year - 1) and (self.month == 12) and (rhs.month == 1))
 
 class DateTime(object):
     # wraps datetime.datetime but allows conversion from string types in constructor

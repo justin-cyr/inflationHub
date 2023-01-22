@@ -2503,23 +2503,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_bootstrap_Alert__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react-bootstrap/Alert */ "./node_modules/react-bootstrap/esm/Alert.js");
-/* harmony import */ var react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react-bootstrap/Button */ "./node_modules/react-bootstrap/esm/Button.js");
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
-/* harmony import */ var react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react-bootstrap/esm/FloatingLabel */ "./node_modules/react-bootstrap/esm/FloatingLabel.js");
-/* harmony import */ var react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react-bootstrap/Form */ "./node_modules/react-bootstrap/esm/Form.js");
-/* harmony import */ var react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js");
-/* harmony import */ var react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! react-bootstrap/Modal */ "./node_modules/react-bootstrap/esm/Modal.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! react-bootstrap/Tab */ "./node_modules/react-bootstrap/esm/Tab.js");
+/* harmony import */ var react_bootstrap_Alert__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react-bootstrap/Alert */ "./node_modules/react-bootstrap/esm/Alert.js");
+/* harmony import */ var react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react-bootstrap/Button */ "./node_modules/react-bootstrap/esm/Button.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! react-bootstrap/esm/FloatingLabel */ "./node_modules/react-bootstrap/esm/FloatingLabel.js");
+/* harmony import */ var react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! react-bootstrap/Form */ "./node_modules/react-bootstrap/esm/Form.js");
+/* harmony import */ var react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js");
+/* harmony import */ var react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! react-bootstrap/Modal */ "./node_modules/react-bootstrap/esm/Modal.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! react-bootstrap/Tab */ "./node_modules/react-bootstrap/esm/Tab.js");
 /* harmony import */ var react_movable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-movable */ "./node_modules/react-movable/lib/index.js");
 /* harmony import */ var _data_points_data_points__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./data_points/data_points */ "./components/curve_builder/data_points/data_points.js");
 /* harmony import */ var _data_points_cpileveldatapoint__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./data_points/cpileveldatapoint */ "./components/curve_builder/data_points/cpileveldatapoint.jsx");
 /* harmony import */ var _data_points_yoydatapoint__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./data_points/yoydatapoint */ "./components/curve_builder/data_points/yoydatapoint.jsx");
-/* harmony import */ var _results_bond_model_results__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./results/bond_model_results */ "./components/curve_builder/results/bond_model_results.jsx");
-/* harmony import */ var _results_cpi_model_results__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./results/cpi_model_results */ "./components/curve_builder/results/cpi_model_results.jsx");
+/* harmony import */ var _data_points_additiveseasonalitydatapoint__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./data_points/additiveseasonalitydatapoint */ "./components/curve_builder/data_points/additiveseasonalitydatapoint.jsx");
+/* harmony import */ var _results_bond_model_results__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./results/bond_model_results */ "./components/curve_builder/results/bond_model_results.jsx");
+/* harmony import */ var _results_cpi_model_results__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./results/cpi_model_results */ "./components/curve_builder/results/cpi_model_results.jsx");
+/* harmony import */ var _results_seasonality_model_results__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./results/seasonality_model_results */ "./components/curve_builder/results/seasonality_model_results.jsx");
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+
 
 
 
@@ -2562,7 +2566,7 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       selectedDomainY: undefined,
       selectedFittingMethod: undefined,
       // selection choices
-      supportedCurveTypes: ['BondCurve', 'CPI', 'Seasonality'],
+      supportedCurveTypes: ['BondCurve', 'CPI', 'AdditiveSeasonality', 'HistDevSeasonality'],
       supportedCurveDataPointTypes: [],
       buildSettingsUsage: {
         domainX: [],
@@ -2610,8 +2614,69 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     }, // callback
     () => {
       // clear curve data points
+      const defaultAdditiveSeasonalityDatapoints = [{
+        month_str: 'Jan',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Feb',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Mar',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Apr',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'May',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Jun',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Jul',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Aug',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Sep',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Oct',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Nov',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }, {
+        month_str: 'Dec',
+        value: 0,
+        type: 'AdditiveSeasonalityDataPoint',
+        isActive: true
+      }];
       this.setState({
-        curveDataPoints: []
+        curveDataPoints: curveType === 'AdditiveSeasonality' ? defaultAdditiveSeasonalityDatapoints : []
       }); // get supported data tyes
 
       this.getCurveDataPointTypes(curveType); // get supported build methods
@@ -2626,7 +2691,8 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       method: 'GET',
       success: response => {
         this._isMounted && this.setState({
-          supportedCurveDataPointTypes: response.choices
+          supportedCurveDataPointTypes: response.choices,
+          curveDataTypeToAdd: response.choices[0]
         });
       }
     });
@@ -2750,6 +2816,26 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           }
         });
 
+      case 'AdditiveSeasonalityDataPoint':
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_data_points_additiveseasonalitydatapoint__WEBPACK_IMPORTED_MODULE_6__["default"], {
+          key: index.toString(),
+          month_str: curveDataPoint.month_str,
+          onMonthStrChange: v => {
+            this.handleCurveDataInput(index, 'month_str', v);
+          },
+          value: curveDataPoint.value,
+          onValueChange: v => {
+            this.handleCurveDataInput(index, 'value', v);
+          },
+          isActive: curveDataPoint.isActive,
+          onBoxCheck: () => {
+            this.flipSwitch(index, 'isActive');
+          },
+          onCloseButton: () => {
+            this.removeDataPoint(index);
+          }
+        });
+
       default:
         console.log('Unhandled type in ', curveDataPoint);
     }
@@ -2800,13 +2886,20 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
     switch (this.state.selectedCurveType) {
       case 'BondCurve':
-        resultsComponent = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_results_bond_model_results__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        resultsComponent = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_results_bond_model_results__WEBPACK_IMPORTED_MODULE_7__["default"], {
           results: this.state.buildResults
         });
         break;
 
       case 'CPI':
-        resultsComponent = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_results_cpi_model_results__WEBPACK_IMPORTED_MODULE_7__["default"], {
+        resultsComponent = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_results_cpi_model_results__WEBPACK_IMPORTED_MODULE_8__["default"], {
+          results: this.state.buildResults
+        });
+        break;
+
+      case 'AdditiveSeasonality':
+      case 'HistDevSeasonality':
+        resultsComponent = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_results_seasonality_model_results__WEBPACK_IMPORTED_MODULE_9__["default"], {
           results: this.state.buildResults
         });
         break;
@@ -2816,14 +2909,14 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         console.log('Unexpected curve type: ' + this.state.selectedCurveType);
     }
 
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_10__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], {
       className: "justify-content-md-center",
       style: {
         padding: "3px"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Alert__WEBPACK_IMPORTED_MODULE_10__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Alert__WEBPACK_IMPORTED_MODULE_12__["default"], {
       style: {
         width: "50%"
       },
@@ -2835,27 +2928,27 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         });
       },
       show: this.state.showAlert
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Alert__WEBPACK_IMPORTED_MODULE_10__["default"].Heading, null, "Failed to Build"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, this.state.buildErrors || 'Unknown error.'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Alert__WEBPACK_IMPORTED_MODULE_12__["default"].Heading, null, "Failed to Build"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, this.state.buildErrors || 'Unknown error.'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], {
       style: {
         padding: "3px"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_12__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_14__["default"], {
       id: "add-curve-data-point-button",
       size: "lg",
       variant: "secondary",
       onClick: this.addDataPoints
-    }, "Add")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, "Add")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       style: {
         width: "137px"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "numCurveDataPointsToAdd-Input",
       label: "How many"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Control, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Control, {
       type: "number",
       step: "1",
       min: "1",
@@ -2863,137 +2956,137 @@ class CurveBuilder extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       value: this.state.numCurveDataPointsToAdd,
       isInvalid: this.state.numCurveDataPointsToAdd < 1 || this.state.numCurveDataPointsToAdd > 30,
       onChange: this.handleInput('numCurveDataPointsToAdd')
-    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "curveDataTypeToAdd-Input",
       label: "Data type"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Select, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Select, {
       value: this.state.curveDataTypeToAdd || '',
       onChange: this.handleInput('curveDataTypeToAdd')
     }, this.state.supportedCurveDataPointTypes.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: s
-    }, s))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, s))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       style: {
         textAlign: "center"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], {
       className: "justify-content-md-center"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "curveType-Input",
       label: "Curve type"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Select, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Select, {
       value: this.state.selectedCurveType,
       onChange: e => {
         this.handleCurveType(e.target.value);
       }
     }, this.state.supportedCurveTypes.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: s
-    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "modelBaseDate-Input",
       label: "Base date"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Control, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Control, {
       style: {
         width: "150px"
       },
       type: "date",
       value: this.state.modelBaseDate || '',
       onChange: this.handleInput('modelBaseDate')
-    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "2"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_12__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_14__["default"], {
       id: "build-button",
       size: "lg",
       type: "submit",
       variant: "primary",
       onClick: this.buildCurve
-    }, "Build"))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_15__["default"], {
+    }, "Build"))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_17__["default"], {
       show: this.state.showModal,
       centered: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_15__["default"].Title, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_17__["default"].Title, {
       style: {
         paddingTop: "10px",
         paddingLeft: "10px",
         color: "white",
         backgroundColor: "#0d6efd"
       }
-    }, "Select Curve Type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_15__["default"].Body, {
+    }, "Select Curve Type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_17__["default"].Body, {
       style: {
         backgroundColor: "#91ABBD"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], {
       className: "justify-content-md-center"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "curveType-Modal-Input",
       label: "Curve type"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Select, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Select, {
       value: this.state.selectedCurveType,
       onChange: e => {
         this.handleCurveType(e.target.value);
       }
     }, ['None'].concat(this.state.supportedCurveTypes).map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: s
-    }, s)))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_16__["default"].Container, {
+    }, s)))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_18__["default"].Container, {
       id: "curve-builder-tabs",
       defaultActiveKey: "#/curve_builder/curveData"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       md: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_17__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_17__["default"].Item, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_19__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_19__["default"].Item, {
       action: true,
       href: "#/curve_builder/curveData"
-    }, "Curve Data"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_17__["default"].Item, {
+    }, "Curve Data"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_19__["default"].Item, {
       action: true,
       href: "#/curve_builder/buildSettings"
-    }, "Build Settings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_17__["default"].Item, {
+    }, "Build Settings"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_19__["default"].Item, {
       action: true,
       href: "#/curve_builder/results"
-    }, "Results"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, "Results"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       style: {
         textAlign: "center"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_16__["default"].Content, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_16__["default"].Pane, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_18__["default"].Content, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_18__["default"].Pane, {
       eventKey: "#/curve_builder/curveData"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Curve data points'), curveDataPoints), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_16__["default"].Pane, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Curve data points'), curveDataPoints), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_18__["default"].Pane, {
       eventKey: "#/curve_builder/buildSettings"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Build settings'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Build settings'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_11__["default"], {
       className: "justify-content-md-center"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "domainX-Input",
       label: "Time domain"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Select, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Select, {
       value: this.state.selectedDomainX,
       onChange: this.handleInput('selectedDomainX')
     }, this.state.buildSettingsUsage.domainX.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: s
-    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "domainY-Input",
       label: "Interpolation domain"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Select, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Select, {
       value: this.state.selectedDomainY,
       onChange: this.handleInput('selectedDomainY')
     }, this.state.buildSettingsUsage.domainY.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: s
-    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_11__["default"], {
+    }, s))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_13__["default"], {
       lg: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_esm_FloatingLabel__WEBPACK_IMPORTED_MODULE_15__["default"], {
       controlId: "fittingMethod-Input",
       label: "Fitting method"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_14__["default"].Select, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_16__["default"].Select, {
       value: this.state.selectedFittingMethod,
       onChange: this.handleInput('selectedFittingMethod')
     }, this.state.buildSettingsUsage.fitting_method_str.map(s => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: s
-    }, s)))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_16__["default"].Pane, {
+    }, s)))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_18__["default"].Pane, {
       eventKey: "#/curve_builder/results"
     }, resultsComponent)))))));
   }
@@ -3018,6 +3111,88 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _curve_builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./curve_builder */ "./components/curve_builder/curve_builder.jsx");
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_curve_builder__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./components/curve_builder/data_points/additiveseasonalitydatapoint.jsx":
+/*!*******************************************************************************!*\
+  !*** ./components/curve_builder/data_points/additiveseasonalitydatapoint.jsx ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_bootstrap_CloseButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/CloseButton */ "./node_modules/react-bootstrap/esm/CloseButton.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Form */ "./node_modules/react-bootstrap/esm/Form.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+
+
+
+
+
+
+const monthList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+class AdditiveSeasonalityDataPointForm extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_1__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      className: "curve-data-form"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      md: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Group, {
+      as: react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"]
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Label, {
+      column: true,
+      md: "auto"
+    }, "Month:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Select, {
+      value: this.props.month_str || '',
+      onChange: e => this.props.onMonthStrChange(e.target.value),
+      disabled: !this.props.isActive
+    }, monthList.map(m => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
+      key: m
+    }, m)))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      md: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Group, {
+      as: react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"]
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Label, {
+      column: true,
+      md: "auto"
+    }, "Seasonal:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Control, {
+      style: {
+        width: "150px"
+      },
+      type: "number",
+      step: "0.001",
+      value: this.props.value || '',
+      onChange: e => this.props.onValueChange(e.target.value),
+      disabled: !this.props.isActive
+    })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      md: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Form__WEBPACK_IMPORTED_MODULE_4__["default"].Check, {
+      type: "checkbox",
+      checked: this.props.isActive,
+      onChange: () => this.props.onBoxCheck()
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      md: "auto"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_CloseButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      variant: "white",
+      onClick: () => this.props.onCloseButton()
+    }))));
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AdditiveSeasonalityDataPointForm);
 
 /***/ }),
 
@@ -3134,6 +3309,15 @@ function defaultDataPoint(type) {
         type: 'YoYDataPoint',
         start_date: undefined,
         tenor: undefined,
+        value: undefined,
+        isActive: true
+      };
+      break;
+
+    case 'AdditiveSeasonalityDataPoint':
+      dataPoint = {
+        type: 'AdditiveSeasonalityDataPoint',
+        month_str: undefined,
         value: undefined,
         isActive: true
       };
@@ -3568,6 +3752,143 @@ class CpiModelResults extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (CpiModelResults);
+
+/***/ }),
+
+/***/ "./components/curve_builder/results/seasonality_model_results.jsx":
+/*!************************************************************************!*\
+  !*** ./components/curve_builder/results/seasonality_model_results.jsx ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+
+
+
+
+class SeasonalityModelResults extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+    const chartLayout = {
+      paper_bgcolor: '#0a0e1a',
+      plot_bgcolor: '#14171C',
+      xaxis: {
+        title: 'Date',
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD'
+      },
+      yaxis: {
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        autotypenumbers: 'strict',
+        minexponent: 9,
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD',
+        tickformat: ",.2f",
+        hoverformat: ",.3f"
+      },
+      showLegend: true,
+      legend: {
+        font: {
+          color: '#BDBDBD'
+        }
+      }
+    };
+    const chartConfig = {
+      displayModeBar: true,
+      scrollZoom: true
+    };
+    this.state = {
+      instantaneousRatePlotData: [],
+      twzrPlotData: [],
+      zeroRatePlotData: [],
+      // chart options
+      chartLayout: chartLayout,
+      chartConfig: chartConfig
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.results !== prevProps.results) {
+      let instantaneousRatePlotData = [];
+      let twzrPlotData = [];
+      let zeroRatePlotData = [];
+      const keys = Object.keys(this.props.results);
+
+      if (keys.includes('instantaneous_forward_rate')) {
+        instantaneousRatePlotData.push({
+          x: this.props.results.instantaneous_forward_rate.map(p => p[0]),
+          y: this.props.results.instantaneous_forward_rate.map(p => p[1]),
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: true,
+          name: 'Inst Fwd Rate'
+        });
+      }
+
+      if (keys.includes('time_weighted_zero_rate')) {
+        twzrPlotData.push({
+          x: this.props.results.time_weighted_zero_rate.map(p => p[0]),
+          y: this.props.results.time_weighted_zero_rate.map(p => p[1]),
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: true,
+          name: 'Time-weighted Zero Rate'
+        });
+      }
+
+      if (keys.includes('zero_rate')) {
+        zeroRatePlotData.push({
+          x: this.props.results.zero_rate.map(p => p[0]),
+          y: this.props.results.zero_rate.map(p => p[1]),
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: true,
+          name: 'Zero Rate'
+        });
+      }
+
+      this.setState({
+        instantaneousRatePlotData: instantaneousRatePlotData,
+        twzrPlotData: twzrPlotData,
+        zeroRatePlotData: zeroRatePlotData
+      }, () => {
+        console.log(this.state);
+        Plotly.react('instantaneous-rate-plot', this.state.instantaneousRatePlotData, this.state.chartLayout, this.state.chartConfig);
+        Plotly.react('twzr-plot', this.state.twzrPlotData, this.state.chartLayout, this.state.chartConfig);
+        Plotly.react('zero-rate-plot', this.state.zeroRatePlotData, this.state.chartLayout, this.state.chartConfig);
+      });
+    }
+  }
+
+  render() {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_1__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "instantaneous-rate-plot"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "twzr-plot"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_2__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "zero-rate-plot"
+    })));
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SeasonalityModelResults);
 
 /***/ }),
 
