@@ -4195,7 +4195,10 @@ class DataViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       type: "date",
       value: this.state.marketDataDate || '',
       onChange: this.handleInput('marketDataDate')
-    }), latest_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__["default"], null)));
+    }), latest_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+      href: 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.state.chartData)),
+      download: 'Inflation-Hub_data_retrieved_' + this.state.marketDataDate + '.json'
+    }, "Download chart data")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__["default"], null)));
   }
 
 }
