@@ -25,9 +25,9 @@ export default () => {
                 <Col className="nav-link">
                     <Link to="/curve_builder">Curve Builder</Link>
                 </Col>
-                <Col className="nav-link">
+                {/*<Col className="nav-link">
                     <Link to="/knowledge_center">Knowledge Center</Link>
-                </Col>
+                </Col>*/}
             </Row>
         </Container>
     );

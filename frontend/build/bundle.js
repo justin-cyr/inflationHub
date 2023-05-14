@@ -2479,10 +2479,6 @@ __webpack_require__.r(__webpack_exports__);
   path: "/curve_builder",
   component: _curve_builder_curve_builder_container__WEBPACK_IMPORTED_MODULE_4__["default"]
 }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
-  exact: true,
-  path: "/knowledge_center",
-  component: _knowledge_center_knowledge_center_container__WEBPACK_IMPORTED_MODULE_5__["default"]
-}), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_9__.Route, {
   path: "/",
   component: _footer_footer_container__WEBPACK_IMPORTED_MODULE_6__["default"]
 })));
@@ -4966,11 +4962,7 @@ __webpack_require__.r(__webpack_exports__);
     className: "nav-link"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
     to: "/curve_builder"
-  }, "Curve Builder")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    className: "nav-link"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__.Link, {
-    to: "/knowledge_center"
-  }, "Knowledge Center"))));
+  }, "Curve Builder"))));
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", {
     className: "nav_bar"
   }, display);
