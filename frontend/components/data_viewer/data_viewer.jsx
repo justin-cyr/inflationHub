@@ -300,6 +300,13 @@ class DataViewer extends React.Component {
                         {latest_data_table}
                     </Col>
                     <Col>
+                        {/* download link */}
+                        <a
+                            href={'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.state.chartData))}
+                            download={'Inflation-Hub_data_retrieved_' + this.state.marketDataDate + '.json'}
+                        >Download chart data</a>
+                    </Col>
+                    <Col>
                         {/* blank column to fill space to the right */}
                     </Col>
                 </Row>

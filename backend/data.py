@@ -81,12 +81,6 @@ class DataAPI(object):
         data_parser = data_config.get('Parser')
         if not data_parser:
             self.data_parser = Parser()
-        elif data_parser == 'TimeSeriesCsvParser':
-            self.data_parser = TimeSeriesCsvParser(self.name)
-        elif data_parser == 'TimeSeriesCnbcJsonParser':
-            self.data_parser = TimeSeriesCnbcJsonParser(self.name)
-        elif data_parser == 'TimeSeriesCnbcIntradayCloseParser':
-            self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
         elif data_parser == 'CnbcJsonQuoteParser':
             self.data_parser = CnbcJsonQuoteParser()           
         elif data_parser == 'IntradayUSTQuoteWsjParser':
@@ -95,10 +89,18 @@ class DataAPI(object):
             self.data_parser = MarketWatchBondQuoteParser()
         elif data_parser == 'CmeTsyQuoteJsonParser':
             self.data_parser = CmeTsyQuoteJsonParser()
-        elif data_parser == 'TwHtmlUSTYieldParser':
-            self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'CmeFuturesQuoteJsonParser':
             self.data_parser = CmeFuturesQuoteJsonParser(self.name)
+        elif data_parser == 'TimeSeriesCsvParser':
+            self.data_parser = TimeSeriesCsvParser(self.name)
+        elif data_parser == 'TimeSeriesCnbcJsonParser':
+            self.data_parser = TimeSeriesCnbcJsonParser(self.name)
+        elif data_parser == 'TimeSeriesCnbcIntradayCloseParser':
+            self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
+        elif data_parser == 'TimeSeriesSPIndexJsonParser':
+            self.data_parser = TimeSeriesSPIndexJsonParser(self.name)
+        elif data_parser == 'TwHtmlUSTYieldParser':
+            self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'YahooQuoteJsonParser':
             self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -385,27 +387,81 @@ class CnbcJsonQuoteParser(Parser):
 
         for record in quote_list:
             try:
-                yield_num = float(self.chop_pct(record.get('last')))
-                coupon = float(self.chop_pct(record.get('coupon')))
                 name = record.get('name')
-                standard_name = Parser.standard_name(name)
+                last = float(self.chop_pct(record.get('last')))
+                change_pct = record.get('change_pct')
+                last_time = record.get('last_time', '')[:19]
 
-                res.append(
-                    {
-                        'standardName': standard_name,
-                        'name': name,
-                        'coupon': coupon,
-                        'price': record.get('bond_last_price'),
-                        'priceChange': record.get('bond_change_price'),
-                        'yield': yield_num,
-                        'yieldChange': record.get('change_pct'),
-                        'timestamp': record.get('last_time')[:19],
-                        'maturityDate': record.get('maturity_date')
-                    }
-                )
+                quote_type = record.get('type')
+                if quote_type == 'BOND':
+                    yield_num = last
+                    coupon = float(self.chop_pct(record.get('coupon')))
+                    standard_name = Parser.standard_name(name)
+
+                    res.append(
+                        {
+                            'standardName': standard_name,
+                            'name': name,
+                            'coupon': coupon,
+                            'price': record.get('bond_last_price'),
+                            'priceChange': record.get('bond_change_price'),
+                            'yield': yield_num,
+                            'yieldChange': change_pct,
+                            'timestamp': last_time,
+                            'maturityDate': record.get('maturity_date')
+                        }
+                    )
+
+                elif quote_type == 'STOCK':
+                    symbol = record.get('symbol')
+
+                    res.append(
+                        {
+                            'standardName': symbol,
+                            'name': name,
+                            'price': last,
+                            'priceChange': change_pct,
+                            'volume': record.get('volume_alt'),
+                            'timestamp': last_time
+                        }
+                    )
+
+                else:
+                    raise NotImplementedError(f'Unsupported quote type {quote_type}')
+
             except Exception as e:
                 app.logger.error(f'{__class__.__name__}: failed to parse {record}\n\t\tReason: {e}')
         return res
+
+
+class TimeSeriesSPIndexJsonParser(Parser):
+    """Parser for index time series data from S&P Global."""
+    def __init__(self, value_col_name='Value', date_col_name='Date'):
+        self.value_col_name = value_col_name
+        self.date_col_name = date_col_name
+
+    def parse(self, response):
+        """Hande response as JSON data and return data as {date_col_name:[...], value_col_name:[...]}
+            dates: yyyy-mm-dd format
+            values: float
+        """
+        self.validate_response(response)
+        response_data = response.json()
+        time_series = response_data['indexLevelsHolder']['indexLevels']
+        dates = []
+        values = []
+        for record in time_series:
+            d = record['formattedEffectiveDate']
+            v = record['indexValue']
+            date_str = self.standard_date_str(d)
+            if not date_str:
+                continue
+            dates.append(date_str)
+            values.append(float(v))
+
+        return {self.date_col_name: dates,
+                self.value_col_name: values}
+
 
 class TimeSeriesStatCanXmlParser(Parser):
     """Parser for time series from Statistics Canada."""

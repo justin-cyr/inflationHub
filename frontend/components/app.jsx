@@ -20,6 +20,7 @@ export default () => (
         <Route exact path="/market_data" component={MarketData} />
         <Route path="/curve_builder" component={CurveBuilder} />
         <Route path="/curve_viewer" component={CurveViewer} />
+        {/*<Route exact path="/knowledge_center" component={KnowledgeCenter} />*/}
         <Route path="/" component={Footer} />
     </div>
 );
