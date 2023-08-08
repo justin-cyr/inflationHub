@@ -153,6 +153,7 @@ def get_tips_prices_wsj():
     """
     from selenium import webdriver
     from selenium.webdriver.common.by import By
+    from selenium.webdriver.chrome.service import Service
 
     # configure web driver
     options = webdriver.ChromeOptions()
@@ -162,7 +163,8 @@ def get_tips_prices_wsj():
     if cfg.IS_PROD in os.environ:
         options.binary_location = os.environ[cfg.GOOGLE_CHROME_BIN]
 
-    driver = webdriver.Chrome(executable_path=os.environ[cfg.CHROMEDRIVER_PATH],
+    service = Service(executable_path=os.environ[cfg.CHROMEDRIVER_PATH])
+    driver = webdriver.Chrome(service=service,
                             options=options)
 
     # get page
