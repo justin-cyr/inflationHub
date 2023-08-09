@@ -166,3 +166,16 @@ def get_build_settings_usage(curve_type):
     except Exception as e:
         app.logger.error(str(e))
         return dict(errors=str(e))
+
+@app.route('/get_curve_templates')
+def get_curve_templates():
+    try:
+        import os
+        curve_template_folder = os.path.join(app.root_path, 'backend/curveconstruction/curve_templates/')
+        curve_templates = [f[:-5] for f in os.listdir(curve_template_folder) 
+                            if (os.path.isfile(os.path.join(curve_template_folder, f)) and f.endswith('.json'))]
+        return dict(curve_templates=curve_templates)
+    
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))
