@@ -1,6 +1,7 @@
 
 from .. import config as cfg
 from ..data import DataAPI
+from ..utils import Date
 from ..tips_data import benchmark_bond_yield_data_point
 
 # Import derived model types for building
@@ -14,7 +15,7 @@ class ModelFactory(object):
     # return a Model object built from arguments in params
 
         model_type = params.get('model_type')
-        base_date = params.get('base_date')
+        base_date = params.get('base_date', Date.today())
         if 'model_data' in params and params['model_data']:
             model_data = params['model_data']
         else:
@@ -74,7 +75,7 @@ class ModelFactory(object):
 
         if model_type == cfg.BONDCURVE:
             # only Cnbc supported currently, since those have maturity date and coupon
-            quote_source = 'CNBC US Treasury Yields (intraday)'
+            quote_source = params.get('quote_source', 'CNBC US Treasury Yields (intraday)')
             quotes = DataAPI(quote_source).get_and_parse_data()['data']
             benchmark_bond_quotes = [benchmark_bond_yield_data_point(**q).serialize() for q in quotes]
             return benchmark_bond_quotes
