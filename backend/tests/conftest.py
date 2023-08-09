@@ -17,7 +17,7 @@ import pytest
 #   pytest backend/tests/models/
 #
 #   Run tests in a specific module:
-#   pytest backend/tests/models/bomd_model_test.py
+#   pytest backend/tests/models/bond_model_test.py
 #
 #   Run a specific test:
 #   pytest backend/tests/models/bond_model_test.py::test_CG_calibration

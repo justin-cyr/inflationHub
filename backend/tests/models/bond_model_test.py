@@ -166,3 +166,19 @@ def test_standard_nominal_calibration(app, default_build_params):
         bond_model = ModelFactory.build(build_params)
 
     print(quotes)
+
+@run_with_profiler
+def test_curve_template_build(app, default_build_params):
+    # volatile test: quotes can change on each test run
+    from ...utils import Date
+    import json
+    import os
+
+    with app.app_context():
+        path = os.path.join(app.root_path, 'backend/curveconstruction/curve_templates/UST_OTR_linear.json')
+        print(path)
+        with open(path, 'r') as f:
+            build_params = json.load(f)
+        bond_model = ModelFactory.build(build_params)
+
+    print(build_params)
