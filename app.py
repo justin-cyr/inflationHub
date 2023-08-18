@@ -170,10 +170,15 @@ def get_build_settings_usage(curve_type):
 @app.route('/get_curve_templates')
 def get_curve_templates():
     try:
+        import json
         import os
         curve_template_folder = os.path.join(app.root_path, 'backend/curveconstruction/curve_templates/')
-        curve_templates = [f[:-5] for f in os.listdir(curve_template_folder) 
+        curve_template_files = [f for f in os.listdir(curve_template_folder) 
                             if (os.path.isfile(os.path.join(curve_template_folder, f)) and f.endswith('.json'))]
+        curve_templates = {}
+        for filename in curve_template_files:
+            with open(os.path.join(curve_template_folder, filename), 'r') as f:
+                curve_templates[filename[:-5]] = json.load(f)
         return dict(curve_templates=curve_templates)
     
     except Exception as e:

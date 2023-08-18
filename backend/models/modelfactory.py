@@ -25,7 +25,7 @@ class ModelFactory(object):
         domainY = params.get('domainY')
         fitting_method_str = params.get('fitting_method_str')
         t0_date = params.get('t0_date', base_date)
-        calibration_tolerance = params.get('calibration_tolerance', cfg.calibration_tolerance_)
+        calibration_tolerance = float(params.get('calibration_tolerance', cfg.calibration_tolerance_))
         opt_method = params.get('opt_method', cfg.TRUST_CONSTR)
 
         if model_type == cfg.CPI:
