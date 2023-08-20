@@ -3905,8 +3905,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Button */ "./node_modules/react-bootstrap/esm/Button.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-bootstrap/Modal */ "./node_modules/react-bootstrap/esm/Modal.js");
+/* harmony import */ var react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Nav */ "./node_modules/react-bootstrap/esm/Nav.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+
 
 
 
@@ -3919,10 +3924,57 @@ __webpack_require__.r(__webpack_exports__);
 class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
+    const chartLayout = {
+      paper_bgcolor: '#0a0e1a',
+      plot_bgcolor: '#14171C',
+      xaxis: {
+        title: 'Date',
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD'
+      },
+      yaxis: {
+        titlefont: {
+          color: '#BDBDBD'
+        },
+        autotypenumbers: 'strict',
+        minexponent: 9,
+        tickfont: {
+          color: '#BDBDBD'
+        },
+        tickcolor: '#BDBDBD',
+        tickformat: ",.2f",
+        hoverformat: ",.3f"
+      },
+      showLegend: true,
+      legend: {
+        font: {
+          color: '#BDBDBD'
+        }
+      }
+    };
+    const chartConfig = {
+      displayModeBar: true,
+      scrollZoom: true
+    };
     this._isMounted = false;
     this.state = {
-      curve_templates: []
-    };
+      chartConfig: chartConfig,
+      chartLayout: chartLayout,
+      curveTemplates: {},
+      curveResults: {},
+      curveErrors: {},
+      selectedCurve: '',
+      selectedPlotData: {},
+      selectedPlots: []
+    }; // bind methods
+
+    this.buildAll = this.buildAll.bind(this);
+    this.handleCurveSelect = this.handleCurveSelect.bind(this);
   }
 
   getCurveTemplates() {
@@ -3931,8 +3983,72 @@ class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       method: 'GET',
       success: response => {
         this._isMounted && this.setState({
-          curve_templates: response.curve_templates
+          curveTemplates: response.curve_templates
         });
+      }
+    });
+  }
+
+  buildOneCurve(curveName) {
+    jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
+      url: 'build_model',
+      method: 'POST',
+      data: { ...this.state.curveTemplates[curveName],
+        handle: curveName
+      },
+      success: response => {
+        let curveResults = this.state.curveResults;
+        let curveErrors = this.state.curveErrors;
+
+        if (response.errors) {
+          curveErrors[curveName] = response.errors;
+        } else if (response.results) {
+          curveResults[curveName] = response.results;
+        }
+
+        this._isMounted && this.setState({
+          curveResults: curveResults,
+          curveErrors: curveErrors
+        });
+      }
+    });
+  }
+
+  buildAll() {
+    const curveTemplateNames = Object.keys(this.state.curveTemplates);
+
+    if (curveTemplateNames.length > 0) {
+      curveTemplateNames.map(key => this.buildOneCurve(key));
+    }
+  }
+
+  handleCurveSelect(curveName) {
+    const keys = this.state.curveResults[curveName] ? Object.keys(this.state.curveResults[curveName]) : [];
+    let selectedPlotData = {};
+
+    for (let key of keys) {
+      selectedPlotData[key] = [];
+
+      if (this.state.curveResults[curveName]) {
+        selectedPlotData[key] = [{
+          x: this.state.curveResults[curveName][key].map(p => p[0]),
+          y: this.state.curveResults[curveName][key].map(p => p[1]),
+          type: 'scatter',
+          mode: 'lines',
+          showlegend: true,
+          name: key
+        }];
+      }
+    }
+
+    this.setState({
+      showModal: true,
+      selectedCurve: curveName,
+      selectedPlotData: selectedPlotData,
+      selectedPlots: keys
+    }, () => {
+      for (let key of this.state.selectedPlots) {
+        Plotly.react(key, this.state.selectedPlotData[key], this.state.chartLayout, this.state.chartConfig);
       }
     });
   }
@@ -3947,9 +4063,70 @@ class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   render() {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    let curveDetailRows = [/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      key: "title"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading curve templates ...')))];
+    const curveTemplateNames = Object.keys(this.state.curveTemplates);
+
+    if (curveTemplateNames.length > 0) {
+      curveDetailRows = curveTemplateNames.map(key => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        key: key
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__["default"], {
+        onSelect: this.handleCurveSelect,
+        fill: "true"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__["default"].Item, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Nav__WEBPACK_IMPORTED_MODULE_2__["default"].Link, {
+        eventKey: key
+      }, key))))));
+    }
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, "Curve viewer"));
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Button__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      id: "button-build-all",
+      size: "lg",
+      variant: "secondary",
+      onClick: this.buildAll
+    }, "Build All")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      show: this.state.showModal,
+      centered: true,
+      size: "lg",
+      onHide: () => this.setState({
+        showModal: false
+      })
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__["default"].Header, {
+      closeButton: true,
+      style: {
+        backgroundColor: "#1c243b"
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__["default"].Title, {
+      style: {
+        paddingTop: "5px",
+        paddingLeft: "5px",
+        backgroundColor: "#1c243b"
+      }
+    }, this.state.selectedCurve)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Modal__WEBPACK_IMPORTED_MODULE_6__["default"].Body, {
+      style: {
+        backgroundColor: "#1c243b"
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      id: "charts-container"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "instantaneous_forward_rate"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "zero_rate"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "df"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      id: "time_weighted_zero_rate"
+    })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, curveDetailRows))));
   }
 
 }
