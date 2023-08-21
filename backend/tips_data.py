@@ -265,9 +265,12 @@ benchmark_bond_conventions = {
     'US 7Y': 'USTBond',
     'US 10Y': 'USTBond',
     'US 20Y': 'USTBond',
-    'US 30Y': 'USTBond'
+    'US 30Y': 'USTBond',
     ####
     # TIPS
+    'TIPS 5Y': 'USTBond',
+    'TIPS 10Y': 'USTBond',
+    'TIPS 30Y': 'USTBond',
     }
 
 def benchmark_bond_inputs(**kwargs):
