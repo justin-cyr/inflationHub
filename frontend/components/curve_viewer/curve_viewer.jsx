@@ -2,12 +2,14 @@ import React from 'react';
 import $ from 'jquery';
 
 
+import Badge from 'react-bootstrap/Badge'
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
 import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import Table from 'react-bootstrap/Table';
 
 class CurveViewer extends React.Component {
@@ -57,6 +59,9 @@ class CurveViewer extends React.Component {
             curveTemplates: {},
             curveResults: {},
             curveErrors: {},
+            curveIsBuilding: {},
+            curveIsBuilt: {},
+            curveBuildAttempted: {},
             selectedCurve: '',
             selectedPlotData: {},
             selectedPlots: []
@@ -73,36 +78,58 @@ class CurveViewer extends React.Component {
             method: 'GET',
             success: (response) => {
                 this._isMounted && this.setState({
-                    curveTemplates: response.curve_templates
+                    curveTemplates: response.curve_templates,
+                    curveIsBuilding: Object.fromEntries(Object.keys(response.curve_templates).map( key => [key, false])),
+                    curveBuildAttempted: Object.fromEntries(Object.keys(response.curve_templates).map(key => [key, false]))
                 })
             }
         });
     }
 
     buildOneCurve(curveName) {
-        $.ajax({
-            url: 'build_model',
-            method: 'POST',
-            data: { ...this.state.curveTemplates[curveName],
+        let curveIsBuilding = this.state.curveIsBuilding;
+        curveIsBuilding[curveName] = true;
+        this.setState({
+            curveIsBuilding: curveIsBuilding
+        },
+        () => {
+            $.ajax({
+                url: 'build_model',
+                method: 'POST',
+                data: {
+                    ...this.state.curveTemplates[curveName],
                     handle: curveName
                 },
-            success: (response) => {
-                let curveResults = this.state.curveResults;
-                let curveErrors = this.state.curveErrors;
-                
-                if (response.errors) {
-                    curveErrors[curveName] = response.errors;
-                }
-                else if (response.results) {
-                    curveResults[curveName] = response.results;
-                }
+                success: (response) => {
+                    let curveResults = this.state.curveResults;
+                    let curveErrors = this.state.curveErrors;
+                    let curveIsBuilding = this.state.curveIsBuilding;
+                    let curveIsBuilt = this.state.curveIsBuilt;
+                    let curveBuildAttempted = this.state.curveBuildAttempted;
 
-                this._isMounted && this.setState({
-                    curveResults: curveResults,
-                    curveErrors: curveErrors
-                });
-            }
-        });
+                    curveIsBuilding[curveName] = false;
+                    curveIsBuilt[curveName] = false;
+                    curveBuildAttempted[curveName] = true;
+
+                    if (response.errors) {
+                        curveErrors[curveName] = response.errors;
+                    }
+                    else if (response.results) {
+                        curveResults[curveName] = response.results;
+                        curveIsBuilt[curveName] = true;
+                    }
+
+                    this._isMounted && this.setState({
+                        curveResults: curveResults,
+                        curveErrors: curveErrors,
+                        curveIsBuilding: curveIsBuilding,
+                        curveIsBuilt: curveIsBuilt,
+                        curveBuildAttempted: curveBuildAttempted
+                    });
+                }
+            });
+        }
+        );
     }
 
     buildAll() {
@@ -168,18 +195,46 @@ class CurveViewer extends React.Component {
             curveDetailRows = curveTemplateNames.map(key =>
                 <tr key={key}>
                     <td style={{ textAlign: 'center' }}>
-                        <Nav
-                            onSelect={this.handleCurveSelect}
-                            fill="true"
-                        >
-                            <Nav.Item>
-                                <Nav.Link
-                                    eventKey={key}
+                        <Row>
+                            <Col>
+                                <Row>
+                                    <Col lg="auto">
+                                        <Button
+                                            id={"button-build-" + key}
+                                            size="sm"
+                                            type="submit"
+                                            variant="secondary"
+                                            onClick={() => this.buildOneCurve(key)}
+                                        >
+                                            Build
+                                        </Button>
+                                    </Col>
+                                    <Col>
+                                        {this.state.curveIsBuilding[key] && <Spinner variant="warning" animation="border" />}
+                                        {!this.state.curveIsBuilding[key] && this.state.curveBuildAttempted[key] && <Badge pill
+                                                                                bg={this.state.curveIsBuilt[key] ? 'success' : 'danger'}
+                                                                            >
+                                                                            {this.state.curveIsBuilt[key] ? 'Built' : 'Error'}
+                                                                            </Badge>
+                                        }
+                                    </Col>
+                                </Row>
+                            </Col>
+                            <Col>
+                                <Nav
+                                    onSelect={this.handleCurveSelect}
+                                    fill="true"
                                 >
-                                    {key}
-                                </Nav.Link>
-                            </Nav.Item>
-                        </Nav>
+                                    <Nav.Item>
+                                        <Nav.Link
+                                            eventKey={key}
+                                        >
+                                            {key}
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                </Nav>
+                            </Col>
+                        </Row>
                     </td>
                 </tr>
             );
@@ -189,14 +244,17 @@ class CurveViewer extends React.Component {
         return (
             <Container fluid>
                 <Row>
-                    <Button
-                        id="button-build-all"
-                        size="lg"
-                        variant="secondary"
-                        onClick={this.buildAll}
-                    >
-                    Build All
-                    </Button>
+                    <Col lg="auto">
+                        <Button
+                            id="button-build-all"
+                            size="lg"
+                            type="submit"
+                            variant="primary"
+                            onClick={this.buildAll}
+                        >
+                            Build All
+                        </Button>
+                    </Col>
                 </Row>
                 <Row>
                     <Modal
@@ -246,7 +304,7 @@ class CurveViewer extends React.Component {
                     </Modal>
                 </Row>
                 <Row>
-                    <Table>
+                    <Table style={{ width: '700px'}}>
                         <tbody>
                             {curveDetailRows}
                         </tbody>
