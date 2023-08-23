@@ -19,7 +19,7 @@ from scipy.optimize import minimize
 from flask import current_app as app
 
 class BondModel(Model):
-    def __init__(self, base_date, training_data=[], build_settings=None, calibration_tolerance=cfg.calibration_tolerance_):
+    def __init__(self, base_date, training_data=[], build_settings=None, calibration_tolerance=cfg.calibration_tolerance_, initial_guess=[]):
         # no reference model is needed
         super().__init__(base_date, training_data, build_settings)
     
@@ -52,6 +52,12 @@ class BondModel(Model):
         if any([t <= 0.0 for t in self.training_times]):
             raise ValueError(f'{self.__class__.__name__}: training times must be strictly positive.')
 
+        if initial_guess:
+            if len(initial_guess) != len(self.training_times):
+                raise ValueError(f'{self.__class__.__name__}: initial guess must have same length as training times but got len(initial_guess)={len(initial_guess)} and len(training_times)={len(self.training_times)}.')
+        else:
+            initial_guess = self.initial_training_data_guess()
+
         # Calibrate model
         # Use a numerical minimizer to iteratively update training data, re-fit model and
         # re-price instruments until square error to target PV is minimized.
@@ -59,7 +65,7 @@ class BondModel(Model):
         app.logger.info(f'Calibrating {self.__class__.__name__} using method={self.build_settings.opt_method}')
         res = minimize(
                 self.calibration_objective,
-                self.initial_training_data_guess(),
+                initial_guess,
                 method=self.build_settings.opt_method
             )
         app.logger.info(f'{self.__class__.__name__} calibration result:\n{res}')
@@ -116,12 +122,12 @@ class BondModel(Model):
 
 
     @classmethod
-    def build(cls, base_date, curve_data, domainX, domainY, fitting_method_str, t0_date=None, calibration_tolerance=cfg.calibration_tolerance_, opt_method=cfg.BFGS):
+    def build(cls, base_date, curve_data, domainX, domainY, fitting_method_str, t0_date=None, calibration_tolerance=cfg.calibration_tolerance_, opt_method=cfg.BFGS, initial_guess=[]):
          # default t0_date to base_date
         if not t0_date:
             t0_date = base_date
         build_settings = BuildSettingsBondCurve(domainX, domainY, fitting_method_str, t0_date, opt_method)
-        return BondModel(base_date, curve_data, build_settings, calibration_tolerance=calibration_tolerance)
+        return BondModel(base_date, curve_data, build_settings, calibration_tolerance=calibration_tolerance, initial_guess=initial_guess)
     
 
     def curve_time(self, date):

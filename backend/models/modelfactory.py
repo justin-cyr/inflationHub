@@ -27,6 +27,7 @@ class ModelFactory(object):
         t0_date = params.get('t0_date', base_date)
         calibration_tolerance = float(params.get('calibration_tolerance', cfg.calibration_tolerance_))
         opt_method = params.get('opt_method', cfg.TRUST_CONSTR)
+        initial_guess = params.get('initial_guess', [])
 
         if model_type == cfg.CPI:
             return CpiModel.build(
@@ -46,7 +47,8 @@ class ModelFactory(object):
                     fitting_method_str,
                     t0_date=t0_date,
                     calibration_tolerance=calibration_tolerance,
-                    opt_method=opt_method
+                    opt_method=opt_method,
+                    initial_guess=initial_guess
                 )
         elif model_type == cfg.ADDITIVE_SEASONALITY:
             return AdditiveSeasonalityModel.build(

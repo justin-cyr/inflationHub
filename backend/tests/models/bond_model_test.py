@@ -47,14 +47,18 @@ def otr_nominal_yields():
     return yields
 
 @pytest.fixture()
-def bond_data_points(otr_nominal_bonds, otr_nominal_yields):
-    return [BondYieldDataPoint(y, b).serialize() for b, y in zip(otr_nominal_bonds, otr_nominal_yields)]
+def test_base_date():
+    return '2022-10-10'
 
 @pytest.fixture()
-def default_build_params(bond_data_points):
+def bond_data_points(otr_nominal_bonds, otr_nominal_yields, test_base_date):
+    return [BondYieldDataPoint(y, b, test_base_date).serialize() for b, y in zip(otr_nominal_bonds, otr_nominal_yields)]
+
+@pytest.fixture()
+def default_build_params(bond_data_points, test_base_date):
     model_build_params = {
         'model_type': 'BondCurve',
-        'base_date': '2022-10-10',
+        'base_date': test_base_date,
         'model_data': bond_data_points,
         'domainX': domains.TIME_ACT_365,
         'domainY': domains.TIME_WEIGHTED_ZERO_RATE,
@@ -142,6 +146,26 @@ def test_CG_calibration(app, default_build_params):
     build_params = default_build_params
     build_params['opt_method'] = 'CG'
 
+    with app.app_context():
+        bond_model = ModelFactory.build(build_params)
+
+@run_with_profiler
+def test_build_initial_guess(app, default_build_params):
+    # volatile test: quotes can change on each test run
+    build_params = default_build_params
+    build_params['initial_guess'] = [
+        0.002192354516458641,
+        0.007835787538554621,
+        0.01952495966416067,
+        0.04098618566846468,
+        0.0839627192306996,
+        0.12773053558662747,
+        0.20344474444590047,
+        0.2771676545769575,
+        0.3765344774189379,
+        0.8219256345028466,
+        1.1070636581473785
+    ]
     with app.app_context():
         bond_model = ModelFactory.build(build_params)
 
