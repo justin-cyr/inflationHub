@@ -28,6 +28,8 @@ class ModelFactory(object):
         calibration_tolerance = float(params.get('calibration_tolerance', cfg.calibration_tolerance_))
         opt_method = params.get('opt_method', cfg.TRUST_CONSTR)
         initial_guess = params.get('initial_guess', [])
+        if initial_guess:
+            initial_guess = [float(x) for x in initial_guess]
 
         if model_type == cfg.CPI:
             return CpiModel.build(

@@ -53,6 +53,8 @@ class BondModel(Model):
             raise ValueError(f'{self.__class__.__name__}: training times must be strictly positive.')
 
         if initial_guess:
+            if initial_guess[0] == 0.0:
+                initial_guess = initial_guess[1:]
             if len(initial_guess) != len(self.training_times):
                 raise ValueError(f'{self.__class__.__name__}: initial guess must have same length as training times but got len(initial_guess)={len(initial_guess)} and len(training_times)={len(self.training_times)}.')
         else:

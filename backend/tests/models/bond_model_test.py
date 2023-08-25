@@ -172,7 +172,7 @@ def test_build_initial_guess(app, default_build_params):
 @run_with_profiler
 def test_trust_constr_calibration(app, default_build_params):
     build_params = default_build_params
-    build_params['opt_method'] = 'BFGS'
+    build_params['opt_method'] = 'trust-constr'
 
     with app.app_context():
         bond_model = ModelFactory.build(build_params)

@@ -3971,6 +3971,7 @@ class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       chartConfig: chartConfig,
       chartLayout: chartLayout,
       curveTemplates: {},
+      curveData: {},
       curveResults: {},
       curveErrors: {},
       curveIsBuilding: {},
@@ -4005,13 +4006,20 @@ class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.setState({
       curveIsBuilding: curveIsBuilding
     }, () => {
+      let payLoad = { ...this.state.curveTemplates[curveName],
+        handle: curveName
+      };
+
+      if (this.state.curveData[curveName] && this.state.curveData[curveName].length > 0) {
+        payLoad['initial_guess'] = this.state.curveData[curveName].map(pt => pt[1]);
+      }
+
       jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
         url: 'build_model',
         method: 'POST',
-        data: { ...this.state.curveTemplates[curveName],
-          handle: curveName
-        },
+        data: payLoad,
         success: response => {
+          let curveData = this.state.curveData;
           let curveResults = this.state.curveResults;
           let curveErrors = this.state.curveErrors;
           let curveIsBuilding = this.state.curveIsBuilding;
@@ -4024,11 +4032,13 @@ class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           if (response.errors) {
             curveErrors[curveName] = response.errors;
           } else if (response.results) {
+            curveData[curveName] = response.training_data;
             curveResults[curveName] = response.results;
             curveIsBuilt[curveName] = true;
           }
 
           this._isMounted && this.setState({
+            curveData: curveData,
             curveResults: curveResults,
             curveErrors: curveErrors,
             curveIsBuilding: curveIsBuilding,

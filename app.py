@@ -13,13 +13,17 @@ cache.init_app(app)
 # configure logger
 app.logger.setLevel(logging.DEBUG)
 
-def process_form_data(form, json_str_keys):
+def process_form_data(form, json_str_keys, list_keys):
     """Convert the Flask request.form to a dict and convert keys in json_str_keys to dicts."""
     from json import loads
     form_data = form.to_dict()
     for key in json_str_keys:
         if key in form_data:
             form_data[key] = loads(form_data[key])
+    for key in list_keys:
+        list_key = key + '[]'
+        #if list_key in form_data:
+        form_data[key] = form.getlist(list_key)
     return form_data
 
 def get_model(handle):
@@ -126,7 +130,8 @@ def get_tips_prices():
 def build_model():
     try:
         from backend.models.modelfactory import ModelFactory
-        params = process_form_data(request.form, ['model_data'])
+        params = process_form_data(
+            request.form, ['model_data'], ['initial_guess'])
         handle = params.get('handle', 'TempModel')
         model = ModelFactory.build(params)
         app.logger.info(f'Built model {handle}: {model}')
@@ -139,7 +144,7 @@ def build_model():
         # gather results
         results_options = params.get('results_options') or {}
         results = model.get_all_results(**results_options)
-        return dict(results=results)
+        return dict(results=results, training_data=model.training_data)
     except Exception as e:
         app.logger.error(str(e))
         return dict(errors=str(e))
