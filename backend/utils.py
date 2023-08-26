@@ -171,13 +171,14 @@ class Date(object):
         self.year = date.year
         self.month = date.month
         self.day = date.day
+        self.hash = self.year * 10000 + self.month * 100 + self.day
 
     
     def __repr__(self):
         return str(self.date)
 
     def __hash__(self):
-        return self.__repr__().__hash__()
+        return self.hash
 
     def datetime_date(self):
         return self.date

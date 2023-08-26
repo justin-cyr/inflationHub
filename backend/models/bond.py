@@ -27,6 +27,7 @@ class BondModel(Model):
         self.training_data = []
         self.t0_date = self.build_settings.t0_date if self.build_settings.t0_date else base_date
         self.calibration_tolerance = calibration_tolerance
+        self.curve_time_cache = { self.t0_date: 0.0 }
         
          # Validate build settings
         if not isinstance(self.build_settings , BuildSettingsBondCurve):
@@ -134,7 +135,9 @@ class BondModel(Model):
 
     def curve_time(self, date):
         """Return the time in years from the curve's t=0 date to this date."""
-        return cu.time_difference(self.t0_date, date, self.build_settings.domainX)
+        if date not in self.curve_time_cache:
+            self.curve_time_cache[date] = cu.time_difference(self.t0_date, date, self.build_settings.domainX)
+        return self.curve_time_cache[date]
 
     def initial_training_data_guess(self):
         """Return initial guess for the model's training data."""
