@@ -177,10 +177,8 @@ class CouponCashflows(Cashflows):
         return rate * dcf * self.notional
 
     def amount(self, d, rate):
-        if d not in self.dcf_map:
-            return 0.0
-        else:
-            return self.amount_calc(self.dcf_map[d], rate)
+        dcf = self.dcf_map.get(d, 0.0)
+        return dcf * rate * self.notional
 
 
 class FixedCouponCashflows(CouponCashflows):
