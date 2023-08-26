@@ -177,14 +177,17 @@ class CouponCashflows(Cashflows):
         return rate * dcf * self.notional
 
     def amount(self, d, rate):
-        dcf = self.dcf_map.get(d, 0.0)
-        return dcf * rate * self.notional
+        if d in self.dcf_map:
+            return self.dcf_map[d] * rate * self.notional
+        else:
+            return 0.0
 
 
 class FixedCouponCashflows(CouponCashflows):
     def __init__(self, payment_dates, notional, rate, dcfs=None, period_dates=None, day_count=None):
         super().__init__(payment_dates, notional, dcfs, period_dates, day_count)
         self.rate = rate
+        self.rate_x_notional = rate * notional
 
     def __repr__(self):
         return f'FixedCouponCashflows({self.schedule()})'
@@ -200,4 +203,8 @@ class FixedCouponCashflows(CouponCashflows):
         return this_schedule
 
     def amount(self, d):
-        return super().amount(d, self.rate)
+        # save a function call by not delegating to super().amount() and a * by using saved rate * notional
+        if d in self.dcf_map:
+            return self.dcf_map[d] * self.rate_x_notional
+        else:
+            return 0.0
