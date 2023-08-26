@@ -190,30 +190,30 @@ class Date(object):
     def __lt__(self, rhs):
         if not isinstance(rhs, Date):
             rhs = Date(rhs)
-        return self.date < rhs.date
+        return self.hash < rhs.hash
 
     def __le__(self, rhs):
         if not isinstance(rhs, Date):
             rhs = Date(rhs)
-        return self.date <= rhs.date
+        return self.hash <= rhs.hash
 
     def __gt__(self, rhs):
         if not isinstance(rhs, Date):
             rhs = Date(rhs)
-        return self.date > rhs.date
+        return self.hash > rhs.hash
 
     def __ge__(self, rhs):
         if not isinstance(rhs, Date):
             rhs = Date(rhs)
-        return self.date >= rhs.date
+        return self.hash >= rhs.hash
 
     def __eq__(self, rhs):
-        # compare as strings to save a constructor call
-        return str(self.date) == str(rhs)
+        # no type check to save a constructor call
+        return self.hash == rhs.hash
 
     def __ne__(self, rhs):
-        # compare as strings to save a constructor call
-        return str(self.date) != str(rhs)
+        # no type check to save a constructor call
+        return self.hash != rhs.hash
 
     def __sub__(self, rhs):
         if not isinstance(rhs, Date):
