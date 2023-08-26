@@ -70,6 +70,16 @@ def default_build_params(bond_data_points, test_base_date):
     return model_build_params
 
 
+@pytest.fixture()
+def default_build_params_linear(default_build_params):
+    default_build_params['fitting_method_str'] = 'PiecewiseLinear'
+    return default_build_params
+
+@pytest.fixture()
+def default_build_params_cubic(default_build_params):
+    default_build_params['fitting_method_str'] = 'CubicSpline'
+    return default_build_params
+
 # DECORATORS
 
 def run_with_profiler(test_fun):
@@ -206,3 +216,21 @@ def test_curve_template_build(app, default_build_params):
         bond_model = ModelFactory.build(build_params)
 
     print(build_params)
+
+
+@run_with_profiler
+def test_performance_linear(app, default_build_params_linear, opt_method='BFGS'):
+    build_params = default_build_params_linear
+    build_params['opt_method'] = opt_method
+
+    with app.app_context():
+        bond_model = ModelFactory.build(build_params)
+
+
+@run_with_profiler
+def test_performance_cubic(app, default_build_params_cubic, opt_method='BFGS'):
+    build_params = default_build_params_cubic
+    build_params['opt_method'] = opt_method
+
+    with app.app_context():
+        bond_model = ModelFactory.build(build_params)

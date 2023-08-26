@@ -43,3 +43,11 @@ def client(app):
 @pytest.fixture()
 def runner(app):
     return app.test_cli_runner()
+
+def pytest_addoption(parser):
+    parser.addoption('--opt_method', action='store', default='BFGS')
+
+@pytest.fixture()
+def opt_method(request):
+    return request.config.getoption('--opt_method')
+
