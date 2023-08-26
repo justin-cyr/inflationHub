@@ -102,19 +102,19 @@ class ProjectedCashflows(object):
         if not isinstance(self.contractual_cashflows, MultiLegCashflows):
             return [self.projected_amount(d)]
         
-        res = [0.0 for _ in self.contractual_cashflows.legs]
         if d < self.base_date:
-            return res
+            return [0.0 for _ in self.contractual_cashflows.legs]
         
+        res = []
         for j in self.contractual_cashflows.nonzero_leg_map.get(d, []):
             # just project the parameters needed on date d
             proj_j = self.proj[j]
             try:
                 if proj_j:
                     factor = self.projection_factor(proj_j(d))
-                    res[j] = self.contractual_cashflows.legs[j].amount(d) * factor
+                    res.append(self.contractual_cashflows.legs[j].amount(d) * factor)
                 else:
-                    res[j] = self.contractual_cashflows.legs[j].amount(d)
+                    res.append(self.contractual_cashflows.legs[j].amount(d))
             except Exception as e:
                 raise Exception(f'ProjectedCashflows: cannot project on date {d} for leg {j}, {e}.')
         
