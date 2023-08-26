@@ -10,6 +10,8 @@ class Spline(FittingMethod):
         self.pairs = None
         self.x_min = None
         self.x_max = None
+        self.num_nodes = None
+        self.time_index_cache = {}
 
     def is_between_endpoints(self, x):
         return (self.x_min <= x) and (x <= self.x_max)
@@ -29,9 +31,12 @@ class Spline(FittingMethod):
     @check_if_out_of_range
     def find_node_index_below(self, target):
         """Return the index of the spline node with the largest x that is <= target."""
+        if target in self.time_index_cache:
+            return self.time_index_cache[target]
+        
         # binary search
         left = 0
-        right = len(self.pairs)
+        right = self.num_nodes
 
         while left + 1 < right:
             mid = (left + right) // 2
@@ -42,6 +47,7 @@ class Spline(FittingMethod):
             else:
                 left = mid
 
+        self.time_index_cache[target] = left
         return left
 
 
@@ -64,6 +70,7 @@ class Spline(FittingMethod):
         self.pairs = sorted(zip(xs, ys), key=lambda x: x[0])
         self.x_min = self.pairs[0][0]
         self.x_max = self.pairs[-1][0]
+        self.num_nodes = len(self.pairs)
 
         # ensure strictly increasing
         x_last = self.x_min
@@ -119,7 +126,7 @@ class PiecewiseConstantLeftCts(Spline):
         if self.hessian is not None:
             return self.hessian
 
-        dim = len(self.pairs)
+        dim = self.num_nodes
         self.hessian = np.zeros((dim, dim))
         return self.hessian
 
@@ -164,7 +171,7 @@ class PiecewiseConstantRightCts(Spline):
         if self.hessian is not None:
             return self.hessian
 
-        dim = len(self.pairs)
+        dim = self.num_nodes
         self.hessian = np.zeros((dim, dim))
         return self.hessian
 
@@ -219,7 +226,7 @@ class PiecewiseLinear(Spline):
         if x < self.x_min:
             i = 0
         elif x >= self.x_max:
-            i = len(self.pairs) - 2
+            i = self.num_nodes - 2
         else:
             i = self.find_node_index_below(x)
         
