@@ -110,17 +110,17 @@ class BondModel(Model):
         
         self.training_data = list(q)
         self.fit()
-        print('*'*100)
-        print(f'training_data = {self.training_data}')
+        # print('*'*100)
+        # print(f'training_data = {self.training_data}')
         # price instruments and calculate difference from target
         square_error = 0.0
         for p, target_pv in zip(self.bond_data_points, self.target_pvs):
             model_pv = self.pv_bond(p.bond)
             diff = target_pv - model_pv
             square_error += diff * diff
-            print(f'target_pv={target_pv}, model_pv={model_pv}, diff={diff}')
+            # print(f'target_pv={target_pv}, model_pv={model_pv}, diff={diff}')
         
-        print(f'square_error={square_error}')
+        # print(f'square_error={square_error}')
         return square_error
 
 
