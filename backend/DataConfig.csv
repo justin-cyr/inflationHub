@@ -322,6 +322,7 @@ FEDFUNDS Target Lower,DFEDTARL,InterestRate,https://fred.stlouisfed.org/graph/fr
 FEDFUNDS Target Upper,DFEDTARU,InterestRate,https://fred.stlouisfed.org/graph/fredgraph.csv,Federal Funds Target Range - Upper Limit,,TimeSeriesCsvParser,TRUE,TRUE,,https://www.federalreserve.gov/data.htm,id=DFEDTARU,,
 Overnight Bank Funding Rate,OBFR,InterestRate,https://fred.stlouisfed.org/graph/fredgraph.csv,Overnight Bank Funding Rate,,TimeSeriesCsvParser,TRUE,TRUE,,https://www.federalreserve.gov/data.htm,id=OBFR,,
 SONIA,IUDSOIA,InterestRate,https://fred.stlouisfed.org/graph/fredgraph.csv,Daily Sterling Overnight Index Average (SONIA) Rate,,TimeSeriesCsvParser,TRUE,TRUE,,https://www.bankofengland.co.uk/,id=IUDSOIA,,
+SOFR Swap EOD Par Rates (Eris),USOSFR,Rate,http://files.erisfutures.com/ftp/Eris_Latest_EOD_ParCouponCurve_SOFR.csv,SOFR Swap Spot-starting Par Rates,,ErisSwapRateCsvParser,TRUE,FALSE,,http://www.erisfutures.com/erisdataguide,,,
 US Gas Prices,GASREGW,Price,https://www.eia.gov/petroleum/gasdiesel/xls/pswrgvwall.xls,Weekly U.S. Regular All Formulations Retail Gasoline Prices  (Dollars per Gallon),,GasPricesExcelParser,TRUE,TRUE,,https://www.eia.gov/petroleum/gasdiesel/,,,
 Global Price of Wheat,PWHEAMTUSDM,Price,https://fred.stlouisfed.org/graph/fredgraph.csv,Global Price of Wheat,,TimeSeriesCsvParser,TRUE,TRUE,,https://www.imf.org/en/home,id=PWHEAMTUSDM,,
 Global Price of Corn,PMAIZMTUSDM,Price,https://fred.stlouisfed.org/graph/fredgraph.csv,Global Price of Corn,,TimeSeriesCsvParser,TRUE,TRUE,,https://www.imf.org/en/home,id=PMAIZMTUSDM,,

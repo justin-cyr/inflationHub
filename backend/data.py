@@ -101,6 +101,8 @@ class DataAPI(object):
             self.data_parser = TimeSeriesSPIndexJsonParser(self.name)
         elif data_parser == 'TwHtmlUSTYieldParser':
             self.data_parser = TwHtmlUSTYieldParser()
+        elif data_parser == 'ErisSwapRateCsvParser':
+            self.data_parser = ErisSwapRateCsvParser()
         elif data_parser == 'YahooQuoteJsonParser':
             self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -740,6 +742,42 @@ class TwHtmlUSTYieldParser(Parser):
         data_pts = [{'month': int(d[0]), 'yield': float(d[1].strip())} for d in raw_data_pts]
 
         return data_pts
+
+
+class ErisSwapRateCsvParser(Parser):
+    def parse(self, response):
+        self.validate_response(response)
+
+        symbols = []
+        tenors = []
+        rates = []
+        line_generator = response.iter_lines()
+        for line in line_generator:
+            decoded_line = line.decode('UTF-8').split(',')
+            if len(decoded_line) < 15:
+                continue
+            try:
+                symbol = decoded_line[0]
+                rate = decoded_line[11]
+
+                tenor_idx = min([i for i, c in enumerate(symbol) if c.isnumeric()])
+                tenor = symbol[tenor_idx:]
+
+                symbols.append(symbol)
+                tenors.append(tenor)
+                rates.append(float(rate))
+            except:
+                # continue if value cannot be parsed as a float
+                pass
+
+        index = decoded_line[14]
+
+        return {
+                'symbol': symbols,
+                'tenor': tenors,
+                'rate': rates,
+                'index': index
+                }
 
 
 def get_fred_data(key, name=None):
