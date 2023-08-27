@@ -91,6 +91,8 @@ class DataAPI(object):
             self.data_parser = CmeTsyQuoteJsonParser()
         elif data_parser == 'CmeFuturesQuoteJsonParser':
             self.data_parser = CmeFuturesQuoteJsonParser(self.name)
+        elif data_parser == 'ErisFuturesCsvParser':
+            self.data_parser = ErisFuturesCsvParser()
         elif data_parser == 'TimeSeriesCsvParser':
             self.data_parser = TimeSeriesCsvParser(self.name)
         elif data_parser == 'TimeSeriesCnbcJsonParser':
@@ -270,6 +272,13 @@ class Parser(object):
         if s and s[-1] in quote_chars:
             s = s[:-1]
         return s
+    
+    def to_float(self, num, err_str='-'):
+        """Return float(num) if num represents a number, else return err_str."""
+        if num.replace('.', '0').isnumeric():
+            return float(num)
+        else:
+            return err_str
 
     def chop_pct(self, s):
         s = s[:-1] if s and isinstance(s, str) and s[-1] == '%' else s
@@ -770,14 +779,101 @@ class ErisSwapRateCsvParser(Parser):
                 # continue if value cannot be parsed as a float
                 pass
 
+        evaluation_date = decoded_line[1]
         index = decoded_line[14]
 
         return {
                 'symbol': symbols,
                 'tenor': tenors,
                 'rate': rates,
-                'index': index
+                'index': index,
+                'evaluationDate': evaluation_date
                 }
+
+
+class ErisFuturesCsvParser(Parser):
+
+    def __init__(self):
+        self.eris_futures_map = {
+            'index': {
+                'YI': 'SOFR',
+                'KX': 'BSBY3M'
+            },
+            'tenor': {
+                'A': '1Y',
+                'T': '2Y',
+                'C': '3Y',
+                'D': '4Y',
+                'W': '5Y',
+                'B': '7Y',
+                'Y': '10Y',
+                'I': '12Y',
+                'L': '15Y',
+                'O': '20Y',
+                'E': '30Y'
+            }
+        }
+
+    def product_to_name(self, product):
+        product = str(product)
+        if len(product) < 3:
+            raise ValueError(
+                f'{__class__.__name__}: expected len(product code) = 3 but got {len(product)}.')
+        
+        index_code = product[:2]
+        tenor_code = product[-1]
+
+        if index_code not in self.eris_futures_map['index']:
+            raise KeyError(f'{__class__.__name__}: unrecognized index code {index_code}.')
+        index = self.eris_futures_map['index'][index_code]
+
+        if tenor_code not in self.eris_futures_map['tenor']:
+            raise KeyError(f'{__class__.__name__}: unrecognized tenor code {tenor_code}.')
+        tenor = self.eris_futures_map['tenor'][tenor_code]
+
+        name = f'{tenor} Eris {index} Swap Future'
+        return name
+
+    def parse(self, response):
+        self.validate_response(response)
+        
+        res = []
+        line_generator = response.iter_lines()
+        for line in line_generator:
+            decoded_line = line.decode('UTF-8').split(',')
+            if (not decoded_line) or (decoded_line[0] == 'Symbol') or len(decoded_line) < 8:
+                continue
+
+            symbol = decoded_line[0]
+            product = decoded_line[1]
+            period = decoded_line[2]
+            price = decoded_line[3]
+            par_rate = decoded_line[5]
+            
+            try:
+
+                price = self.to_float(price)
+                par_rate = self.to_float(par_rate)
+
+                timestamp = datetime.datetime.now().strftime(
+                    '%Y-%m-%dT%H:%M:%S')
+
+                res.append(
+                    {
+                        'ticker':       symbol,
+                        'productName':  product,
+                        'expirationDate': period,
+                        'last':         price,
+                        'price':        price,
+                        'parRate':      par_rate,
+                        'timestamp':    timestamp,
+                        'dataName':     self.product_to_name(product)
+                    }
+                )
+            except Exception as e:
+                app.logger.error(
+                    f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
+        return res
 
 
 def get_fred_data(key, name=None):
