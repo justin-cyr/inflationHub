@@ -102,9 +102,9 @@ class DataAPI(object):
         elif data_parser == 'TimeSeriesSPIndexJsonParser':
             self.data_parser = TimeSeriesSPIndexJsonParser(self.name)
         elif data_parser == 'ErisIntradayCurveCsvParser':
-            self.data_parser = ErisIntradayCurveCsvParser()
+            self.data_parser = ErisIntradayCurveCsvParser(self.name)
         elif data_parser == 'ErisEodCurveCsvParser':
-            self.data_parser = ErisEodCurveCsvParser()
+            self.data_parser = ErisEodCurveCsvParser(self.query_params[0], self.name)
         elif data_parser == 'TwHtmlUSTYieldParser':
             self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'ErisSwapRateCsvParser':
@@ -881,6 +881,9 @@ class ErisFuturesCsvParser(Parser):
 
 
 class ErisIntradayCurveCsvParser(Parser):
+    def __init__(self, value_col_name='DiscountFactor'):
+        self.value_col_name = value_col_name
+
     def parse(self, response):
         self.validate_response(response)
 
@@ -907,7 +910,7 @@ class ErisIntradayCurveCsvParser(Parser):
                     time = decoded_line[4]
 
                 dfs.append(float(df))
-                dates.append(date)          # already in yyyy-mm-dd format
+                dates.append(self.standard_date_str(date))          # already in yyyy-mm-dd format
 
             except Exception as e:
                 app.logger.error(
@@ -917,7 +920,7 @@ class ErisIntradayCurveCsvParser(Parser):
 
         return {
             'Date': dates,
-            'DiscountFactor': dfs,
+            self.value_col_name: dfs,
             'curveName': curve,
             'evaluationDate': evaluation_date,
             'timestamp': timestamp
@@ -925,57 +928,93 @@ class ErisIntradayCurveCsvParser(Parser):
 
 
 class ErisEodCurveCsvParser(Parser):
-    def parse(self, response):
-        self.validate_response(response)
+    def __init__(self, field, value_col_name='DiscountFactor'):
+        self.field = field
+        self.value_col_name = value_col_name
 
+    def parse_fwd_rate(self, line_generator):
         dates = []
         fwd_start_dates = []
-        fwd_end_dates = []
-        dfs = []
-        zero_rates = []
         fwd_rates = []
-        line_generator = response.iter_lines()
         for line in line_generator:
             decoded_line = line.decode('UTF-8').split(',')
             if (not decoded_line) or (decoded_line[0] == 'Date') or len(decoded_line) < 6:
                 continue
-
             try:
                 date = decoded_line[0]
-                df = self.to_float(decoded_line[1])
-                if df <= 0.0:
-                    # skip nonsense values
-                    break
+                fwd_date = decoded_line[4]
+                fwd_rate = decoded_line[3]
 
-                zero_rate = self.to_float(decoded_line[2])
-
-                dates.append(date)
-                dfs.append(df)
-                zero_rates.append(zero_rate)
-
-                fwd_rate = self.to_float(decoded_line[3])
-                if fwd_rate != '-':
-                    fwd_start = decoded_line[4]
-                    fwd_end = decoded_line[5]
-
-                    fwd_rates.append(fwd_rate)
-                    fwd_start_dates.append(fwd_start)
-                    fwd_end_dates.append(fwd_end)
+                if fwd_date != date:
+                    # it's a non-business day, copy the last fwd rate
+                    if fwd_rates:
+                        fwd_start_dates.append(self.standard_date_str(date))
+                        fwd_rates.append(fwd_rates[-1])
+                else:
+                    fwd_start_dates.append(self.standard_date_str(fwd_date))
+                    fwd_rates.append(self.to_float(fwd_rate))
 
             except Exception as e:
-                app.logger.error(
-                    f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
-
+                    app.logger.error(f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
         return {
-            'Date': dates,
-            'DiscountFactor': dfs,
-            'ZeroRates_Act360_Cts': zero_rates,
-            'evaluationDate': dates[0],
-            'FwdRates': fwd_rates,
-            'FwdStartDates': fwd_start_dates,
-            'FwdEndDates': fwd_end_dates
+            'Date': fwd_start_dates,
+            self.value_col_name: fwd_rates
         }
 
+    def parse_df(self, line_generator):
+        dates = []
+        dfs = []
+        for line in line_generator:
+            decoded_line = line.decode('UTF-8').split(',')
+            if (not decoded_line) or (decoded_line[0] == 'Date') or len(decoded_line) < 6:
+                continue
+            try:
+                date = decoded_line[0]
+                df = decoded_line[1]
+
+                dates.append(self.standard_date_str(date))
+                dfs.append(self.to_float(df))
+
+            except Exception as e:
+                    app.logger.error(f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
+        return {
+            'Date': dates,
+            self.value_col_name: dfs
+        }
+
+    def parse_zero_rate(self, line_generator):
+        dates = []
+        zero_rates = []
+        for line in line_generator:
+            decoded_line = line.decode('UTF-8').split(',')
+            if (not decoded_line) or (decoded_line[0] == 'Date') or len(decoded_line) < 6:
+                continue
+            try:
+                date = decoded_line[0]
+                zero_rate = decoded_line[2]
+
+                dates.append(self.standard_date_str(date))
+                zero_rates.append(self.to_float(zero_rate))
+
+            except Exception as e:
+                    app.logger.error(f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
+        return {
+            'Date': dates,
+            self.value_col_name: zero_rates
+        }
+                        
+    def parse(self, response):
+        self.validate_response(response)
+        line_generator = response.iter_lines()
+
+        if self.field == 'ForwardRate':
+            return self.parse_fwd_rate(line_generator)
+        elif self.field == 'DiscountFactor':
+            return self.parse_df(line_generator)
+        elif self.field == 'ZeroRate':
+            return self.parse_zero_rate(line_generator)
+        else:
+            raise ValueError(f'{__class__.__name__}: unsupported field {self.field}.)')
 
 
 def get_fred_data(key, name=None):

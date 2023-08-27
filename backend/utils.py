@@ -150,7 +150,8 @@ class Date(object):
                 '%Y-%m',    # 2022-04
                 '%Y %b',    # 2022 Apr
                 '%d %b %Y', # 01 Apr 2022
-                '%d-%b-%Y'  # 01-Apr-2022
+                '%d-%b-%Y', # 01-Apr-2022
+                '%m/%d/%Y'  # 04/01/2022
             ]
             date_obj = None
             for fmt in supported_formats:
