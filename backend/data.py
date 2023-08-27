@@ -101,6 +101,10 @@ class DataAPI(object):
             self.data_parser = TimeSeriesCnbcIntradayCloseParser(self.name)
         elif data_parser == 'TimeSeriesSPIndexJsonParser':
             self.data_parser = TimeSeriesSPIndexJsonParser(self.name)
+        elif data_parser == 'ErisIntradayCurveCsvParser':
+            self.data_parser = ErisIntradayCurveCsvParser()
+        elif data_parser == 'ErisEodCurveCsvParser':
+            self.data_parser = ErisEodCurveCsvParser()
         elif data_parser == 'TwHtmlUSTYieldParser':
             self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'ErisSwapRateCsvParser':
@@ -874,6 +878,104 @@ class ErisFuturesCsvParser(Parser):
                 app.logger.error(
                     f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
         return res
+
+
+class ErisIntradayCurveCsvParser(Parser):
+    def parse(self, response):
+        self.validate_response(response)
+
+        dates = []
+        dfs = []
+        line_generator = response.iter_lines()
+        for line in line_generator:
+            decoded_line = line.decode('UTF-8').split(',')
+            if (not decoded_line) or (decoded_line[0] == 'Date') or len(decoded_line) < 4:
+                continue
+
+            date = decoded_line[0]
+            df = self.to_float(decoded_line[1])
+
+            if df <= 0.0:
+                # skip nonsense values
+                break
+
+            try:
+                if df == 1.0:
+                    # this is the first line
+                    evaluation_date = decoded_line[2]
+                    curve = decoded_line[3]
+                    time = decoded_line[4]
+
+                dfs.append(float(df))
+                dates.append(date)          # already in yyyy-mm-dd format
+
+            except Exception as e:
+                app.logger.error(
+                    f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
+        
+        timestamp = DateTime(time[:-4]).datetime.strftime('%Y-%m-%dT%H:%M:%S')
+
+        return {
+            'Date': dates,
+            'DiscountFactor': dfs,
+            'curveName': curve,
+            'evaluationDate': evaluation_date,
+            'timestamp': timestamp
+        }
+
+
+class ErisEodCurveCsvParser(Parser):
+    def parse(self, response):
+        self.validate_response(response)
+
+        dates = []
+        fwd_start_dates = []
+        fwd_end_dates = []
+        dfs = []
+        zero_rates = []
+        fwd_rates = []
+        line_generator = response.iter_lines()
+        for line in line_generator:
+            decoded_line = line.decode('UTF-8').split(',')
+            if (not decoded_line) or (decoded_line[0] == 'Date') or len(decoded_line) < 6:
+                continue
+
+            try:
+                date = decoded_line[0]
+                df = self.to_float(decoded_line[1])
+                if df <= 0.0:
+                    # skip nonsense values
+                    break
+
+                zero_rate = self.to_float(decoded_line[2])
+
+                dates.append(date)
+                dfs.append(df)
+                zero_rates.append(zero_rate)
+
+                fwd_rate = self.to_float(decoded_line[3])
+                if fwd_rate != '-':
+                    fwd_start = decoded_line[4]
+                    fwd_end = decoded_line[5]
+
+                    fwd_rates.append(fwd_rate)
+                    fwd_start_dates.append(fwd_start)
+                    fwd_end_dates.append(fwd_end)
+
+            except Exception as e:
+                app.logger.error(
+                    f'{__class__.__name__}: failed to parse {decoded_line}\n\t\tReason: {e}')
+
+        return {
+            'Date': dates,
+            'DiscountFactor': dfs,
+            'ZeroRates_Act360_Cts': zero_rates,
+            'evaluationDate': dates[0],
+            'FwdRates': fwd_rates,
+            'FwdStartDates': fwd_start_dates,
+            'FwdEndDates': fwd_end_dates
+        }
+
 
 
 def get_fred_data(key, name=None):
