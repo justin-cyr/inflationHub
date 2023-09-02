@@ -64,7 +64,8 @@ class DataAPI(object):
         header_str = 'Header'
         header_col = header_str + str(i)
         while (header_col in data_config and data_config[header_col]):
-            k, v = data_config[header_col].split(':')
+            k = data_config[header_col].split(':')[0]
+            v = data_config[header_col][len(k) + 1:]
             headers[k] = v
             i += 1
             header_col = header_str + str(i)
@@ -109,6 +110,8 @@ class DataAPI(object):
             self.data_parser = TwHtmlUSTYieldParser()
         elif data_parser == 'ErisSwapRateCsvParser':
             self.data_parser = ErisSwapRateCsvParser()
+        elif data_parser == 'QuikStrikeCtdOtrParser':
+            self.data_parser = QuikStrikeCtdOtrParser()
         elif data_parser == 'YahooQuoteJsonParser':
             self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -282,6 +285,21 @@ class Parser(object):
         if num.replace('.', '0').isnumeric():
             return float(num)
         else:
+            return err_str
+
+    def mixed_number_to_float(self, num, err_str='-'):
+        """Return float(num) if num represents a mixed number, else return err_str."""
+        try:
+            space_split = num.split(' ')
+            int_part = float(space_split[0])
+            dec_part = 0.0
+            if len(space_split) > 1:
+                div_split = space_split[1].split('/')
+                if len(div_split) != 2:
+                    return err_str
+                dec_part = float(div_split[0]) / float(div_split[1])
+            return int_part + dec_part
+        except:
             return err_str
 
     def chop_pct(self, s):
@@ -1015,6 +1033,58 @@ class ErisEodCurveCsvParser(Parser):
             return self.parse_zero_rate(line_generator)
         else:
             raise ValueError(f'{__class__.__name__}: unsupported field {self.field}.)')
+
+
+class QuikStrikeHtmlParser(Parser):
+    """Base class for parsing QuikStrike HTML documents."""
+    def parse(self, response):
+        self.validate_response(response)
+        return response.text
+
+class QuikStrikeCtdOtrParser(Parser):
+    def parse(self, response):
+        raw_text = super().parse(response)
+        tr_split = raw_text.split('<tr')
+        rows = [r.split('</tr>')[0] for r in tr_split[4:]]
+        row_data = [[s.split('</td>')[0].split('">')[1]
+                     for s in row.split('<td class=')[1:]] for row in rows]
+
+        return [self.parse_row_data(row) for row in row_data]
+
+    def parse_row_data(self, row):
+        # each row_data looks has this form:
+        # ['2 Yr',                            0   Future name
+        #  '\r\n<span>TUZ3</span>\r\n\r\n',   1   Future ticker
+        #  '101-28.125',                      2   Future price
+        #  '3 1/2',                           3   CTD coupon
+        #  '9/15/2025',                       4   CTD maturity
+        #  '1/4/2024',                        5   CTD delivery date
+        #  '9/15/2022',                       6   CTD issue date
+        #  '4.9266%',                         7   CTD Forward yield
+        #  '$33.03',                          8   Futures DV01
+        #  '5',                               9   OTR coupon
+        #  '8/31/2025',                       10  OTR maturity
+        #  '9/5/2023',                        11  OTR settlement date
+        #  '8/31/2023',                       12  OTR issue date
+        #  '4.8816%',                         13  OTR yield
+        #  '$37.49']                          14  OTR DV01
+        return {
+            'futureName': row[0],
+            'futureTicker': row[1].split('<span>')[1].split('</span>')[0],
+            'futurePrice': row[2],
+            'ctdCoupon': self.mixed_number_to_float(row[3]),
+            'ctdMaturity': self.standard_date_str(row[4]),
+            'ctdDeliveryDate': self.standard_date_str(row[5]),
+            'ctdIssueDate': self.standard_date_str(row[6]),
+            'fwdYield': float(self.chop_pct(row[7])),
+            'futureDV01': float(row[8][1:]),
+            'otrCoupon': self.mixed_number_to_float(row[9]),
+            'otrMaturity': self.standard_date_str(row[10]),
+            'otrSettlementDate': self.standard_date_str(row[11]),
+            'otrIssueDate': self.standard_date_str(row[12]),
+            'otrYield': float(self.chop_pct(row[13])),
+            'otrDV01': float(row[14][1:])
+        }
 
 
 def get_fred_data(key, name=None):
