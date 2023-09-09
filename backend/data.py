@@ -112,6 +112,8 @@ class DataAPI(object):
             self.data_parser = ErisSwapRateCsvParser()
         elif data_parser == 'QuikStrikeCtdOtrParser':
             self.data_parser = QuikStrikeCtdOtrParser()
+        elif data_parser == 'QuikStrikeFedWatchParser':
+            self.data_parser = QuikStrikeFedWatchParser()
         elif data_parser == 'YahooQuoteJsonParser':
             self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -223,6 +225,21 @@ class Parser(object):
         'U.S. 30 Year TIPS': 'TIPS 30Y'
     }
 
+    cme_month_map = {
+        'F': 'JAN',
+        'G': 'FEB',
+        'H': 'MAR',
+        'J': 'APR',
+        'K': 'MAY',
+        'M': 'JUN',
+        'N': 'JUL',
+        'Q': 'AUG',
+        'U': 'SEP',
+        'V': 'OCT',
+        'X': 'NOV',
+        'Z': 'DEC'
+    }
+
     def __repr__(self):
         return f'{self.__class__.__name__}({self.__dict__})'
 
@@ -271,6 +288,10 @@ class Parser(object):
         except TypeError:
             return None
 
+    def current_time_as_str(self):
+        """Return the yyyy-mm-dd HH:MM:SS format of the current timestamp."""
+        return self.standard_datetime_str(datetime.datetime.now())
+
     def chop_quotes(self, s):
         """Return s without quotes if it has any leading or trailing quotes."""
         quote_chars = ['"', "'"]
@@ -310,6 +331,14 @@ class Parser(object):
     def standard_name(name):
         """Return the standard name of this quote used in this app."""
         return Parser.standard_name_map.get(name, '')
+    
+    @staticmethod
+    def futures_code_to_expiration_month(ticker):
+        """Return the MMM YYYY expiration month for a CME futures ticker."""
+        code = ticker[-2:].upper()
+        month = Parser.cme_month_map.get(code[0], '')
+        year = str(2020 + int(code[-1]))
+        return f'{month} {year}'
 
 
 class TimeSeriesCsvParser(Parser):
@@ -877,8 +906,7 @@ class ErisFuturesCsvParser(Parser):
                 price = self.to_float(price)
                 par_rate = self.to_float(par_rate)
 
-                timestamp = datetime.datetime.now().strftime(
-                    '%Y-%m-%dT%H:%M:%S')
+                timestamp = self.current_time_as_str()
 
                 res.append(
                     {
@@ -1084,6 +1112,45 @@ class QuikStrikeCtdOtrParser(Parser):
             'otrIssueDate': self.standard_date_str(row[12]),
             'otrYield': float(self.chop_pct(row[13])),
             'otrDV01': float(row[14][1:])
+        }
+
+
+class QuikStrikeFedWatchParser(QuikStrikeHtmlParser):
+
+    def parse_fed_funds_futures(self, ff_split):
+        ff_split0 = ff_split.split('<th>')
+        futures_codes = [d.split('</th>')[0] for d in ff_split0[1:]]
+        futures_prices = [float(d.split('</td>')[0]) for d in ff_split0[-1].split('<td>')[1:]]
+
+        timestamp = self.current_time_as_str()
+
+        res = [
+            {
+                'ticker': code,
+                'productName': 'FF' + code[-2:],
+                'month': Parser.futures_code_to_expiration_month(code),
+                'last': price,
+                'price': price,
+                'timestamp': timestamp,
+                'dataName': 'FF Futures (FedWatch)'
+            }   for code, price in zip(futures_codes, futures_prices)
+        ]
+        return res
+
+    def parse(self, response):
+        raw_text = super().parse(response)
+
+        split0 = raw_text.split('Fed Fund Futures')[1].split('Meeting Probabilities')
+        split1 = split0[1].split('Total Probabilities')
+        
+        ff_split = split0[0]
+        meeting_prob_split = split1[0]
+        total_prob_split = split1[1]
+
+        fed_funds_futures = self.parse_fed_funds_futures(ff_split)
+
+        return {
+            'fedFundsFutures': fed_funds_futures
         }
 
 
