@@ -1138,19 +1138,76 @@ class QuikStrikeFedWatchParser(QuikStrikeHtmlParser):
         return res
 
     def parse_meeting_prob_row(self, row_data):
-        date = row_data[0]
+        date = self.standard_date_str(row_data[0])
         row_data_strs = [d.split('\'>\r\n')[1].split('\r\n')[0].strip() for d in row_data[1:] if len(d.split('\'>\r\n')) > 1]
-        row_data = [float(d.split('%')[0]) * 0.01 if d else 0.0 for d in row_data_strs]
+        row_data = [float(d.split('%')[0]) if d else 0.0 for d in row_data_strs]
         return date, row_data
 
     def parse_meeting_probabilities(self, meeting_prob_split):
         mp_split0 = meeting_prob_split.split('<th>')
         ranges = [d.split('</th>')[0] for d in mp_split0[2:]]
         rows = [self.parse_meeting_prob_row(d.split('</td>')) for d in mp_split0[-1].split('<td class="number">')[1:]]
+        dates, data = zip(*rows)
         res = {
-            date: { rate_range: prob for rate_range, prob in zip(ranges, row_data)}
-            for date, row_data in rows
+            'ranges': ranges,
+            'dates': list(dates),
+            'probabilities': list(data)
         }
+        return res
+
+    def parse_total_probabilities(self, total_prob_split):
+        tp_split0 = total_prob_split.split('<th>')
+        rows = [[x.split('</td>\r\n')[0] for x in d.split('<td class="number">')[1:]]
+                for d in tp_split0[-1].split('<tr>\r\n')[1:]]
+
+        res = []
+        for row in rows:
+            row_dict = {
+                'Meeting Date': self.standard_date_str(row[0]),
+                'Days to Meeting': row[1],
+                'Ease': float(self.chop_pct(row[2])),
+                'No Change': float(self.chop_pct(row[3])),
+                'Hike': float(self.chop_pct(row[4]))
+            }
+            res.append(row_dict)
+
+        return res
+
+    def calc_expected_change(self, meeting_probabilities, total_probabilities):
+        ease_prob = total_probabilities[0]['Ease']
+        no_change_prob = total_probabilities[0]['No Change']
+        next_meeting_probabilities = meeting_probabilities['probabilities'][0]
+
+        running_ease = 0.0
+        tol = 1E-6
+        range_idx = 0
+        for prob in next_meeting_probabilities:
+            if (abs(prob - no_change_prob) < tol) and (abs(ease_prob - running_ease) < tol):
+                break
+            range_idx += 1
+            running_ease += prob
+
+        if range_idx >= len(next_meeting_probabilities):
+            raise ValueError(f'{self.__class__}.{__name__}: failed to find {ease_prob} in next meeting probabilities {next_meeting_probabilities}.')
+
+        if range_idx >= len(meeting_probabilities['ranges']):
+            raise IndexError(f'{self.__class__}.{__name__}: unexpected meeting probability without heading in {meeting_probabilities}.')
+
+        current_range = meeting_probabilities['ranges'][range_idx]
+        app.logger.info(f'{self.__class__}.{__name__}: Current FedFunds target range {current_range}.')
+
+        rate_changes = [25.0 * (i - range_idx) for i in range(len(next_meeting_probabilities))]
+        expected_change_from_current = [ 0.01 * sum([r * p for r, p in zip(rate_changes, prob_row)]) for prob_row in meeting_probabilities['probabilities']]
+        expected_incremental_change = [this - prev for this, prev in zip(
+            expected_change_from_current,
+            [0.0] + expected_change_from_current[:-1]
+            )
+        ]
+        res = {
+            'fromCurrent': [[d, r] for d, r in zip(meeting_probabilities['dates'], expected_change_from_current)],
+            'atMeeting': [[d, r] for d, r in zip(meeting_probabilities['dates'], expected_incremental_change)]
+        }
+
         return res
 
     def parse(self, response):
@@ -1165,10 +1222,14 @@ class QuikStrikeFedWatchParser(QuikStrikeHtmlParser):
 
         fed_funds_futures = self.parse_fed_funds_futures(ff_split)
         meeting_probabilities = self.parse_meeting_probabilities(meeting_prob_split)
+        total_probabilites = self.parse_total_probabilities(total_prob_split)
+        expected_changes = self.calc_expected_change(meeting_probabilities, total_probabilites)
 
         return {
             'fedFundsFutures': fed_funds_futures,
-            'meetingProbabilities': meeting_probabilities
+            'meetingProbabilities': meeting_probabilities,
+            'totalProbabilities': total_probabilites,
+            'expectedChangeBps': expected_changes
         }
 
 
