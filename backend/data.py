@@ -1137,6 +1137,22 @@ class QuikStrikeFedWatchParser(QuikStrikeHtmlParser):
         ]
         return res
 
+    def parse_meeting_prob_row(self, row_data):
+        date = row_data[0]
+        row_data_strs = [d.split('\'>\r\n')[1].split('\r\n')[0].strip() for d in row_data[1:] if len(d.split('\'>\r\n')) > 1]
+        row_data = [float(d.split('%')[0]) * 0.01 if d else 0.0 for d in row_data_strs]
+        return date, row_data
+
+    def parse_meeting_probabilities(self, meeting_prob_split):
+        mp_split0 = meeting_prob_split.split('<th>')
+        ranges = [d.split('</th>')[0] for d in mp_split0[2:]]
+        rows = [self.parse_meeting_prob_row(d.split('</td>')) for d in mp_split0[-1].split('<td class="number">')[1:]]
+        res = {
+            date: { rate_range: prob for rate_range, prob in zip(ranges, row_data)}
+            for date, row_data in rows
+        }
+        return res
+
     def parse(self, response):
         raw_text = super().parse(response)
 
@@ -1148,9 +1164,11 @@ class QuikStrikeFedWatchParser(QuikStrikeHtmlParser):
         total_prob_split = split1[1]
 
         fed_funds_futures = self.parse_fed_funds_futures(ff_split)
+        meeting_probabilities = self.parse_meeting_probabilities(meeting_prob_split)
 
         return {
-            'fedFundsFutures': fed_funds_futures
+            'fedFundsFutures': fed_funds_futures,
+            'meetingProbabilities': meeting_probabilities
         }
 
 
