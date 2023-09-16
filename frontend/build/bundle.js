@@ -5309,7 +5309,12 @@ class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.props.updateBondFuturesQuotesCme('CME 2Y Micro-yield Futures (intraday)');
     this.props.updateBondFuturesQuotesCme('CME 5Y Micro-yield Futures (intraday)');
     this.props.updateBondFuturesQuotesCme('CME 10Y Micro-yield Futures (intraday)');
-    this.props.updateBondFuturesQuotesCme('CME 30Y Micro-yield Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 30Y Micro-yield Futures (intraday)'); // IR futures quotes
+
+    this.props.updateBondFuturesQuotesCme('CME 3M SOFR Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 1M SOFR Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('CME 30D FF Futures (intraday)');
+    this.props.updateBondFuturesQuotesCme('Eris Swap Futures (intraday)');
   }
 
   render() {
