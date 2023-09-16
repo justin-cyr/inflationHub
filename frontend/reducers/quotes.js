@@ -114,6 +114,7 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
                     last: record.last,
                     priorSettle: record.priorSettle,
                     ticker: record.ticker,
+                    standardName: record.standardName,
                     month: record.month,
                     expirationDate: record.expirationDate
                 } 

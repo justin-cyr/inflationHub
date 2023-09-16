@@ -222,7 +222,21 @@ class Parser(object):
         'UST 5-Yr. TIPS':    'TIPS 5Y',
         'U.S. 5 Year TIPS':  'TIPS 5Y',
         'U.S. 10 Year TIPS': 'TIPS 10Y',
-        'U.S. 30 Year TIPS': 'TIPS 30Y'
+        'U.S. 30 Year TIPS': 'TIPS 30Y',
+    # Bond futures
+        # CME code to BBG code
+        'ZT': 'TU',
+        'Z3N': '3Y',
+        'ZF': 'FV',
+        'ZN': 'TY',
+        'TN': 'UXY',
+        'TWE': 'TWE',
+        'ZB': 'US',
+        'UB': 'WN',
+    # IR Futures
+        'SR3': 'SFR',
+        'SR1': 'SER',
+        'ZQ': 'FF'
     }
 
     cme_month_map = {
@@ -617,6 +631,13 @@ class CmeFuturesQuoteJsonParser(Parser):
     def __init__(self, name):
         self.name = name
 
+    def cme_ticker_to_bbg_ticker(self, ticker):
+        """Return the BBG ticker for this CME ticker."""
+        month_code = ticker[-2:]
+        product_code = ticker[:-2]
+        bbg_ticker = Parser.standard_name_map.get(product_code, product_code) + month_code
+        return bbg_ticker
+
     def parse(self, response):
         self.validate_response(response)
         response_data = response.json()
@@ -654,6 +675,7 @@ class CmeFuturesQuoteJsonParser(Parser):
 
                     res.append(
                         {
+                            'standardName': self.cme_ticker_to_bbg_ticker(q['quoteCode']),
                             'ticker':       q['quoteCode'],
                             'productName':  q['productName'],
                             'expirationDate': q['expirationDate'],

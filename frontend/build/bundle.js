@@ -4011,7 +4011,7 @@ class CurveViewer extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       };
 
       if (this.state.curveData[curveName] && this.state.curveData[curveName].length > 0) {
-        payLoad['initial_guess'] = this.state.curveData[curveName].map(pt => pt[1]);
+        payLoad['initial_guess'] = JSON.stringify(this.state.curveData[curveName].map(pt => pt[1]));
       }
 
       jquery__WEBPACK_IMPORTED_MODULE_1___default().ajax({
@@ -4699,7 +4699,7 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           textAlign: 'center',
           color: this.state.bbgColor
         }
-      }, record.ticker), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      }, record.standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
           textAlign: 'center',
           color: this.getChangeColor(this.props.data, record.ticker, 'priceChange')
@@ -6011,6 +6011,7 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
           last: record.last,
           priorSettle: record.priorSettle,
           ticker: record.ticker,
+          standardName: record.standardName,
           month: record.month,
           expirationDate: record.expirationDate
         }

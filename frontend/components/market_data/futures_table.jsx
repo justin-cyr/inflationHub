@@ -62,7 +62,7 @@ class FuturesTable extends React.Component {
                     <td style={{
                         textAlign: 'center',
                         color: this.state.bbgColor
-                    }}>{record.ticker}</td>
+                    }}>{record.standardName}</td>
                     <td style={{
                         textAlign: 'center',
                         color: this.getChangeColor(this.props.data, record.ticker, 'priceChange')
