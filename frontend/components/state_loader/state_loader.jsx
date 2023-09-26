@@ -3,6 +3,17 @@ import React from 'react';
 class StateLoader extends React.Component {
     constructor(props) {
         super(props);
+
+        const yfConn = new WebSocket('wss://streamer.finance.yahoo.com');
+        yfConn.onopen = (e) => { 
+            console.log('Connection open');
+            yfConn.send(JSON.stringify({ 'subscribe': ['JPY=X', 'BTC-USD'] }));
+        };
+        yfConn.onmessage = (e) => this.props.updateYfWsQuote(e);
+
+        this.state = {
+            yfConn: yfConn
+        }
     }
 
     componentDidMount() {
@@ -35,6 +46,10 @@ class StateLoader extends React.Component {
         this.props.updateBondFuturesQuotesCme('CME 1M SOFR Futures (intraday)');
         this.props.updateBondFuturesQuotesCme('CME 30D FF Futures (intraday)');
         this.props.updateBondFuturesQuotesCme('Eris Swap Futures (intraday)');
+    }
+
+    componentWillUnmount() {
+        this.state.yfConn.close();
     }
 
     render() {

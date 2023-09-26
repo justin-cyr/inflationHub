@@ -14,7 +14,6 @@ export async function decodePricingData(base64str) {
 
     // decode
     const message = PricingData.decode(byteArray);
-    console.log(message);
 
     return PricingData.toObject(message);
 };
