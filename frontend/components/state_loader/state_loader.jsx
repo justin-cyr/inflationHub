@@ -1,5 +1,30 @@
 import React from 'react';
 
+const yfSubscriptionList = [
+    // Treasuries
+    '^IRX',
+    '^FVX',
+    '^TNX',
+    '^TYX',
+    // Bond futures
+    'ZT=F',
+    'Z3N=F',
+    'ZF=F',
+    'ZN=F',
+    'TN=F',
+    'TWE=F',
+    'ZB=F',
+    'UB=F',
+    // micro-yield futures
+    '2YY=F',
+    '5YY=F',
+    '10Y=F',
+    '30Y=F',
+    // ETFs
+    'TIP', 'SCHP', 'SPIP', 'STIP', 'LTPZ', 'VTIP', 'TDTT', 'TIPX', 'CPII', 'RINF',
+    'SHY', 'IEF', 'IEI', 'TLT', 'TLH', 'SHV'
+];
+
 class StateLoader extends React.Component {
     constructor(props) {
         super(props);
@@ -7,7 +32,7 @@ class StateLoader extends React.Component {
         const yfConn = new WebSocket('wss://streamer.finance.yahoo.com');
         yfConn.onopen = (e) => { 
             console.log('Connection open');
-            yfConn.send(JSON.stringify({ 'subscribe': ['JPY=X', 'BTC-USD'] }));
+            yfConn.send(JSON.stringify({ 'subscribe': yfSubscriptionList }));
         };
         yfConn.onmessage = (e) => this.props.updateYfWsQuote(e);
 
