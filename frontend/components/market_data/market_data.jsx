@@ -14,7 +14,9 @@ const bbgColor = '#ff6600'; // orange
 
 const benchmarkTsys = [
     'US 1M',
+    'US 2M',
     'US 3M',
+    'US 4M',
     'US 6M',
     'US 1Y',
     'US 2Y',

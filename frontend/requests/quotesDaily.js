@@ -17,7 +17,7 @@ export const getOtrTsyQuotesWsj = () => (
 
 export const getOtrTsyQuotesCnbc = () => (
     $.ajax({
-        url: '/data/CNBC US Treasury Yields (intraday)',
+        url: '/data/CNBC US Treasury Yields with 2M, 4M bills (intraday)',
         method: 'GET'
     })
 );

@@ -172,7 +172,9 @@ class Parser(object):
         ####
         # CNBC
         'U.S. 1 Month Treasury': 'US 1M',
+        'U.S. 2 Month Treasury': 'US 2M',
         'U.S. 3 Month Treasury': 'US 3M',
+        'U.S. 4 Month Treasury': 'US 4M',
         'U.S. 6 Month Treasury': 'US 6M',
         'U.S. 1 Year Treasury':  'US 1Y',
         'U.S. 2 Year Treasury':  'US 2Y',

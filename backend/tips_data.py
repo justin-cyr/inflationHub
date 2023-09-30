@@ -256,7 +256,9 @@ def get_tips_quotes_from_marketwatch(cusips):
 benchmark_bond_conventions = {
     # US Treasuries
     'US 1M': 'USTBill',
+    'US 2M': 'USTBill',
     'US 3M': 'USTBill',
+    'US 4M': 'USTBill',
     'US 6M': 'USTBill',
     'US 1Y': 'USTBill',
     'US 2Y': 'USTBond',

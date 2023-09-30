@@ -5936,7 +5936,7 @@ const unchColor = '#bdbdbd'; // default text color
 
 const bbgColor = '#ff6600'; // orange
 
-const benchmarkTsys = ['US 1M', 'US 3M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
+const benchmarkTsys = ['US 1M', 'US 2M', 'US 3M', 'US 4M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
 const benchmarkTips = ['TIPS 5Y', 'TIPS 10Y', 'TIPS 30Y'];
 const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
 const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
@@ -6456,7 +6456,7 @@ const yfSubscriptionList = [// Treasuries
 '^IRX', '^FVX', '^TNX', '^TYX', // Bond futures
 'ZT=F', 'Z3N=F', 'ZF=F', 'ZN=F', 'TN=F', 'TWE=F', 'ZB=F', 'UB=F', // micro-yield futures
 '2YY=F', '5YY=F', '10Y=F', '30Y=F', // ETFs
-'TIP', 'SCHP', 'SPIP', 'STIP', 'LTPZ', 'VTIP', 'TDTT', 'TIPX', 'SHY', 'IEF', 'IEI', 'TLT', 'TLH', 'SHV'];
+'TIP', 'SCHP', 'SPIP', 'STIP', 'LTPZ', 'VTIP', 'TDTT', 'TIPX', 'CPII', 'RINF', 'SHY', 'IEF', 'IEI', 'TLT', 'TLH', 'SHV'];
 
 class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -7538,7 +7538,7 @@ const getOtrTsyQuotesWsj = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().a
   method: 'GET'
 });
 const getOtrTsyQuotesCnbc = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
-  url: '/data/CNBC US Treasury Yields (intraday)',
+  url: '/data/CNBC US Treasury Yields with 2M, 4M bills (intraday)',
   method: 'GET'
 });
 const getOtrTsyQuotesMw = () => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
