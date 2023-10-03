@@ -6083,17 +6083,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-bootstrap/Tab */ "./node_modules/react-bootstrap/esm/Tab.js");
-/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Tab */ "./node_modules/react-bootstrap/esm/Tab.js");
 /* harmony import */ var _treasuries_monitor_container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./treasuries_monitor_container */ "./components/market_data/treasuries_monitor_container.js");
 /* harmony import */ var _bond_futures_monitor_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bond_futures_monitor_container */ "./components/market_data/bond_futures_monitor_container.js");
-/* harmony import */ var _futures_table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./futures_table */ "./components/market_data/futures_table.jsx");
-
-
 
 
 
@@ -6107,8 +6103,6 @@ const upColor = '#198754'; // green
 const downColor = '#dc3545'; // red
 
 const unchColor = '#bdbdbd'; // default text color
-
-const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
 
 class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -6129,136 +6123,32 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   render() {
-    const bond_futures_table_heading = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
-      style: {
-        color: unchColor
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
-    }, "Month"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
-    }, "Ticker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
-    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-      src: cmeLogo,
-      width: "30",
-      height: "30"
-    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
-    }, "Last"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
-    }, "Prior Settle"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
-    }, "Volume"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-      style: {
-        textAlign: 'center'
-      }
-    }, "Timestamp"));
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Container, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Container, {
       id: "market-data-tabs",
       defaultActiveKey: "#/market_data/treasuries_monitor"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__["default"], {
       md: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"].Item, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__["default"].Item, {
       action: true,
       href: "#/market_data/treasuries_monitor"
-    }, "Treasuries Monitor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"].Item, {
+    }, "Treasuries Monitor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__["default"].Item, {
       action: true,
       href: "#/market_data/bond_futures_monitor"
-    }, "Bond Futures Monitor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"].Item, {
-      action: true,
-      href: "#/market_data/old"
-    }, "Old page"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    }, "Bond Futures Monitor"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__["default"], {
       style: {
         textAlign: "center"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Content, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Pane, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Content, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Pane, {
       eventKey: "#/market_data/treasuries_monitor"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Treasuries Monitor'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_treasuries_monitor_container__WEBPACK_IMPORTED_MODULE_1__["default"], {
       getChangeColor: this.getChangeColor
-    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Pane, {
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Pane, {
       eventKey: "#/market_data/bond_futures_monitor"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Bond Futures Monitor'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_bond_futures_monitor_container__WEBPACK_IMPORTED_MODULE_2__["default"], {
       getChangeColor: this.getChangeColor
-    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Pane, {
-      eventKey: "#/market_data/old"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Bond Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        height: this.props.height,
-        width: '1100px',
-        overflow: 'auto'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_9__["default"], {
-      id: "bond-futures-table",
-      responsive: true,
-      hover: true,
-      style: {
-        color: unchColor
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, bond_futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "2Y UST Futures",
-      data: this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "3Y UST Futures",
-      data: this.props.quotes.daily.futures['CME 3Y UST Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "5Y UST Futures",
-      data: this.props.quotes.daily.futures['CME 5Y UST Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "10Y UST Futures",
-      data: this.props.quotes.daily.futures['CME 10Y UST Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "Ultra-10Y UST Futures",
-      data: this.props.quotes.daily.futures['CME Ultra-10Y UST Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "20Y UST Futures",
-      data: this.props.quotes.daily.futures['CME 20Y UST Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "30Y UST Futures",
-      data: this.props.quotes.daily.futures['CME 30Y UST Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "Ultra-30Y UST Futures",
-      data: this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)']
-    })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Micro Yield Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        height: this.props.height,
-        width: '1100px',
-        overflow: 'auto'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_9__["default"], {
-      id: "micro-yield-futures-table",
-      responsive: true,
-      hover: true,
-      style: {
-        color: unchColor
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, bond_futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "Micro 2Y-yield Futures",
-      data: this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "Micro 5Y-yield Futures",
-      data: this.props.quotes.daily.futures['CME 5Y Micro-yield Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "Micro 10Y-yield Futures",
-      data: this.props.quotes.daily.futures['CME 10Y Micro-yield Futures (intraday)']
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      title: "Micro 30Y-yield Futures",
-      data: this.props.quotes.daily.futures['CME 30Y Micro-yield Futures (intraday)']
-    })))))))))))));
+    }))))))));
   }
 
 }
