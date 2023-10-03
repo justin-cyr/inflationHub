@@ -5967,7 +5967,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
-
 const upColor = '#198754'; // green
 
 const downColor = '#dc3545'; // red
@@ -5975,6 +5974,8 @@ const downColor = '#dc3545'; // red
 const unchColor = '#bdbdbd'; // default text color
 
 const bbgColor = '#ff6600'; // orange
+
+const filterFutures = false; // only go up to the last expiration date with a non-blank price if true
 
 class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -5992,7 +5993,8 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       upColor: this.props.upColor || upColor,
       downColor: this.props.downColor || downColor,
       unchColor: this.props.unchColor || unchColor,
-      bbgColor: this.props.bbgColor || bbgColor
+      bbgColor: this.props.bbgColor || bbgColor,
+      filterFutures: this.props.filterFutures || filterFutures
     };
   }
 
@@ -6025,6 +6027,23 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     if (this.props.data) {
       let data = Object.values(this.props.data);
       data.sort((a, b) => Number(a.expirationDate) - Number(b.expirationDate));
+
+      if (this.state.filterFutures) {
+        let maxIdx = -1;
+
+        for (let [i, record] of data.entries()) {
+          if (record.price !== '-') {
+            maxIdx = i;
+          }
+        }
+
+        if (maxIdx === -1) {
+          data = [];
+        } else {
+          data = data.slice(0, maxIdx + 1);
+        }
+      }
+
       table_rows = table_rows.concat(data.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
         key: record.ticker
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
@@ -6071,6 +6090,163 @@ class FuturesTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
 /***/ }),
 
+/***/ "./components/market_data/ir_futures_monitor.jsx":
+/*!*******************************************************!*\
+  !*** ./components/market_data/ir_futures_monitor.jsx ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var _futures_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./futures_table */ "./components/market_data/futures_table.jsx");
+
+
+
+
+
+
+const unchColor = '#bdbdbd'; // default text color
+
+const oneMonthTableWith = '650px';
+
+class IRFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+    this.getChangeColor = this.props.getChangeColor;
+  }
+
+  render() {
+    const futures_table_heading = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Month"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Ticker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: this.props.referenceData.logos.cme,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Last"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Prior Settle"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Volume"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Timestamp"));
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      fluid: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: this.props.height,
+        width: oneMonthTableWith,
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      id: "ff-futures-table",
+      responsive: true,
+      hover: true,
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "1M FF Futures",
+      data: this.props.quotes.daily.futures['CME 30D FF Futures (intraday)'],
+      filterFutures: true
+    }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: this.props.height,
+        width: oneMonthTableWith,
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      id: "ser-futures-table",
+      responsive: true,
+      hover: true,
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "1M SOFR Futures",
+      data: this.props.quotes.daily.futures['CME 1M SOFR Futures (intraday)']
+    }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: this.props.height,
+        width: oneMonthTableWith,
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      id: "sfr-futures-table",
+      responsive: true,
+      hover: true,
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, futures_table_heading), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      title: "3M SOFR Futures",
+      data: this.props.quotes.daily.futures['CME 3M SOFR Futures (intraday)'],
+      filterFutures: true
+    })))))));
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (IRFuturesMonitor);
+
+/***/ }),
+
+/***/ "./components/market_data/ir_futures_monitor_container.js":
+/*!****************************************************************!*\
+  !*** ./components/market_data/ir_futures_monitor_container.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _ir_futures_monitor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ir_futures_monitor */ "./components/market_data/ir_futures_monitor.jsx");
+
+
+
+const mapStateToProps = state => ({
+  referenceData: state.referenceData,
+  quotes: state.quotes
+});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps)(_ir_futures_monitor__WEBPACK_IMPORTED_MODULE_1__["default"]));
+
+/***/ }),
+
 /***/ "./components/market_data/market_data.jsx":
 /*!************************************************!*\
   !*** ./components/market_data/market_data.jsx ***!
@@ -6083,13 +6259,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Tab */ "./node_modules/react-bootstrap/esm/Tab.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-bootstrap/ListGroup */ "./node_modules/react-bootstrap/esm/ListGroup.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react-bootstrap/Tab */ "./node_modules/react-bootstrap/esm/Tab.js");
 /* harmony import */ var _treasuries_monitor_container__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./treasuries_monitor_container */ "./components/market_data/treasuries_monitor_container.js");
 /* harmony import */ var _bond_futures_monitor_container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bond_futures_monitor_container */ "./components/market_data/bond_futures_monitor_container.js");
+/* harmony import */ var _ir_futures_monitor_container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ir_futures_monitor_container */ "./components/market_data/ir_futures_monitor_container.js");
+
 
 
 
@@ -6123,30 +6301,37 @@ class MarketData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   render() {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_4__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Container, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Container, {
       id: "market-data-tabs",
       defaultActiveKey: "#/market_data/treasuries_monitor"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__["default"], {
       md: "auto"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__["default"].Item, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"].Item, {
       action: true,
       href: "#/market_data/treasuries_monitor"
-    }, "Treasuries Monitor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_7__["default"].Item, {
+    }, "Treasuries Monitor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"].Item, {
       action: true,
       href: "#/market_data/bond_futures_monitor"
-    }, "Bond Futures Monitor"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, "Bond Futures Monitor"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_ListGroup__WEBPACK_IMPORTED_MODULE_8__["default"].Item, {
+      action: true,
+      href: "#/market_data/ir_futures_monitor"
+    }, "IR Futures Monitor"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_7__["default"], {
       style: {
         textAlign: "center"
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Content, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Pane, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Content, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Pane, {
       eventKey: "#/market_data/treasuries_monitor"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Treasuries Monitor'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_treasuries_monitor_container__WEBPACK_IMPORTED_MODULE_1__["default"], {
       getChangeColor: this.getChangeColor
-    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_5__["default"].Pane, {
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Pane, {
       eventKey: "#/market_data/bond_futures_monitor"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'Bond Futures Monitor'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_bond_futures_monitor_container__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      getChangeColor: this.getChangeColor
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Tab__WEBPACK_IMPORTED_MODULE_6__["default"].Pane, {
+      eventKey: "#/market_data/ir_futures_monitor"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, 'IR Futures Monitor'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_ir_futures_monitor_container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       getChangeColor: this.getChangeColor
     }))))))));
   }
@@ -10043,7 +10228,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

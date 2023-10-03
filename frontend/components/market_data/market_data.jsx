@@ -8,6 +8,7 @@ import Tab from 'react-bootstrap/Tab';
 
 import TreasuriesMonitor from './treasuries_monitor_container';
 import BondFuturesMonitor from './bond_futures_monitor_container';
+import IRFuturesMonitor from './ir_futures_monitor_container';
 
 const upColor = '#198754';  // green
 const downColor = '#dc3545';  // red
@@ -46,6 +47,7 @@ class MarketData extends React.Component {
                                 <ListGroup>
                                     <ListGroup.Item action href="#/market_data/treasuries_monitor">Treasuries Monitor</ListGroup.Item>
                                     <ListGroup.Item action href="#/market_data/bond_futures_monitor">Bond Futures Monitor</ListGroup.Item>
+                                    <ListGroup.Item action href="#/market_data/ir_futures_monitor">IR Futures Monitor</ListGroup.Item>
                                 </ListGroup>
                             </Col>
                             <Col
@@ -61,6 +63,11 @@ class MarketData extends React.Component {
                                     <Tab.Pane eventKey="#/market_data/bond_futures_monitor">
                                         <h3>{'Bond Futures Monitor'}</h3>
                                         <BondFuturesMonitor getChangeColor={this.getChangeColor} />
+                                    </Tab.Pane>
+
+                                    <Tab.Pane eventKey="#/market_data/ir_futures_monitor">
+                                        <h3>{'IR Futures Monitor'}</h3>
+                                        <IRFuturesMonitor getChangeColor={this.getChangeColor} />
                                     </Tab.Pane>
 
                                 </Tab.Content>

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Table from 'react-bootstrap/Table';
-
 const upColor = '#198754';  // green
 const downColor = '#dc3545';  // red
 const unchColor = '#bdbdbd'; // default text color
 const bbgColor = '#ff6600'; // orange
+
+const filterFutures = false; // only go up to the last expiration date with a non-blank price if true
 
 class FuturesTable extends React.Component {
     constructor(props) {
@@ -24,7 +24,8 @@ class FuturesTable extends React.Component {
             upColor: this.props.upColor || upColor,
             downColor: this.props.downColor || downColor,
             unchColor: this.props.unchColor || unchColor,
-            bbgColor: this.props.bbgColor || bbgColor
+            bbgColor: this.props.bbgColor || bbgColor,
+            filterFutures: this.props.filterFutures || filterFutures
         }
 
     }
@@ -52,6 +53,21 @@ class FuturesTable extends React.Component {
         if (this.props.data) {
             let data = Object.values(this.props.data);
             data.sort((a, b) => Number(a.expirationDate) - Number(b.expirationDate));
+
+            if (this.state.filterFutures) {
+                let maxIdx = -1;
+                for (let [i, record] of data.entries()) {
+                    if (record.price !== '-') {
+                        maxIdx = i;
+                    }
+                }
+                if (maxIdx === -1) {
+                    data = [];
+                }
+                else {
+                    data = data.slice(0, maxIdx + 1);
+                }
+            }
 
             table_rows = table_rows.concat(data.map(record =>
                 <tr key={record.ticker}>
