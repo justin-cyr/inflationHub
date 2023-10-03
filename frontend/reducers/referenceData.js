@@ -1,10 +1,38 @@
 import { RECEIVE_TIPS_CUSIPS, RECEIVE_TIPS_REF_DATA, RECEIVE_TSY_REF_DATA } from "../actions/referenceData";
 import { RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_CNBC } from "../actions/quotesDaily";
 
+const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.svg";
+const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
+const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
+const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
+
+const benchmarkTsys = [
+    'US 1M',
+    'US 2M',
+    'US 3M',
+    'US 4M',
+    'US 6M',
+    'US 1Y',
+    'US 2Y',
+    'US 3Y',
+    'US 5Y',
+    'US 7Y',
+    'US 10Y',
+    'US 20Y',
+    'US 30Y'
+];
+
+const benchmarkTips = [
+    'TIPS 5Y',
+    'TIPS 10Y',
+    'TIPS 30Y'
+];
+
 // default state
 const _emptyState = {
-    tips: { cusips: [], otr: {}, bonds: {} },
-    tsys: { cusips: [], otr: {}, bonds: {} },
+    logos: { cnbc: cnbcLogo, wsj: wsjLogo, mw: mwLogo, cme: cmeLogo },
+    tips: { cusips: [], otr: {}, bonds: {}, benchmarkTips: benchmarkTips },
+    tsys: { cusips: [], otr: {}, bonds: {}, benchmarkTsys: benchmarkTsys },
 }
 
 // helper function for OTR reference data update

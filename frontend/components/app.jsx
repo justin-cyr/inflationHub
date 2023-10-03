@@ -17,7 +17,7 @@ export default () => (
         <Route exact path="/" component={DataViewer} />
         <Route exact path="/data_viewer" component={DataViewer} />
         <Route exact path="/tips_data" component={TipsData} />
-        <Route exact path="/market_data" component={MarketData} />
+        <Route path="/market_data" component={MarketData} />
         <Route path="/curve_builder" component={CurveBuilder} />
         <Route path="/curve_viewer" component={CurveViewer} />
         {/*<Route exact path="/knowledge_center" component={KnowledgeCenter} />*/}

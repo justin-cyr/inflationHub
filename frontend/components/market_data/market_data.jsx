@@ -2,9 +2,12 @@ import React from 'react';
 
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
+import Tab from 'react-bootstrap/Tab';
 import Table from 'react-bootstrap/Table';
 
+import TreasuriesMonitor from './treasuries_monitor_container';
 import FuturesTable from './futures_table';
 
 const upColor = '#198754';  // green
@@ -230,110 +233,139 @@ class MarketData extends React.Component {
         return (
             <Container fluid>
                 <Row>
-                    {/* Tsys benchmark table */}
-                    <h2>Treasuries</h2>
-                    {tsy_data_table}
-                </Row>
-                <Row
-                    style={{ paddingTop: '25px' }}
-                >
-                    <Col>
-                        {/* Tips benchmark table */}
-                        <h2>TIPS</h2>
-                        {tips_data_table}
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        {/* Bond futures table */}
-                        <h2>Bond Futures</h2>
-                        <div
-                            style={{ height: this.props.height, width: '1100px', overflow: 'auto' }}
-                        >
-                            <Table
-                                id="bond-futures-table"
-                                responsive
-                                hover
-                                style={{ color: unchColor }}
+                    <Tab.Container id="market-data-tabs" defaultActiveKey="#/market_data/treasuries_monitor">
+                        <Row>
+                            <Col
+                                md="auto"
                             >
-                                <thead>
-                                    {bond_futures_table_heading}
-                                </thead>
-                                <tbody>
-                                    <FuturesTable
-                                        title="2Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="3Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME 3Y UST Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="5Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME 5Y UST Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="10Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME 10Y UST Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="Ultra-10Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME Ultra-10Y UST Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="20Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME 20Y UST Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="30Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME 30Y UST Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="Ultra-30Y UST Futures"
-                                        data={this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)']}
-                                    />
-                                </tbody>
-                            </Table>
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        {/* Micro-yield futures table */}
-                        <h2>Micro Yield Futures</h2>
-                        <div
-                            style={{ height: this.props.height, width: '1100px', overflow: 'auto' }}
-                        >
-                            <Table
-                                id="micro-yield-futures-table"
-                                responsive
-                                hover
-                                style={{ color: unchColor }}
+                                <ListGroup>
+                                    <ListGroup.Item action href="#/market_data/treasuries_monitor">Treasuries Monitor</ListGroup.Item>
+                                    <ListGroup.Item action href="#/market_data/old">Old page</ListGroup.Item>
+                                </ListGroup>
+                            </Col>
+                            <Col
+                                style={{ textAlign: "center" }}
                             >
-                                <thead>
-                                    {bond_futures_table_heading}
-                                </thead>
-                                <tbody>
-                                    <FuturesTable
-                                        title="Micro 2Y-yield Futures"
-                                        data={this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="Micro 5Y-yield Futures"
-                                        data={this.props.quotes.daily.futures['CME 5Y Micro-yield Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="Micro 10Y-yield Futures"
-                                        data={this.props.quotes.daily.futures['CME 10Y Micro-yield Futures (intraday)']}
-                                    />
-                                    <FuturesTable
-                                        title="Micro 30Y-yield Futures"
-                                        data={this.props.quotes.daily.futures['CME 30Y Micro-yield Futures (intraday)']}
-                                    />
-                                </tbody>
-                            </Table>
-                        </div>
-                    </Col>
+                                <Tab.Content>
+
+                                    <Tab.Pane eventKey="#/market_data/treasuries_monitor">
+                                        <h3>{'Treasuries Monitor'}</h3>
+                                        <TreasuriesMonitor getChangeColor={this.getChangeColor} />
+                                    </Tab.Pane>
+
+                                    <Tab.Pane eventKey="#/market_data/old">
+                                        <Row>
+                                            {/* Tsys benchmark table */}
+                                            <h2>Treasuries</h2>
+                                            {tsy_data_table}
+                                        </Row>
+                                        <Row
+                                            style={{ paddingTop: '25px' }}
+                                        >
+                                            <Col>
+                                                {/* Tips benchmark table */}
+                                                <h2>TIPS</h2>
+                                                {tips_data_table}
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                {/* Bond futures table */}
+                                                <h2>Bond Futures</h2>
+                                                <div
+                                                    style={{ height: this.props.height, width: '1100px', overflow: 'auto' }}
+                                                >
+                                                    <Table
+                                                        id="bond-futures-table"
+                                                        responsive
+                                                        hover
+                                                        style={{ color: unchColor }}
+                                                    >
+                                                        <thead>
+                                                            {bond_futures_table_heading}
+                                                        </thead>
+                                                        <tbody>
+                                                            <FuturesTable
+                                                                title="2Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME 2Y UST Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="3Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME 3Y UST Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="5Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME 5Y UST Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="10Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME 10Y UST Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="Ultra-10Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME Ultra-10Y UST Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="20Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME 20Y UST Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="30Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME 30Y UST Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="Ultra-30Y UST Futures"
+                                                                data={this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)']}
+                                                            />
+                                                        </tbody>
+                                                    </Table>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                {/* Micro-yield futures table */}
+                                                <h2>Micro Yield Futures</h2>
+                                                <div
+                                                    style={{ height: this.props.height, width: '1100px', overflow: 'auto' }}
+                                                >
+                                                    <Table
+                                                        id="micro-yield-futures-table"
+                                                        responsive
+                                                        hover
+                                                        style={{ color: unchColor }}
+                                                    >
+                                                        <thead>
+                                                            {bond_futures_table_heading}
+                                                        </thead>
+                                                        <tbody>
+                                                            <FuturesTable
+                                                                title="Micro 2Y-yield Futures"
+                                                                data={this.props.quotes.daily.futures['CME 2Y Micro-yield Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="Micro 5Y-yield Futures"
+                                                                data={this.props.quotes.daily.futures['CME 5Y Micro-yield Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="Micro 10Y-yield Futures"
+                                                                data={this.props.quotes.daily.futures['CME 10Y Micro-yield Futures (intraday)']}
+                                                            />
+                                                            <FuturesTable
+                                                                title="Micro 30Y-yield Futures"
+                                                                data={this.props.quotes.daily.futures['CME 30Y Micro-yield Futures (intraday)']}
+                                                            />
+                                                        </tbody>
+                                                    </Table>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </Tab.Pane>
+
+                                </Tab.Content>
+                            </Col>
+                        </Row>
+                    </Tab.Container>
                 </Row>
             </Container>
         );
