@@ -3458,6 +3458,7 @@ function useWindow() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "RECEIVE_BOND_FUTURES_QUOTES_CME": () => (/* binding */ RECEIVE_BOND_FUTURES_QUOTES_CME),
+/* harmony export */   "RECEIVE_CTD_OTR_TABLE_CME": () => (/* binding */ RECEIVE_CTD_OTR_TABLE_CME),
 /* harmony export */   "RECEIVE_OTR_TIPS_QUOTES_CNBC": () => (/* binding */ RECEIVE_OTR_TIPS_QUOTES_CNBC),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CME": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CME),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_CNBC": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_CNBC),
@@ -3466,6 +3467,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "RECEIVE_TIPS_PRICES": () => (/* binding */ RECEIVE_TIPS_PRICES),
 /* harmony export */   "RECEIVE_YF_WS_QUOTE": () => (/* binding */ RECEIVE_YF_WS_QUOTE),
 /* harmony export */   "updateBondFuturesQuotesCme": () => (/* binding */ updateBondFuturesQuotesCme),
+/* harmony export */   "updateCtdOtrTableCme": () => (/* binding */ updateCtdOtrTableCme),
 /* harmony export */   "updateOtrTipsQuotesCnbc": () => (/* binding */ updateOtrTipsQuotesCnbc),
 /* harmony export */   "updateOtrTsyQuotesCme": () => (/* binding */ updateOtrTsyQuotesCme),
 /* harmony export */   "updateOtrTsyQuotesCnbc": () => (/* binding */ updateOtrTsyQuotesCnbc),
@@ -3486,6 +3488,7 @@ const RECEIVE_OTR_TSY_QUOTES_MW = 'RECEIVE_OTR_TSY_QUOTES_MW';
 const RECEIVE_OTR_TSY_QUOTES_CME = 'RECEIVE_OTR_TSY_QUOTES_CME';
 const RECEIVE_BOND_FUTURES_QUOTES_CME = 'RECEIVE_BOND_FUTURES_QUOTES_CME';
 const RECEIVE_YF_WS_QUOTE = 'RECEIVE_YF_WS_QUOTE';
+const RECEIVE_CTD_OTR_TABLE_CME = 'RECEIVE_CTD_OTR_TABLE_CME';
 const quoteUpdateFreq = 10000;
 
 const receiveTipsPrices = response => ({
@@ -3528,6 +3531,11 @@ const receiveYfWsQuote = response => ({
   response
 });
 
+const receiveCtdOtrTableCme = response => ({
+  type: RECEIVE_CTD_OTR_TABLE_CME,
+  response
+});
+
 const updateTipsPrices = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getTipsPrices)().then(response => dispatch(receiveTipsPrices(response)));
 const updateOtrTipsQuotesCnbc = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTipsQuotesCnbc)().then(response => dispatch(receiveOtrTipsQuotesCnbc(response))).then(() => {
   setTimeout(() => dispatch(updateOtrTipsQuotesCnbc()), quoteUpdateFreq);
@@ -3548,6 +3556,9 @@ const updateBondFuturesQuotesCme = dataName => dispatch => (0,_requests_quotesDa
   setTimeout(() => dispatch(updateBondFuturesQuotesCme(dataName)), quoteUpdateFreq);
 });
 const updateYfWsQuote = e => dispatch => (0,_protobuf_pricingData__WEBPACK_IMPORTED_MODULE_1__.decodePricingData)(e.data).then(response => dispatch(receiveYfWsQuote(response)));
+const updateCtdOtrTableCme = dataName => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getData)(dataName).then(response => dispatch(receiveCtdOtrTableCme(response))).then(() => {
+  setTimeout(() => dispatch(updateCtdOtrTableCme(dataName)), quoteUpdateFreq * 6);
+});
 
 /***/ }),
 
@@ -6838,7 +6849,8 @@ class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.props.updateBondFuturesQuotesCme('CME 2Y Micro-yield Futures (intraday)');
     this.props.updateBondFuturesQuotesCme('CME 5Y Micro-yield Futures (intraday)');
     this.props.updateBondFuturesQuotesCme('CME 10Y Micro-yield Futures (intraday)');
-    this.props.updateBondFuturesQuotesCme('CME 30Y Micro-yield Futures (intraday)'); // IR futures quotes
+    this.props.updateBondFuturesQuotesCme('CME 30Y Micro-yield Futures (intraday)');
+    this.props.updateCtdOtrTableCme('QuikStrike CTD-OTR Table'); // IR futures quotes
 
     this.props.updateBondFuturesQuotesCme('CME 3M SOFR Futures (intraday)');
     this.props.updateBondFuturesQuotesCme('CME 1M SOFR Futures (intraday)');
@@ -6897,7 +6909,8 @@ const mapDispatchToProps = dispatch => ({
   updateTipsCusips: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsCusips)()),
   updateTipsRefData: cusip => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTipsRefData)(cusip)),
   updateTsyRefData: () => dispatch((0,_actions_referenceData__WEBPACK_IMPORTED_MODULE_2__.updateTsyRefData)()),
-  updateYfWsQuote: e => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateYfWsQuote)(e))
+  updateYfWsQuote: e => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateYfWsQuote)(e)),
+  updateCtdOtrTableCme: dataName => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateCtdOtrTableCme)(dataName))
 });
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_0__.connect)(mapStateToProps, mapDispatchToProps)(_state_loader__WEBPACK_IMPORTED_MODULE_3__["default"]));
@@ -7481,6 +7494,7 @@ const _emptyState = {
         cme: {}
       }
     },
+    ctdOtrTable: [],
     futures: {},
     yfQuotes: {}
   }
@@ -7700,8 +7714,19 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
       {
         const ticker = action.response.id;
         return { ...state,
-          yfQuotes: { ...state.yfQuotes,
-            [ticker]: action.response
+          daily: { ...state.daily,
+            yfQuotes: { ...state.yfQuotes,
+              [ticker]: action.response
+            }
+          }
+        };
+      }
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_CTD_OTR_TABLE_CME:
+      {
+        return { ...state,
+          daily: { ...state.daily,
+            ctdOtrTable: action.response.data
           }
         };
       }
@@ -7870,6 +7895,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "getBondFuturesQuotesCme": () => (/* binding */ getBondFuturesQuotesCme),
+/* harmony export */   "getData": () => (/* binding */ getData),
 /* harmony export */   "getOtrTipsQuotesCnbc": () => (/* binding */ getOtrTipsQuotesCnbc),
 /* harmony export */   "getOtrTsyQuotesCme": () => (/* binding */ getOtrTsyQuotesCme),
 /* harmony export */   "getOtrTsyQuotesCnbc": () => (/* binding */ getOtrTsyQuotesCnbc),
@@ -7906,6 +7932,10 @@ const getOtrTipsQuotesCnbc = () => jquery__WEBPACK_IMPORTED_MODULE_0___default()
   method: 'GET'
 });
 const getBondFuturesQuotesCme = dataName => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: '/data/' + dataName,
+  method: 'GET'
+});
+const getData = dataName => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
   url: '/data/' + dataName,
   method: 'GET'
 });

@@ -1,4 +1,4 @@
-import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME, RECEIVE_BOND_FUTURES_QUOTES_CME, RECEIVE_YF_WS_QUOTE } from "../actions/quotesDaily";
+import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME, RECEIVE_BOND_FUTURES_QUOTES_CME, RECEIVE_YF_WS_QUOTE, RECEIVE_CTD_OTR_TABLE_CME } from "../actions/quotesDaily";
 
 // default state
 const _emptyState = {
@@ -6,6 +6,7 @@ const _emptyState = {
         tipsPrices: { priceData: [] },
         tips: { otr: { cnbc: {} } },
         tsys: { otr: { wsj: {}, cnbc: {}, mw: {}, cme: {} } },
+        ctdOtrTable: [],
         futures: {},
         yfQuotes: {}
     }
@@ -264,9 +265,23 @@ export default (state = _emptyState, action) => {
 
             return {
                 ...state,
-                yfQuotes: {
-                    ...state.yfQuotes,
-                    [ticker]: action.response
+                daily: {
+                    ...state.daily,
+                    yfQuotes: {
+                        ...state.yfQuotes,
+                        [ticker]: action.response
+                    }
+                }
+            }
+        }
+
+        case RECEIVE_CTD_OTR_TABLE_CME:
+        {
+            return {
+                ...state,
+                daily: {
+                    ...state.daily,
+                    ctdOtrTable: action.response.data
                 }
             }
         }

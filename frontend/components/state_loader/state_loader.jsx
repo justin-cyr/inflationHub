@@ -65,6 +65,7 @@ class StateLoader extends React.Component {
         this.props.updateBondFuturesQuotesCme('CME 5Y Micro-yield Futures (intraday)');
         this.props.updateBondFuturesQuotesCme('CME 10Y Micro-yield Futures (intraday)');
         this.props.updateBondFuturesQuotesCme('CME 30Y Micro-yield Futures (intraday)');
+        this.props.updateCtdOtrTableCme('QuikStrike CTD-OTR Table');
 
         // IR futures quotes
         this.props.updateBondFuturesQuotesCme('CME 3M SOFR Futures (intraday)');

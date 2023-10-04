@@ -49,3 +49,10 @@ export const getBondFuturesQuotesCme = (dataName) => (
         method: 'GET'
     })
 );
+
+export const getData = (dataName) => (
+    $.ajax({
+        url: '/data/' + dataName,
+        method: 'GET'
+    })
+);
