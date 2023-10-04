@@ -92,4 +92,4 @@ export const updateYfWsQuote = (e) => dispatch => decodePricingData(e.data)
 
 export const updateCtdOtrTableCme = (dataName) => dispatch => getData(dataName)
     .then(response => dispatch(receiveCtdOtrTableCme(response)))
-    .then(() => { setTimeout(() => dispatch(updateCtdOtrTableCme(dataName)), quoteUpdateFreq * 6) });
+    .then(() => { setTimeout(() => dispatch(updateCtdOtrTableCme(dataName)), quoteUpdateFreq) });

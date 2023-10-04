@@ -3557,7 +3557,7 @@ const updateBondFuturesQuotesCme = dataName => dispatch => (0,_requests_quotesDa
 });
 const updateYfWsQuote = e => dispatch => (0,_protobuf_pricingData__WEBPACK_IMPORTED_MODULE_1__.decodePricingData)(e.data).then(response => dispatch(receiveYfWsQuote(response)));
 const updateCtdOtrTableCme = dataName => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getData)(dataName).then(response => dispatch(receiveCtdOtrTableCme(response))).then(() => {
-  setTimeout(() => dispatch(updateCtdOtrTableCme(dataName)), quoteUpdateFreq * 6);
+  setTimeout(() => dispatch(updateCtdOtrTableCme(dataName)), quoteUpdateFreq);
 });
 
 /***/ }),
@@ -5810,10 +5810,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
 /* harmony import */ var _futures_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./futures_table */ "./components/market_data/futures_table.jsx");
 
 
@@ -5823,6 +5823,8 @@ __webpack_require__.r(__webpack_exports__);
 
 const unchColor = '#bdbdbd'; // default text color
 
+const bbgColor = '#ff6600'; // orange
+
 class BondFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
     super(props);
@@ -5830,6 +5832,89 @@ class BondFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   }
 
   render() {
+    let ctd_table_rows = [/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...'))];
+
+    if (this.props.quotes.daily.ctdOtrTable) {
+      ctd_table_rows = this.props.quotes.daily.ctdOtrTable.map(record => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+        key: record.futureName
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: bbgColor
+        }
+      }, record.futureName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: bbgColor
+        }
+      }, record.standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record.futurePrice), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record.ctdDeliveryDate), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record.ctdCoupon.toFixed(3) + '%'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record.ctdMaturity), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center'
+        }
+      }, record.fwdYield.toFixed(3))));
+    }
+
+    const ctd_otr_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      id: "ctd-otr-table",
+      responsive: true,
+      hover: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", {
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Name"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Ticker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Delivery Date"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "CTD Cpn"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "CTD Maturity"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Fwd Yield"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+      style: {
+        color: unchColor
+      }
+    }, ctd_table_rows)));
     const bond_futures_table_heading = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
       style: {
         color: unchColor
@@ -5867,15 +5952,15 @@ class BondFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         textAlign: 'center'
       }
     }, "Timestamp"));
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Bond Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Active Futures CTD Bonds"), ctd_otr_table)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Bond Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         height: this.props.height,
         width: '1100px',
         overflow: 'auto'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "bond-futures-table",
       responsive: true,
       hover: true,
@@ -5906,13 +5991,13 @@ class BondFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_futures_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
       title: "Ultra-30Y UST Futures",
       data: this.props.quotes.daily.futures['CME Ultra-30Y UST Futures (intraday)']
-    })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Micro Yield Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    })))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Micro Yield Futures"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         height: this.props.height,
         width: '1100px',
         overflow: 'auto'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "micro-yield-futures-table",
       responsive: true,
       hover: true,
@@ -10258,7 +10343,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table, #ctd-otr-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n", "",{"version":3,"sources":["webpack://./styles/style_sheet.css"],"names":[],"mappings":";AACA,WAAW;AACX;IACI,yBAAyB;IACzB,cAAc;IACd,aAAa;AACjB;;AAEA,WAAW;AACX;IACI,qBAAqB;IACrB,kBAAkB;IAClB,sBAAsB;AAC1B;;AAEA,eAAe;AACf;IACI;AACJ;;AAEA;IACI,yBAAyB;IACzB,iBAAiB;IACjB,kBAAkB;IAClB,gBAAgB;IAChB;AACJ;;AAEA;IACI,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,cAAc;IACd,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,cAAc;;AAEd;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,yBAAyB;IACzB,WAAW;AACf;;AAEA;IACI,kBAAkB;AACtB;;AAEA,gBAAgB;;AAEhB;IACI,+BAA+B;IAC/B,4BAA4B;AAChC;;AAEA,iBAAiB;AACjB;IACI,gBAAgB;IAChB,mBAAmB;IACnB,eAAe;IACf,kBAAkB;;IAElB,qBAAqB;IACrB,iBAAiB;IACjB,mBAAmB;IACnB,mBAAmB;;IAEnB,aAAa;IACb,uBAAuB;AAC3B","sourcesContent":["\n/* Global */\nbody {\n    background-color: #0a0e1a;\n    color: #bdbdbd;\n    padding: 10px;\n}\n\n/* NavBar */\n.nav-link {\n    align-content: center;\n    text-align: center;\n    vertical-align: middle;\n}\n\n/* DataViewer */\n.list-group {\n    width: 405px\n}\n\n.list-group-item {\n    background-color: #91ABBD;\n    padding-left: 0px;\n    padding-right: 0px;\n    margin-left: 0px;\n    margin-right: 0px\n}\n\n.data-series-name-text {\n    padding-left: 0px;\n    padding-right: 0px;\n}\n\n.btn-close.data-series-clear-btn {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n#latest-data-table {\n    color: #bdbdbd;\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* TIPS Data */\n\n#tips-data-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n.modal-header {\n    border-bottom: 0 none;\n}\n\n.modal-header .btn-close {\n    background-color: #91ABBD;\n    opacity: .5;\n}\n\n.modal-footer {\n    border-top: 0 none;\n}\n\n/* Market Data */\n\n#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table, #ctd-otr-table {\n    --bs-table-hover-color: #6bcbff;\n    --bs-table-hover-bg: #121729;\n}\n\n/* CurveBuilder */\n.curve-data-form {\n    padding-top: 3px;\n    padding-bottom: 3px;\n    margin-top: 2px;\n    margin-bottom: 2px;\n    \n    border-color: #0d6efd;\n    border-width: 1px;\n    border-style: solid;\n    border-radius: 10px;\n\n    display: flex;\n    justify-content: center;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

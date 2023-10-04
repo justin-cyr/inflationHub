@@ -64,7 +64,7 @@ body {
 
 /* Market Data */
 
-#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table {
+#tsys-benchmark-table, #tips-benchmark-table, #bond-futures-table, #micro-yield-futures-table, #ff-futures-table, #ser-futures-table, #sfr-futures-table, #ctd-otr-table {
     --bs-table-hover-color: #6bcbff;
     --bs-table-hover-bg: #121729;
 }

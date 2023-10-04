@@ -235,6 +235,7 @@ class Parser(object):
         'TWE': 'TWE',
         'ZB': 'US',
         'UB': 'WN',
+        'UL': 'WN',
     # IR Futures
         'SR3': 'SFR',
         'SR1': 'SER',
@@ -343,6 +344,14 @@ class Parser(object):
         s = s[:-1] if s and isinstance(s, str) and s[-1] == '%' else s
         return s
     
+    def cme_ticker_to_bbg_ticker(self, ticker):
+        """Return the BBG ticker for this CME ticker."""
+        month_code = ticker[-2:]
+        product_code = ticker[:-2]
+        bbg_ticker = Parser.standard_name_map.get(
+            product_code, product_code) + month_code
+        return bbg_ticker
+
     @staticmethod
     def standard_name(name):
         """Return the standard name of this quote used in this app."""
@@ -632,13 +641,6 @@ class CmeFuturesQuoteJsonParser(Parser):
     """Parser for intraday CME futures quotes."""
     def __init__(self, name):
         self.name = name
-
-    def cme_ticker_to_bbg_ticker(self, ticker):
-        """Return the BBG ticker for this CME ticker."""
-        month_code = ticker[-2:]
-        product_code = ticker[:-2]
-        bbg_ticker = Parser.standard_name_map.get(product_code, product_code) + month_code
-        return bbg_ticker
 
     def parse(self, response):
         self.validate_response(response)
@@ -1120,9 +1122,11 @@ class QuikStrikeCtdOtrParser(Parser):
         #  '8/31/2023',                       12  OTR issue date
         #  '4.8816%',                         13  OTR yield
         #  '$37.49']                          14  OTR DV01
+        futureTicker = row[1].split('<span>')[1].split('</span>')[0]
         return {
+            'standardName': self.cme_ticker_to_bbg_ticker(futureTicker),
             'futureName': row[0],
-            'futureTicker': row[1].split('<span>')[1].split('</span>')[0],
+            'futureTicker': futureTicker,
             'futurePrice': row[2],
             'ctdCoupon': self.mixed_number_to_float(row[3]),
             'ctdMaturity': self.standard_date_str(row[4]),

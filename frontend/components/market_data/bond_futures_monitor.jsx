@@ -8,6 +8,7 @@ import Table from 'react-bootstrap/Table';
 import FuturesTable from './futures_table';
 
 const unchColor = '#bdbdbd'; // default text color
+const bbgColor = '#ff6600'; // orange
 
 class BondFuturesMonitor extends React.Component {
     constructor(props) {
@@ -17,6 +18,65 @@ class BondFuturesMonitor extends React.Component {
     }
 
     render() {
+
+        let ctd_table_rows = [<tr><center>{'... Loading data ...'}</center></tr>];
+        
+        if (this.props.quotes.daily.ctdOtrTable) {
+            ctd_table_rows = this.props.quotes.daily.ctdOtrTable.map(record => 
+                <tr key={record.futureName}>
+                    <td style={{
+                        textAlign: 'center',
+                        color: bbgColor
+                    }}>{record.futureName}</td>
+                    <td style={{
+                        textAlign: 'center',
+                        color: bbgColor
+                    }}>{record.standardName}</td>
+                    <td style={{
+                        textAlign: 'center',
+                    }}>{record.futurePrice}</td>
+                    <td style={{
+                        textAlign: 'center',
+                    }}>{record.ctdDeliveryDate}</td>
+                    <td style={{
+                        textAlign: 'center',
+                    }}>{record.ctdCoupon.toFixed(3) + '%'}</td>
+                    <td style={{
+                        textAlign: 'center',
+                    }}>{record.ctdMaturity}</td>
+                    <td style={{
+                        textAlign: 'center',
+                    }}>{record.fwdYield.toFixed(3)}</td>
+                </tr>
+            );
+        }
+
+        const ctd_otr_table = <div
+                style={{overflow: 'auto'}}
+            >
+            <Table
+                id="ctd-otr-table"
+                responsive
+                hover
+            >
+                <thead style={{ color: unchColor }}>
+                    <tr>
+                        <th style={{ textAlign: 'center' }}>Name</th>
+                        <th style={{ textAlign: 'center' }}>Ticker</th>
+                        <th style={{ textAlign: 'center' }}>Price</th>
+                        <th style={{ textAlign: 'center' }}>Delivery Date</th>
+                        <th style={{ textAlign: 'center' }}>CTD Cpn</th>
+                        <th style={{ textAlign: 'center' }}>CTD Maturity</th>
+                        <th style={{ textAlign: 'center' }}>Fwd Yield</th>
+                    </tr>
+                </thead>
+                <tbody
+                    style={{ color: unchColor }}
+                >
+                    {ctd_table_rows}
+                </tbody>
+            </Table>
+        </div>;
 
         const bond_futures_table_heading = (
             <tr style={{ color: unchColor }}>
@@ -34,6 +94,12 @@ class BondFuturesMonitor extends React.Component {
 
         return (
             <Container fluid>
+                <Row>
+                    <Col>
+                        <h2>Active Futures CTD Bonds</h2>
+                            {ctd_otr_table}
+                    </Col>
+                </Row>
                 <Row>
                     <Col>
                         {/* Bond futures table */}
