@@ -1207,7 +1207,7 @@ class QuikStrikeFedWatchParser(QuikStrikeHtmlParser):
         next_meeting_probabilities = meeting_probabilities['probabilities'][0]
 
         running_ease = 0.0
-        tol = 1E-6
+        tol = 1E-1
         range_idx = 0
         for prob in next_meeting_probabilities:
             if (abs(prob - no_change_prob) < tol) and (abs(ease_prob - running_ease) < tol):
