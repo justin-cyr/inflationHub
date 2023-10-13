@@ -41,6 +41,7 @@ class Bond(object):
             maturity_date,
             settlement_days=0,
             settlement_calendars=[],
+            settlement_date=None,
             payment_days=0,
             payment_calendars=[]
         ):
@@ -51,6 +52,7 @@ class Bond(object):
         self.notional = float(notional)
         self.settlement_days = int(settlement_days)
         self.maturity_date = Date(maturity_date)
+        self.settlement_date = Date(settlement_date) if settlement_date else None
         self.settlement_calendars = list(settlement_calendars)
         self.payment_days = int(payment_days)
         self.payment_calendars = list(payment_calendars)
@@ -74,6 +76,7 @@ class Bond(object):
         dated_date = kwargs.get('dated_date')
         tenor = kwargs.get('tenor')
         rate = kwargs.get('rate')
+        settlement_date = kwargs.get('settlement_date')
 
         # optional parameters in kwargs or Bonds.csv
         if 'Convention' not in kwargs:
@@ -127,6 +130,7 @@ class Bond(object):
                 yield_convention,
                 settlement_days=settlement_days,
                 settlement_calendars=settlement_calendars,
+                settlement_date=settlement_date,
                 payment_days=payment_days,
                 payment_calendars=payment_calendars
             )
@@ -144,6 +148,7 @@ class Bond(object):
                     tenor=tenor,
                     settlement_days=settlement_days,
                     settlement_calendars=settlement_calendars,
+                    settlement_date=settlement_date,
                     payment_days=payment_days,
                     payment_calendars=payment_calendars,
                     day_count=day_count
@@ -161,14 +166,16 @@ class Bond(object):
         else:
             return []
 
-    def get_settlement_date(self, base_date):
+    def get_settlement_date(self, base_date=Date.today()):
         # post-condition: returns a Date
-        settlement_date = CalendarUtil.add_business_days(
-            self.settlement_calendars,
-            base_date,
-            self.settlement_days
-        )
-        return settlement_date
+        if not isinstance(self.settlement_date, Date):
+            self.settlement_date = CalendarUtil.add_business_days(
+                self.settlement_calendars,
+                base_date,
+                self.settlement_days
+            )
+
+        return self.settlement_date
 
     def get_projected_cashflows(self, base_date=Date.today()):
         if self.is_fixed and isinstance(self.cashflows, MultiLegCashflows):
@@ -305,6 +312,7 @@ class ZeroCouponBond(Bond):
             yield_convention,
             settlement_days=0,
             settlement_calendars=[],
+            settlement_date=None,
             payment_days=0,
             payment_calendars=[]
         ):
@@ -313,6 +321,7 @@ class ZeroCouponBond(Bond):
             maturity_date,
             settlement_days=settlement_days,
             settlement_calendars=settlement_calendars,
+            settlement_date=settlement_date,
             payment_days=payment_days,
             payment_calendars=payment_calendars
         )
@@ -338,6 +347,7 @@ class FixedRateBond(Bond):
             tenor=None,
             settlement_days=0,
             settlement_calendars=[],
+            settlement_date=None,
             payment_days=0,
             payment_calendars=[],
             day_count=None
@@ -347,6 +357,7 @@ class FixedRateBond(Bond):
             maturity_date,
             settlement_days=settlement_days,
             settlement_calendars=settlement_calendars,
+            settlement_date=settlement_date,
             payment_days=payment_days,
             payment_calendars=payment_calendars
         )
