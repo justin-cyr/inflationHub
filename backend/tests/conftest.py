@@ -22,6 +22,9 @@ import pytest
 #   Run a specific test:
 #   pytest backend/tests/models/bond_model_test.py::test_CG_calibration
 #
+#   Run one case of a parameterized test:
+#   pytest backend/tests/data/data_test.py::test_treasuries_monitor['CNBC TIPS Yields (intraday)']
+#
 
 
 @pytest.fixture()
