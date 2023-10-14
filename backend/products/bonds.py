@@ -375,13 +375,24 @@ class FixedRateBond(Bond):
             if val is None:
                 raise ValueError(f'FixedRateBond: requires argument {name}.')
 
-        # dated_date is required unless Tenor is provided
-        if not tenor:
-            if not dated_date:
-                raise ValueError(f'FixedRateBond: requires either tenor or dated_date.')
-        else:
-            bkwd_tenor = Tenor('-'+tenor)
-            dated_date = self.maturity_date.addTenor(bkwd_tenor)
+        # If dated_date is not provided, then need tenor or settlement_date
+        if not dated_date:
+            if tenor:
+                # shift maturity date backward by tenor
+                bkwd_tenor = Tenor('-'+tenor)
+                dated_date = self.maturity_date.addTenor(bkwd_tenor)
+            elif settlement_date:
+                # shift backward by payment_frequency until reaching settlement_date
+                dated_date = self.maturity_date
+                while dated_date > settlement_date:
+                    dated_date = dated_date.shiftDate(
+                                    payment_frequency,
+                                    bump_direction=BumpDirection.BACKWARD,
+                                    eom_rule=eom_rule
+                                )
+            else:
+                raise ValueError(
+                    f'FixedRateBond: requires dated_date, tenor or settlement_date to determine accrual start.')
 
         self.rate = float(rate)
         self.dated_date = Date(dated_date)

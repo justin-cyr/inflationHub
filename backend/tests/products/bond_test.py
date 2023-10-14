@@ -12,8 +12,7 @@ def bond_with_settlement_date():
         'notional': 100,
         'rate': 0.05,
         'maturity_date': '2025-09-30',
-        'settlement_date': '2024-01-04',
-        'tenor': '2Y'
+        'settlement_date': '2024-01-04'
     }
     return Bond.create_bond(**params)
 
