@@ -73,13 +73,22 @@ class DataAPI(object):
         self.headers = headers
 
         # set DataGetter and Parser
-        data_getter = data_config.get('Getter')
-        if not data_getter:
-            self.data_getter = DataGetter(self.name)
-        else:
-            raise Exception('DataAPI(\'' + name + '\') - unrecognized Getter: ' + data_getter)
+        self.resolve_getter(data_config.get('Getter'))
+        self.resolve_parser(data_config.get('Parser'))
 
-        data_parser = data_config.get('Parser')
+
+    def resolve_getter(self, data_getter):
+        if not data_getter:
+            self.data_getter = HttpGetter(self.name, self.url_query(), headers=self.headers)
+        elif data_getter == 'CompositeGetter':
+            if not self.query_params:
+                raise ValueError(f'CompositeGetter for {self.name} requires non-empty query params.')
+            components = self.query_params[0].split('/')
+            self.data_getter = CompositeGetter(self.name, components=components)
+        else:
+            raise Exception('DataAPI(\'' + self.name + '\') - unrecognized Getter: ' + data_getter)
+
+    def resolve_parser(self, data_parser):
         if not data_parser:
             self.data_parser = Parser()
         elif data_parser == 'CnbcJsonQuoteParser':
@@ -92,6 +101,10 @@ class DataAPI(object):
             self.data_parser = CmeTsyQuoteJsonParser()
         elif data_parser == 'CmeFuturesQuoteJsonParser':
             self.data_parser = CmeFuturesQuoteJsonParser(self.name)
+        elif data_parser == 'BenchmarkBondParser':
+            self.data_parser = BenchmarkBondParser()
+        elif data_parser == 'CtdForwardYieldsParser':
+            self.data_parser = CtdForwardYieldsParser()
         elif data_parser == 'ErisFuturesCsvParser':
             self.data_parser = ErisFuturesCsvParser()
         elif data_parser == 'TimeSeriesCsvParser':
@@ -121,7 +134,7 @@ class DataAPI(object):
         elif data_parser == 'TimeSeriesStatCanXmlParser':
             self.data_parser = TimeSeriesStatCanXmlParser(self.name)
         else:
-            raise Exception('DataAPI(\'' + name + '\') - unrecognized Parser: ' + data_parser)
+            raise Exception('DataAPI(\'' + self.name + '\') - unrecognized Parser: ' + data_parser)
 
 
     def __repr__(self):
@@ -137,7 +150,7 @@ class DataAPI(object):
     
     def get_and_parse_data(self):
         try:
-            response = self.data_getter.get(self.url_query(), headers=self.headers)
+            response = self.data_getter.get()
         except Exception as e:
             app.logger.error('DataAPI(\'' + self.name + '\').get_and_parse_data failed to get data: ' + str(e))
             return dict(errors=str(e))
@@ -158,11 +171,38 @@ class DataGetter(object):
     def __repr__(self):
         return 'DataGetter(\'' + self.name + '\')'
 
-    def get(self, url, headers={}):
+    def get(self):
+        raise  NotImplementedError(f'{self.__class__.__name__}.{__name__}: not implemented in base class')
+
+class HttpGetter(DataGetter):
+    """Make GET request to a url."""
+    def __init__(self, name, url, headers={}):
+        super().__init__(name)
+        self.url = url
+        self.headers = headers
+
+    def get(self):
         """Default implementation: make GET request to url and return response as text."""
-        app.logger.info('DataAPI(\'' + self.name + '\') making request GET ' + url)
-        response = requests.get(url, headers=headers)
+        app.logger.info('DataAPI(\'' + self.name + '\') making request GET ' + self.url)
+        response = requests.get(self.url, headers=self.headers)
         return response
+
+class CompositeGetter(DataGetter):
+    """Combine a list of existing data getters in DataConfig.csv (separated by / in QueryParam1)."""
+    def __init__(self, name, components):
+        super().__init__(name)
+        for name in components:
+            if name not in DATA_CONFIG:
+                raise KeyError(f'{self.__class__.__name__}.{__name__}: Component {name} not fond in DataConfig.')
+        self.components = components
+
+    def get(self):
+        """Get each component and merge the results."""
+        app.logger.info(f'{self.__class__.__name__}.{__name__}: getting composite data for {self.name}')
+        results = {}
+        for name in self.components:
+            results[name] = DataAPI(name=name).get_and_parse_data().get('data')
+        return results
 
 
 class Parser(object):
@@ -288,6 +328,12 @@ class Parser(object):
                 if fmt == 'json':
                     if content_type_format[:4] != fmt:
                         raise Exception('Parser.validate_response - expected Content-Type json but got ' + content_type_format)
+
+    @classmethod
+    def validate_record(cls, record):
+        for a in cls.required_args:
+            if a not in record:
+                raise KeyError(f'{cls.__name__}.{__name__} requires argument {a}.')
 
     def standard_date_str(self, date_str):
         """Return the yyyy-mm-dd format of this state string if it can be inferred.
@@ -1259,6 +1305,109 @@ class QuikStrikeFedWatchParser(QuikStrikeHtmlParser):
             'totalProbabilities': total_probabilites,
             'expectedChangeBps': expected_changes
         }
+
+class CompositeParserSingleton(Parser):
+    def validate_response(self, response):
+        if not isinstance(response, dict) or len(response.values()) != 1:
+            raise ValueError(f'{self.__class__.__name__}.{__name__}: expected response to be a singleton dict')
+
+    def parse(self, response):
+        self.validate_response(response)
+        return list(response.values())[0]
+
+class BenchmarkBondParser(CompositeParserSingleton):
+    # Benchmark bond input
+    benchmark_bond_conventions = {
+        # US Treasuries
+        'US 1M': 'USTBill',
+        'US 2M': 'USTBill',
+        'US 3M': 'USTBill',
+        'US 4M': 'USTBill',
+        'US 6M': 'USTBill',
+        'US 1Y': 'USTBill',
+        'US 2Y': 'USTBond',
+        'US 3Y': 'USTBond',
+        'US 5Y': 'USTBond',
+        'US 7Y': 'USTBond',
+        'US 10Y': 'USTBond',
+        'US 20Y': 'USTBond',
+        'US 30Y': 'USTBond',
+        ####
+        # TIPS
+        'TIPS 5Y': 'USTBond',
+        'TIPS 10Y': 'USTBond',
+        'TIPS 30Y': 'USTBond',
+    }
+
+    required_args = [
+            'standardName',
+            'maturityDate',
+            'timestamp',
+            'yield'
+        ]
+
+    def parse_one_record(self, record):
+        BenchmarkBondParser.validate_record(record)
+
+        name = record['standardName']
+        if not name in BenchmarkBondParser.benchmark_bond_conventions:
+            raise ValueError(f'{name} is not a recognized benchmark bond name.')
+        convention = BenchmarkBondParser.benchmark_bond_conventions[name]
+
+        # expect second part of name is tenor
+        tenor = name.split(' ')[-1]
+        base_date = record['timestamp'][:10]
+
+        bond_inputs = {
+            'Convention': convention,
+            'notional': 100.0,
+            'rate': record.get('coupon', 0.0) / 100.0,
+            'maturity_date': record['maturityDate'],
+            'tenor': tenor,
+            'base_date': base_date,
+            'label': name,
+            'yield': record['yield'] / 100.0
+        }
+        return bond_inputs
+
+    def parse(self, response):
+        res = super().parse(response)
+        bond_list = []
+        for record in res:
+            bond_list.append(self.parse_one_record(record))
+        return bond_list
+
+
+class CtdForwardYieldsParser(CompositeParserSingleton):
+
+    required_args = [
+        'ctdCoupon',
+        'ctdMaturity',
+        'ctdDeliveryDate',
+        'standardName',
+        'fwdYield'
+    ]
+
+    def parse_one_record(self, record):
+        print(record)
+        CtdForwardYieldsParser.validate_record(record)
+        return {
+            'Convention': 'USTBond',
+            'notional': 100.0,
+            'rate': record['ctdCoupon'] / 100.0,
+            'maturity_date': record['ctdMaturity'],
+            'settlement_date': record['ctdDeliveryDate'],
+            'label': record['standardName'] + '_CTD',
+            'yield': record['fwdYield'] / 100.0
+        }
+
+    def parse(self, response):
+        res = super().parse(response)
+        print(res)
+        bond_list = []
+        for record in res:
+            bond_list.append(self.parse_one_record(record))
+        return bond_list
 
 
 def get_fred_data(key, name=None):

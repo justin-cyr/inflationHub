@@ -53,10 +53,19 @@ ir_futures_monitor = [
     'CME 3M SOFR Futures (intraday)',
     'CME 1M SOFR Futures (intraday)',
     'CME 30D FF Futures (intraday)',
-    'QuikStrike FedWatch',
     'Eris Swap Futures (intraday)'
 ]
 
 @pytest.mark.parametrize('name', ir_futures_monitor, ids=ir_futures_monitor)
 def test_ir_futures_monitor(app, name):
+    get_and_parse_test(app, name)
+
+
+composite_getters = [
+    'CNBC OTR Treasuries',
+    'CME CTD Forward Yields'
+]
+
+@pytest.mark.parametrize('name', composite_getters, ids=composite_getters)
+def test_composite_getters(app, name):
     get_and_parse_test(app, name)

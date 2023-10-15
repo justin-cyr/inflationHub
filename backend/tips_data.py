@@ -3,7 +3,7 @@ import datetime
 import os
 import requests
 
-from backend.data import DataGetter, get_fred_data, MarketWatchBondQuoteParser
+from backend.data import HttpGetter, get_fred_data, MarketWatchBondQuoteParser
 from backend.curveconstruction.curvedata import BondYieldDataPoint
 from backend import config as cfg
 
@@ -26,9 +26,9 @@ def calc_tenor(maturity_date, start_date=datetime.date.today()):
 def get_tips_cusips():
     """Return list of TIPS cusips"""
     tips_cusips_url = 'https://www.treasurydirect.gov/TA_WS/secindex/current/CPI?format=json'
-    getter = DataGetter('TIPS CUSIPs')
+    getter = HttpGetter('TIPS CUSIPs', tips_cusips_url)
 
-    response = getter.get(tips_cusips_url)
+    response = getter.get()
     return [record['cusip'] for record in response.json()]
 
 
@@ -74,8 +74,8 @@ def get_treasury_reference_data(cusip):
     """Get reference data for each cusip in CUSIPs from TreasuryDirect."""
     url = 'https://www.treasurydirect.gov/TA_WS/securities/search?format=json&cusip=' + cusip
     
-    getter = DataGetter(cusip)
-    response = getter.get(url)
+    getter = HttpGetter(cusip, url)
+    response = getter.get()
     record = response.json()[0]
     
     # strip timestamp out of date fields
@@ -246,8 +246,8 @@ def get_tips_quotes_from_marketwatch(cusips):
     mapped_cusip_names = ['Bond-US-' + c for c in cusips]
 
     url = endpoint + '?' + '&'.join([k + '=' + v for k, v in static_query_params.items()]) + '&id=' + ','.join(mapped_cusip_names)
-    getter = DataGetter(f'Market-Watch TIPS Quotes {cusips}')
-    response = getter.get(url)
+    getter = HttpGetter(f'Market-Watch TIPS Quotes {cusips}', url)
+    response = getter.get()
     parser = MarketWatchBondQuoteParser()
     return parser.parse(response)
 
