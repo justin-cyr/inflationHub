@@ -53,6 +53,7 @@ ir_futures_monitor = [
     'CME 3M SOFR Futures (intraday)',
     'CME 1M SOFR Futures (intraday)',
     'CME 30D FF Futures (intraday)',
+    'CME US T-Bill Futures (intraday)',
     'Eris Swap Futures (intraday)'
 ]
 

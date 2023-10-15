@@ -279,7 +279,8 @@ class Parser(object):
     # IR Futures
         'SR3': 'SFR',
         'SR1': 'SER',
-        'ZQ': 'FF'
+        'ZQ': 'FF',
+        'TBF3': 'TZR'
     }
 
     cme_month_map = {
