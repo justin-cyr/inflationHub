@@ -1,0 +1,9 @@
+{
+    "model_type": "BondCurve",
+    "quote_source": "CME CTD Forward Yields",
+    "domainX": "TIME_ACT_365",
+    "domainY": "TIME_WEIGHTED_ZERO_RATE",
+    "fitting_method_str": "CubicSpline",
+    "calibration_tolerance": 1E-6,
+    "opt_method": "BFGS"
+}

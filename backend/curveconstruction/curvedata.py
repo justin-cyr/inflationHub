@@ -227,6 +227,8 @@ class BondDataPoint(CurveDataPoint):
             label = '_'.join([self.__class__.__name__, str(self.bond.maturity_date)])
         
         super().__init__(value, label)
+        if base_date is None:
+            base_date = Date.today()
         self.base_date = Date(base_date)
 
     def to_BondPriceAndYieldDataPoint(self):
