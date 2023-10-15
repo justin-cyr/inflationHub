@@ -1,6 +1,6 @@
 {
     "model_type": "BondCurve",
-    "quote_source": "CNBC TIPS Yields (intraday)",
+    "quote_source": "CNBC OTR TIPS",
     "domainX": "TIME_ACT_365",
     "domainY": "TIME_WEIGHTED_ZERO_RATE",
     "fitting_method_str": "CubicSpline",

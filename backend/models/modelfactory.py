@@ -2,7 +2,7 @@
 from .. import config as cfg
 from ..data import DataAPI
 from ..utils import Date
-from ..tips_data import benchmark_bond_yield_data_point
+from ..curveconstruction.curvedata import BondYieldDataPoint
 
 # Import derived model types for building
 from .cpi import CpiModel
@@ -79,9 +79,9 @@ class ModelFactory(object):
 
         if model_type == cfg.BONDCURVE:
             # only Cnbc supported currently, since those have maturity date and coupon
-            quote_source = params.get('quote_source', 'CNBC US Treasury Yields (intraday)')
+            quote_source = params.get('quote_source', 'CNBC OTR Treasuries')
             quotes = DataAPI(quote_source).get_and_parse_data()['data']
-            benchmark_bond_quotes = [benchmark_bond_yield_data_point(**q).serialize() for q in quotes]
+            benchmark_bond_quotes = [BondYieldDataPoint.from_bond_nvps(**q).serialize() for q in quotes]
             return benchmark_bond_quotes
         else:
             raise ValueError(f'ModelFactory.get_model_data: unsupported model type {model_type}')

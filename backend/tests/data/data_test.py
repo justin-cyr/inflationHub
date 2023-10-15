@@ -63,7 +63,8 @@ def test_ir_futures_monitor(app, name):
 
 composite_getters = [
     'CNBC OTR Treasuries',
-    'CME CTD Forward Yields'
+    'CME CTD Forward Yields',
+    'CNBC OTR TIPS'
 ]
 
 @pytest.mark.parametrize('name', composite_getters, ids=composite_getters)

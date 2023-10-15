@@ -4,7 +4,6 @@ from ...curveconstruction.curvedata import BondYieldDataPoint
 from ...curveconstruction import domains
 from ...models.modelfactory import ModelFactory
 from ...data import DataAPI
-from ...tips_data import benchmark_bond_yield_data_point
 
 import pytest
 
@@ -192,9 +191,9 @@ def test_standard_nominal_calibration(app, default_build_params):
     # volatile test: quotes can change on each test run
     build_params = default_build_params
 
-    with app.app_context(): 
-        quotes = DataAPI('CNBC US Treasury Yields (intraday)').get_and_parse_data()['data']
-        benchmark_bond_quotes = [benchmark_bond_yield_data_point(**q).serialize() for q in quotes]
+    with app.app_context():
+        quotes = DataAPI('CNBC OTR Treasuries').get_and_parse_data()['data']
+        benchmark_bond_quotes = [BondYieldDataPoint.from_bond_nvps(**q).serialize() for q in quotes]
         build_params['model_data'] = benchmark_bond_quotes
 
         bond_model = ModelFactory.build(build_params)

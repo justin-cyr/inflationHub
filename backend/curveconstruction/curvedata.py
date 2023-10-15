@@ -268,6 +268,24 @@ class BondYieldDataPoint(BondDataPoint):
 
         return BondYieldDataPoint(d['ytm'], d['bond'], base_date=d.get('base_date'), label=d.get('label'))
 
+    @classmethod
+    def from_bond_nvps(cls, **kwargs):
+        """Return a BondYieldDataPoint for the bond in kwargs."""
+        if 'yield' not in kwargs:
+            raise KeyError(f'{cls.__name__}.{__name__} requires argument yield.')
+
+        bond_dp = {
+            'bond': kwargs,
+            'ytm': kwargs['yield']
+        }
+
+        optional_arguments = ['base_date', 'label']
+        for key in optional_arguments:
+            if key in kwargs:
+                bond_dp[key] = kwargs[key]
+
+        return cls.deserialize(bond_dp)
+
     def to_BondPriceDataPoint(self):
         """Return the equivalent BondPriceDataPoint"""
         clean_price = self.bond.yield_to_clean_price(self.ytm, self.base_date)
