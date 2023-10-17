@@ -231,6 +231,35 @@ def get_tips_prices_wsj():
     return row_data
 
 
+def cusip_to_us_isin(cusip):
+    """Given the CUSIP of a US Govt security, return the ISIN number.
+        This is just the CUSIP with the 'check digit' appended at the end.
+        The check digit is calculated using Luhn's algorithm.
+    """
+    # country code US
+    cusip_num = 3028
+    for c in cusip:
+        if c.isnumeric():
+            cusip_num = cusip_num * 10 + int(c)
+        else:
+            cusip_num = cusip_num * 100 + (ord(c) - 55)
+
+    twice_sum = 0
+    i = 0
+    while cusip_num > 0:
+        d = (cusip_num % 10) * (2 - (i % 2))
+        if d >= 10:
+            twice_sum += d % 10
+            d = d // 10
+        twice_sum += d
+
+        cusip_num = cusip_num // 10
+        i += 1
+
+    check_digit = (- twice_sum) % 10
+    return cusip + str(check_digit)
+
+
 def get_tips_quotes_from_marketwatch(cusips):
     """Query Market-Watch for last price and yield of these TIPS CUSIPs."""
     endpoint = 'https://api.wsj.net/api/dylan/quotes/v2/comp/quoteByDialect'
@@ -242,7 +271,7 @@ def get_tips_quotes_from_marketwatch(cusips):
         'EntitlementToken': 'cecc4267a0194af89ca343805a3e57af',
         'ckey': 'cecc4267a0'
     }
-    mapped_cusip_names = ['Bond-US-' + c for c in cusips]
+    mapped_cusip_names = ['BOND-US-' + cusip_to_us_isin(c) for c in cusips]
 
     url = endpoint + '?' + '&'.join([k + '=' + v for k, v in static_query_params.items()]) + '&id=' + ','.join(mapped_cusip_names)
     getter = HttpGetter(f'Market-Watch TIPS Quotes {cusips}', url)
