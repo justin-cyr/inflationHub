@@ -790,6 +790,12 @@ class MarketWatchBondQuoteParser(Parser):
                             res_record['name'] = match['Instrument'].get('CommonName')
                             res_record['standardName'] = Parser.standard_name(res_record['name'])
 
+                            res_record['isin'] = match['Instrument'].get('Isin')
+                            res_record['cusip'] = match['Instrument'].get('Cusip')
+
+                            if not res_record['standardName']:
+                                res_record['standardName'] = res_record['cusip']
+
                         # Price
                         if 'BondSpecific' in match:
                             bond_specific = match['BondSpecific']
