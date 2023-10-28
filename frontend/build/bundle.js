@@ -3465,6 +3465,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_MW": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_MW),
 /* harmony export */   "RECEIVE_OTR_TSY_QUOTES_WSJ": () => (/* binding */ RECEIVE_OTR_TSY_QUOTES_WSJ),
 /* harmony export */   "RECEIVE_TIPS_PRICES": () => (/* binding */ RECEIVE_TIPS_PRICES),
+/* harmony export */   "RECEIVE_TIPS_PRICES_MW": () => (/* binding */ RECEIVE_TIPS_PRICES_MW),
 /* harmony export */   "RECEIVE_YF_WS_QUOTE": () => (/* binding */ RECEIVE_YF_WS_QUOTE),
 /* harmony export */   "updateBondFuturesQuotesCme": () => (/* binding */ updateBondFuturesQuotesCme),
 /* harmony export */   "updateCtdOtrTableCme": () => (/* binding */ updateCtdOtrTableCme),
@@ -3474,6 +3475,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "updateOtrTsyQuotesMw": () => (/* binding */ updateOtrTsyQuotesMw),
 /* harmony export */   "updateOtrTsyQuotesWsj": () => (/* binding */ updateOtrTsyQuotesWsj),
 /* harmony export */   "updateTipsPrices": () => (/* binding */ updateTipsPrices),
+/* harmony export */   "updateTipsPricesMw": () => (/* binding */ updateTipsPricesMw),
 /* harmony export */   "updateYfWsQuote": () => (/* binding */ updateYfWsQuote)
 /* harmony export */ });
 /* harmony import */ var _requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../requests/quotesDaily */ "./requests/quotesDaily.js");
@@ -3481,6 +3483,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const RECEIVE_TIPS_PRICES = 'RECEIVE_TIPS_PRICES';
+const RECEIVE_TIPS_PRICES_MW = 'RECEIVE_TIPS_PRICES_MW';
 const RECEIVE_OTR_TIPS_QUOTES_CNBC = 'RECEIVE_OTR_TIPS_QUOTES_CNBC';
 const RECEIVE_OTR_TSY_QUOTES_WSJ = 'RECEIVE_OTR_TSY_QUOTES_WSJ';
 const RECEIVE_OTR_TSY_QUOTES_CNBC = 'RECEIVE_OTR_TSY_QUOTES_CNBC';
@@ -3493,6 +3496,11 @@ const quoteUpdateFreq = 10000;
 
 const receiveTipsPrices = response => ({
   type: RECEIVE_TIPS_PRICES,
+  response
+});
+
+const receiveTipsPricesMw = response => ({
+  type: RECEIVE_TIPS_PRICES_MW,
   response
 });
 
@@ -3537,6 +3545,9 @@ const receiveCtdOtrTableCme = response => ({
 });
 
 const updateTipsPrices = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getTipsPrices)().then(response => dispatch(receiveTipsPrices(response)));
+const updateTipsPricesMw = cusips => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getTipsPricesMw)(cusips).then(response => dispatch(receiveTipsPricesMw(response))).then(() => {
+  setTimeout(() => dispatch(updateTipsPricesMw(cusips)), quoteUpdateFreq);
+});
 const updateOtrTipsQuotesCnbc = () => dispatch => (0,_requests_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.getOtrTipsQuotesCnbc)().then(response => dispatch(receiveOtrTipsQuotesCnbc(response))).then(() => {
   setTimeout(() => dispatch(updateOtrTipsQuotesCnbc()), quoteUpdateFreq);
 });
@@ -6913,6 +6924,7 @@ class StateLoader extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
 
   componentDidMount() {
     this.props.updateTipsCusips().then(() => {
+      this.props.updateTipsPricesMw(this.props.referenceData.tips.cusips);
       this.props.referenceData.tips.cusips.map(cusip => this.props.updateTipsRefData(cusip));
     });
     this.props.updateTipsPrices();
@@ -6985,6 +6997,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   updateTipsPrices: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateTipsPrices)()),
+  updateTipsPricesMw: cusips => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateTipsPricesMw)(cusips)),
   updateOtrTipsQuotesCnbc: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTipsQuotesCnbc)()),
   updateOtrTsyQuotesWsj: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesWsj)()),
   updateOtrTsyQuotesCnbc: () => dispatch((0,_actions_quotesDaily__WEBPACK_IMPORTED_MODULE_1__.updateOtrTsyQuotesCnbc)()),
@@ -7569,7 +7582,8 @@ const _emptyState = {
     tips: {
       otr: {
         cnbc: {}
-      }
+      },
+      byCusip: {}
     },
     tsys: {
       otr: {
@@ -7714,6 +7728,20 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
           }
         }
       };
+
+    case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_TIPS_PRICES_MW:
+      {
+        const newTipsPricesByCusip = newOtrTsyQuotes(state.daily.tips.byCusip, action.response.data);
+        return { ...state,
+          daily: { ...state.daily,
+            tips: { ...state.daily.tips,
+              byCusip: { ...state.daily.tips.byCusip,
+                ...newTipsPricesByCusip
+              }
+            }
+          }
+        };
+      }
 
     case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_OTR_TIPS_QUOTES_CNBC:
       {
@@ -7986,7 +8014,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getOtrTsyQuotesCnbc": () => (/* binding */ getOtrTsyQuotesCnbc),
 /* harmony export */   "getOtrTsyQuotesMw": () => (/* binding */ getOtrTsyQuotesMw),
 /* harmony export */   "getOtrTsyQuotesWsj": () => (/* binding */ getOtrTsyQuotesWsj),
-/* harmony export */   "getTipsPrices": () => (/* binding */ getTipsPrices)
+/* harmony export */   "getTipsPrices": () => (/* binding */ getTipsPrices),
+/* harmony export */   "getTipsPricesMw": () => (/* binding */ getTipsPricesMw)
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
@@ -8023,6 +8052,13 @@ const getBondFuturesQuotesCme = dataName => jquery__WEBPACK_IMPORTED_MODULE_0___
 const getData = dataName => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
   url: '/data/' + dataName,
   method: 'GET'
+});
+const getTipsPricesMw = cusips => jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+  url: 'tips_prices_mw',
+  method: 'POST',
+  data: {
+    cusips: cusips
+  }
 });
 
 /***/ }),

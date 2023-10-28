@@ -1,7 +1,8 @@
-import { getTipsPrices, getOtrTsyQuotesWsj, getOtrTsyQuotesCnbc, getOtrTsyQuotesMw, getOtrTsyQuotesCme, getOtrTipsQuotesCnbc, getBondFuturesQuotesCme, getData } from "../requests/quotesDaily";
+import { getTipsPrices, getOtrTsyQuotesWsj, getOtrTsyQuotesCnbc, getOtrTsyQuotesMw, getOtrTsyQuotesCme, getOtrTipsQuotesCnbc, getBondFuturesQuotesCme, getData, getTipsPricesMw } from "../requests/quotesDaily";
 import { decodePricingData } from "../protobuf/pricingData";
 
 export const RECEIVE_TIPS_PRICES = 'RECEIVE_TIPS_PRICES';
+export const RECEIVE_TIPS_PRICES_MW = 'RECEIVE_TIPS_PRICES_MW';
 export const RECEIVE_OTR_TIPS_QUOTES_CNBC = 'RECEIVE_OTR_TIPS_QUOTES_CNBC';
 
 export const RECEIVE_OTR_TSY_QUOTES_WSJ = 'RECEIVE_OTR_TSY_QUOTES_WSJ';
@@ -17,6 +18,11 @@ const quoteUpdateFreq = 10000;
 
 const receiveTipsPrices = response => ({
     type: RECEIVE_TIPS_PRICES,
+    response
+});
+
+const receiveTipsPricesMw = response => ({
+    type: RECEIVE_TIPS_PRICES_MW,
     response
 });
 
@@ -62,6 +68,10 @@ const receiveCtdOtrTableCme = response => ({
 
 export const updateTipsPrices = () => dispatch => getTipsPrices()
     .then(response => dispatch(receiveTipsPrices(response)));
+
+export const updateTipsPricesMw = (cusips) => dispatch => getTipsPricesMw(cusips)
+    .then(response => dispatch(receiveTipsPricesMw(response)))
+    .then(() => { setTimeout(() => dispatch(updateTipsPricesMw(cusips)), quoteUpdateFreq) });
 
 export const updateOtrTipsQuotesCnbc = () => dispatch => getOtrTipsQuotesCnbc()
     .then(response => dispatch(receiveOtrTipsQuotesCnbc(response)))

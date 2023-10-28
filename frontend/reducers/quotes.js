@@ -1,10 +1,10 @@
-import { RECEIVE_TIPS_PRICES, RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME, RECEIVE_BOND_FUTURES_QUOTES_CME, RECEIVE_YF_WS_QUOTE, RECEIVE_CTD_OTR_TABLE_CME } from "../actions/quotesDaily";
+import { RECEIVE_TIPS_PRICES, RECEIVE_TIPS_PRICES_MW, RECEIVE_OTR_TIPS_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_WSJ, RECEIVE_OTR_TSY_QUOTES_CNBC, RECEIVE_OTR_TSY_QUOTES_MW, RECEIVE_OTR_TSY_QUOTES_CME, RECEIVE_BOND_FUTURES_QUOTES_CME, RECEIVE_YF_WS_QUOTE, RECEIVE_CTD_OTR_TABLE_CME } from "../actions/quotesDaily";
 
 // default state
 const _emptyState = {
     daily: {
         tipsPrices: { priceData: [] },
-        tips: { otr: { cnbc: {} } },
+        tips: { otr: { cnbc: {} }, byCusip: {} },
         tsys: { otr: { wsj: {}, cnbc: {}, mw: {}, cme: {} } },
         ctdOtrTable: [],
         futures: {},
@@ -152,6 +152,25 @@ export default (state = _emptyState, action) => {
                 }
             };
         
+        case RECEIVE_TIPS_PRICES_MW:
+        {
+            const newTipsPricesByCusip = newOtrTsyQuotes(state.daily.tips.byCusip, action.response.data);
+
+            return {
+                ...state,
+                daily: {
+                    ...state.daily,
+                    tips: {
+                        ...state.daily.tips,
+                        byCusip: {
+                            ...state.daily.tips.byCusip,
+                            ...newTipsPricesByCusip
+                        }
+                    }
+                }
+            };
+        }
+
         case RECEIVE_OTR_TIPS_QUOTES_CNBC:
         {
             const newOtrTips = newOtrTsyQuotes(state.daily.tips.otr.cnbc, action.response.data);

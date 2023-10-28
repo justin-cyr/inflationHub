@@ -114,6 +114,19 @@ def get_tips_yield_data(cusip):
         return dict(errors=str(e))
 
 
+@app.route('/tips_prices_mw', methods=['POST'])
+def get_tips_prices_mw():
+    try:
+        from backend.tips_data import get_tips_quotes_from_marketwatch as get_prices
+        payload = process_form_data(request.form, [], ['cusips'])
+        cusips = payload['cusips']
+        price_data = get_prices(cusips)
+        return dict(data=price_data)
+
+    except Exception as e:
+        app.logger.error(str(e))
+        return dict(errors=str(e))
+
 @app.route('/tips_prices')
 @cache.cached(timeout=1800)
 def get_tips_prices():

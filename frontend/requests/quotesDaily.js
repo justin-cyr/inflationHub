@@ -56,3 +56,13 @@ export const getData = (dataName) => (
         method: 'GET'
     })
 );
+
+export const getTipsPricesMw = (cusips) => (
+    $.ajax({
+        url: 'tips_prices_mw',
+        method: 'POST',
+        data: {
+            cusips: cusips
+        }
+    })
+);
