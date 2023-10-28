@@ -62,6 +62,7 @@ class TipsData extends React.Component {
         this.getTipsYields = this.getTipsYields.bind(this);
         this.getTipsPrices = this.getTipsPrices.bind(this);
         this.handleCusipSelect = this.handleCusipSelect.bind(this);
+        this.liveYieldColor = this.liveYieldColor.bind(this);
     }
 
     getTipsCusips() {
@@ -266,6 +267,20 @@ class TipsData extends React.Component {
         );
     }
 
+    liveYieldColor(record) {
+        const hasCloseYield = ('YIELD' in record);
+        const hasLiveYield = (record['cusip'] in this.props.quotes.daily.tips.byCusip) && ('yield' in this.props.quotes.daily.tips.byCusip[record['cusip']]);
+        if (hasCloseYield && hasLiveYield) {
+            const closeYield = record['YIELD'];
+            const liveYield = this.props.quotes.daily.tips.byCusip[record['cusip']].yield;
+
+            return (liveYield > closeYield) ? this.state.downColor : this.state.upColor;
+        }
+        else {
+            return this.state.bbgColor;
+        }
+    }
+
     componentDidMount() {
         this._isMounted = true;
         this.getTipsPrices();
@@ -360,11 +375,11 @@ class TipsData extends React.Component {
                         <td style={{ textAlign: 'center',
                                      color: record['CHANGE'] >= 0 ? this.state.upColor : this.state.downColor
                                                          }}>{'YIELD' in record ? Number(record['YIELD']).toFixed(3) + '%' : ''}</td>
+                        <td style={{ textAlign: 'center',
+                                    color: this.liveYieldColor(record)
+                        }}>{record['cusip'] in this.props.quotes.daily.tips.byCusip ? Number(this.props.quotes.daily.tips.byCusip[record['cusip']].yield).toFixed(3) + '%' : ''}</td>
                         <td style={ numberStyle }>{'BID' in record ? Number(record['BID']).toFixed(2) : ''}</td>
                         <td style={ numberStyle }>{'ASK' in record ? Number(record['ASK']).toFixed(2) : ''}</td>
-                        <td style={{ textAlign: 'center', 
-                            fontWeight: Math.min(900, Math.max(100, -200 * (Number(record['BID_ASK_SPREAD']) - 2) + 900)) || 400
-                                                         }}>{'BID_ASK_SPREAD' in record ? Number(record['BID_ASK_SPREAD']).toFixed(0) : ''}</td>
                     </tr>    
                 );
 
@@ -383,10 +398,10 @@ class TipsData extends React.Component {
                         <th style={{ textAlign: 'center' }}>CUSIP</th>
                         <th style={{ textAlign: 'center' }}>Tenor</th>
                         <th style={{ textAlign: 'center' }}>Term</th>
-                        <th style={{ textAlign: 'center' }}>YTM</th>
+                        <th style={{ textAlign: 'center' }}>Close Yield</th>
+                        <th style={{ textAlign: 'center' }}>Live Yield</th>
                         <th style={{ textAlign: 'center' }}>Bid</th>
                         <th style={{ textAlign: 'center' }}>Ask</th>
-                        <th style={{ textAlign: 'center' }}>Spread</th>
                     </tr>
                 </thead>
                 <tbody

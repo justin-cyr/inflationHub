@@ -7095,6 +7095,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     this.getTipsYields = this.getTipsYields.bind(this);
     this.getTipsPrices = this.getTipsPrices.bind(this);
     this.handleCusipSelect = this.handleCusipSelect.bind(this);
+    this.liveYieldColor = this.liveYieldColor.bind(this);
   }
 
   getTipsCusips() {
@@ -7296,6 +7297,19 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     });
   }
 
+  liveYieldColor(record) {
+    const hasCloseYield = ('YIELD' in record);
+    const hasLiveYield = record['cusip'] in this.props.quotes.daily.tips.byCusip && 'yield' in this.props.quotes.daily.tips.byCusip[record['cusip']];
+
+    if (hasCloseYield && hasLiveYield) {
+      const closeYield = record['YIELD'];
+      const liveYield = this.props.quotes.daily.tips.byCusip[record['cusip']].yield;
+      return liveYield > closeYield ? this.state.downColor : this.state.upColor;
+    } else {
+      return this.state.bbgColor;
+    }
+  }
+
   componentDidMount() {
     this._isMounted = true;
     this.getTipsPrices();
@@ -7401,15 +7415,15 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
           color: record['CHANGE'] >= 0 ? this.state.upColor : this.state.downColor
         }
       }, 'YIELD' in record ? Number(record['YIELD']).toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+        style: {
+          textAlign: 'center',
+          color: this.liveYieldColor(record)
+        }
+      }, record['cusip'] in this.props.quotes.daily.tips.byCusip ? Number(this.props.quotes.daily.tips.byCusip[record['cusip']].yield).toFixed(3) + '%' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: numberStyle
       }, 'BID' in record ? Number(record['BID']).toFixed(2) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: numberStyle
-      }, 'ASK' in record ? Number(record['ASK']).toFixed(2) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
-        style: {
-          textAlign: 'center',
-          fontWeight: Math.min(900, Math.max(100, -200 * (Number(record['BID_ASK_SPREAD']) - 2) + 900)) || 400
-        }
-      }, 'BID_ASK_SPREAD' in record ? Number(record['BID_ASK_SPREAD']).toFixed(0) : '')));
+      }, 'ASK' in record ? Number(record['ASK']).toFixed(2) : '')));
       data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           height: '500px',
@@ -7447,7 +7461,11 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         style: {
           textAlign: 'center'
         }
-      }, "YTM"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      }, "Close Yield"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+        style: {
+          textAlign: 'center'
+        }
+      }, "Live Yield"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
         style: {
           textAlign: 'center'
         }
@@ -7455,11 +7473,7 @@ class TipsData extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         style: {
           textAlign: 'center'
         }
-      }, "Ask"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
-        style: {
-          textAlign: 'center'
-        }
-      }, "Spread"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+      }, "Ask"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
         style: {
           color: '#bdbdbd'
         }
