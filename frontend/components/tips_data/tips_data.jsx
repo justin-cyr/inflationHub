@@ -32,8 +32,8 @@ class TipsData extends React.Component {
             text: priceData.map(record => record.MATURITY),
             type: 'scatter',
             mode: 'markers',
-            showlegend: false,
-            name: 'Real Yields'
+            showlegend: true,
+            name: 'Close'
         }
 
         this._isMounted = false;
@@ -133,8 +133,8 @@ class TipsData extends React.Component {
                     text: priceData.map(record => record.MATURITY),
                     type: 'scatter',
                     mode: 'markers',
-                    showlegend: false,
-                    name: 'Real Yields'
+                    showlegend: true,
+                    name: 'Close'
                 }
 
                 this._isMounted && this.setState({
@@ -267,6 +267,35 @@ class TipsData extends React.Component {
         );
     }
 
+    liveYieldSeries() {
+        const tipsByCusip = this.props.quotes.daily.tips.byCusip;
+        let xs = [];
+        let ys = [];
+        let labels = [];
+
+        for (let record of this.state.referenceData) {
+            if (record.cusip in tipsByCusip) {
+                xs = xs.concat(record.TENOR);
+                ys = ys.concat(tipsByCusip[record.cusip].yield / 100);
+                labels = labels.concat(record.MATURITY);
+            }
+        }
+
+        let series = undefined;
+        if (xs.length > 0) {
+            series = {
+                x: xs,
+                y: ys,
+                text: labels,
+                type: 'scatter',
+                mode: 'markers',
+                showlegend: true,
+                name: 'Live'
+            }
+        }
+        return series;
+    }
+
     liveYieldColor(record) {
         const hasCloseYield = ('YIELD' in record);
         const hasLiveYield = (record['cusip'] in this.props.quotes.daily.tips.byCusip) && ('yield' in this.props.quotes.daily.tips.byCusip[record['cusip']]);
@@ -277,7 +306,7 @@ class TipsData extends React.Component {
             return (liveYield > closeYield) ? this.state.downColor : this.state.upColor;
         }
         else {
-            return this.state.bbgColor;
+            return this.state.unchColor;
         }
     }
 
@@ -335,7 +364,13 @@ class TipsData extends React.Component {
             scrollZoom: true,
         };
 
-        Plotly.react('real-yield-chart', this.state.chartData, chartLayout, chartConfig);
+        let chartData = this.state.chartData;
+        const liveData = this.liveYieldSeries();
+        if (liveData) {
+            chartData = chartData.concat(liveData);
+        }
+
+        Plotly.react('real-yield-chart', chartData, chartLayout, chartConfig);
         
     }
 
@@ -380,11 +415,15 @@ class TipsData extends React.Component {
                         }}>{record['cusip'] in this.props.quotes.daily.tips.byCusip ? Number(this.props.quotes.daily.tips.byCusip[record['cusip']].yield).toFixed(3) + '%' : ''}</td>
                         <td style={ numberStyle }>{'BID' in record ? Number(record['BID']).toFixed(2) : ''}</td>
                         <td style={ numberStyle }>{'ASK' in record ? Number(record['ASK']).toFixed(2) : ''}</td>
+                        <td style={{
+                            textAlign: 'center',
+                            color: this.liveYieldColor(record)
+                        }}>{record['cusip'] in this.props.quotes.daily.tips.byCusip ? Number(this.props.quotes.daily.tips.byCusip[record['cusip']].price).toFixed(5) : ''}</td>
                     </tr>    
                 );
 
             data_table = <div
-                style={{ height: '500px', overflow: 'auto' }}
+                style={{ height: '800px', overflow: 'auto' }}
             >
             <Table
                 id="tips-data-table"
@@ -402,6 +441,7 @@ class TipsData extends React.Component {
                         <th style={{ textAlign: 'center' }}>Live Yield</th>
                         <th style={{ textAlign: 'center' }}>Bid</th>
                         <th style={{ textAlign: 'center' }}>Ask</th>
+                        <th style={{ textAlign: 'center' }}>Live Price</th>
                     </tr>
                 </thead>
                 <tbody
