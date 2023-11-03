@@ -34,6 +34,7 @@ class BondFuturesMonitor extends React.Component {
                     }}>{record.standardName}</td>
                     <td style={{
                         textAlign: 'center',
+                        color: this.getChangeColor({ 'dummy': { 'yieldChange': -record['yieldChange'] } }, 'dummy', 'yieldChange')
                     }}>{record.futurePrice}</td>
                     <td style={{
                         textAlign: 'center',
@@ -46,6 +47,7 @@ class BondFuturesMonitor extends React.Component {
                     }}>{record.ctdMaturity}</td>
                     <td style={{
                         textAlign: 'center',
+                        color: this.getChangeColor({'dummy': record}, 'dummy', 'yieldChange')
                     }}>{record.fwdYield.toFixed(3)}</td>
                 </tr>
             );
@@ -63,7 +65,9 @@ class BondFuturesMonitor extends React.Component {
                     <tr>
                         <th style={{ textAlign: 'center' }}>Name</th>
                         <th style={{ textAlign: 'center' }}>Ticker</th>
-                        <th style={{ textAlign: 'center' }}>Price</th>
+                        <th style={{ textAlign: 'center' }}>Price
+                            <img src={this.props.referenceData.logos.cme} width="30" height="30"></img>
+                        </th>
                         <th style={{ textAlign: 'center' }}>Delivery Date</th>
                         <th style={{ textAlign: 'center' }}>CTD Cpn</th>
                         <th style={{ textAlign: 'center' }}>CTD Maturity</th>

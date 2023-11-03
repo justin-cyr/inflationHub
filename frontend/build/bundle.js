@@ -5860,7 +5860,12 @@ class BondFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
       }, record.standardName), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'center'
+          textAlign: 'center',
+          color: this.getChangeColor({
+            'dummy': {
+              'yieldChange': -record['yieldChange']
+            }
+          }, 'dummy', 'yieldChange')
         }
       }, record.futurePrice), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
@@ -5876,7 +5881,10 @@ class BondFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         }
       }, record.ctdMaturity), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
         style: {
-          textAlign: 'center'
+          textAlign: 'center',
+          color: this.getChangeColor({
+            'dummy': record
+          }, 'dummy', 'yieldChange')
         }
       }, record.fwdYield.toFixed(3))));
     }
@@ -7774,6 +7782,32 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
   }
 
   return newFutures;
+};
+
+const newCtdOtrTable = (currentCtdOtrTable, responseData) => {
+  if (currentCtdOtrTable.length === 0) {
+    return responseData;
+  }
+
+  let newCtdOtrTabe = currentCtdOtrTable;
+
+  for (let record of responseData) {
+    for (let i = 0; i < newCtdOtrTabe.length; ++i) {
+      let existingRecord = newCtdOtrTabe[i];
+
+      if (record.futureTicker === existingRecord.futureTicker) {
+        const yieldChange = existingRecord.fwdYield - record.fwdYield;
+
+        if (yieldChange !== 0) {
+          existingRecord = record;
+        }
+
+        existingRecord.yieldChange = yieldChange;
+      }
+    }
+  }
+
+  return newCtdOtrTabe;
 }; // Daily quotes reducer
 
 
@@ -7889,7 +7923,7 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
         const ticker = action.response.id;
         return { ...state,
           daily: { ...state.daily,
-            yfQuotes: { ...state.yfQuotes,
+            yfQuotes: { ...state.daily.yfQuotes,
               [ticker]: action.response
             }
           }
@@ -7898,9 +7932,10 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
 
     case _actions_quotesDaily__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_CTD_OTR_TABLE_CME:
       {
+        const newCtds = newCtdOtrTable(state.daily.ctdOtrTable, action.response.data);
         return { ...state,
           daily: { ...state.daily,
-            ctdOtrTable: action.response.data
+            ctdOtrTable: newCtds
           }
         };
       }

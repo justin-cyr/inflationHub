@@ -135,6 +135,30 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
     return newFutures;
 };
 
+const newCtdOtrTable = (currentCtdOtrTable, responseData) => {
+
+    if (currentCtdOtrTable.length === 0) {
+        return responseData;
+    }
+
+    let newCtdOtrTabe = currentCtdOtrTable;
+
+    for (let record of responseData) {
+        for (let i = 0; i < newCtdOtrTabe.length; ++i) {
+            let existingRecord = newCtdOtrTabe[i];
+            if (record.futureTicker === existingRecord.futureTicker) {
+                const yieldChange = existingRecord.fwdYield - record.fwdYield;
+                if (yieldChange !== 0) {
+                    existingRecord = record;
+                }
+                existingRecord.yieldChange = yieldChange;
+            }
+        }
+    }
+
+    return newCtdOtrTabe;
+};
+
 // Daily quotes reducer
 export default (state = _emptyState, action) => {
     Object.freeze(state);
@@ -287,7 +311,7 @@ export default (state = _emptyState, action) => {
                 daily: {
                     ...state.daily,
                     yfQuotes: {
-                        ...state.yfQuotes,
+                        ...state.daily.yfQuotes,
                         [ticker]: action.response
                     }
                 }
@@ -296,11 +320,13 @@ export default (state = _emptyState, action) => {
 
         case RECEIVE_CTD_OTR_TABLE_CME:
         {
+            const newCtds = newCtdOtrTable(state.daily.ctdOtrTable, action.response.data);
+
             return {
                 ...state,
                 daily: {
                     ...state.daily,
-                    ctdOtrTable: action.response.data
+                    ctdOtrTable: newCtds
                 }
             }
         }
