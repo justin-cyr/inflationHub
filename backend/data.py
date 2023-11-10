@@ -9,6 +9,7 @@ from xml.etree import ElementTree
 from flask import current_app as app
 
 from .utils import Date, DateTime
+from .curveconstruction.curvedata import CpiLevelDataPoint, YoYDataPoint
 
 # Read DataConfig.csv
 DATA_CONFIG = pd.read_csv(
@@ -129,6 +130,8 @@ class DataAPI(object):
             self.data_parser = QuikStrikeFedWatchParser()
         elif data_parser == 'CompositeParserTimeSeriesLatest':
             self.data_parser = CompositeParserTimeSeriesLatest()
+        elif data_parser == 'InflationExpectationCurveDataParser':
+            self.data_parser = InflationExpectationCurveDataParser()
         elif data_parser == 'YahooQuoteJsonParser':
             self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -1438,7 +1441,26 @@ class CompositeParserTimeSeriesLatest(Parser):
 
     def parse(self, response):
         self.validate_response(response)
-        return {k: v[k][-1] for k, v in response.items()}
+        return {k: {'Date': v['Date'][-1], 'Value': v[k][-1]} for k, v in response.items()}
+
+
+class InflationExpectationCurveDataParser(CompositeParserTimeSeriesLatest):
+    def parse(self, response):
+        res = super().parse(response)
+        points = []
+        start_date = None
+        for k, v in res.items():
+            if len(k.split('CPI')) > 1:
+                start_date = Date(v['Date'])
+                points.append(CpiLevelDataPoint(v['Value'], start_date, label=k).serialize())
+                del res[k]
+                break
+        
+        for k, v in res.items():
+            tenor = k.split('Y')[0] + 'Y'
+            points.append(YoYDataPoint(v['Value'] / 100.0, start_date, tenor, label=k).serialize())
+        
+        return points
 
 
 def get_fred_data(key, name=None):

@@ -83,5 +83,11 @@ class ModelFactory(object):
             quotes = DataAPI(quote_source).get_and_parse_data()['data']
             benchmark_bond_quotes = [BondYieldDataPoint.from_bond_nvps(**q).serialize() for q in quotes]
             return benchmark_bond_quotes
+
+        elif model_type == cfg.CPI:
+            quote_source = params['quote_source']
+            cpi_curve_quotes = DataAPI(quote_source).get_and_parse_data()['data']
+            return cpi_curve_quotes
+
         else:
             raise ValueError(f'ModelFactory.get_model_data: unsupported model type {model_type}')

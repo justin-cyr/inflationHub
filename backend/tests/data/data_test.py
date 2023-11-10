@@ -66,7 +66,7 @@ composite_getters = [
     'CNBC OTR Treasuries',
     'CME CTD Forward Yields',
     'CNBC OTR TIPS',
-    'Inflation Expectations'
+    'Inflation Expectation Curve Data'
 ]
 
 @pytest.mark.parametrize('name', composite_getters, ids=composite_getters)

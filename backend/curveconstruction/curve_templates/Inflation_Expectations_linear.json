@@ -1,0 +1,7 @@
+{
+    "model_type": "CPI",
+    "quote_source": "Inflation Expectation Curve Data",
+    "domainX": "TIME_ACT_365",
+    "domainY": "TIME_WEIGHTED_ZERO_RATE",
+    "fitting_method_str": "PiecewiseLinear"
+}
