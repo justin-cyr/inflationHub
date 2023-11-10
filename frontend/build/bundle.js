@@ -7889,7 +7889,7 @@ const newBondFuturesQuotesCme = (currentFutures, responseData) => {
         const ticker = action.response.id;
         return { ...state,
           daily: { ...state.daily,
-            yfQuotes: { ...state.yfQuotes,
+            yfQuotes: { ...state.daily.yfQuotes,
               [ticker]: action.response
             }
           }
