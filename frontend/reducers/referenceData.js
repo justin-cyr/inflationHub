@@ -5,6 +5,7 @@ const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.
 const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
 const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
 const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
+const yfLogo = "https://s.yimg.com/cv/apiv2/default/20211027/logo-18-18.svg";
 
 const benchmarkTsys = [
     'US 1M',
@@ -30,7 +31,7 @@ const benchmarkTips = [
 
 // default state
 const _emptyState = {
-    logos: { cnbc: cnbcLogo, wsj: wsjLogo, mw: mwLogo, cme: cmeLogo },
+    logos: { cnbc: cnbcLogo, wsj: wsjLogo, mw: mwLogo, cme: cmeLogo, yf: yfLogo },
     tips: { cusips: [], otr: {}, bonds: {}, benchmarkTips: benchmarkTips },
     tsys: { cusips: [], otr: {}, bonds: {}, benchmarkTsys: benchmarkTsys },
 }

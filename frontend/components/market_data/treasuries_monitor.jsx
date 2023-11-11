@@ -212,7 +212,7 @@ class TreasuriesMonitor extends React.Component {
                             etfs={tsyEtfs}
                             data={tsyEtfData}
                             getChangeColor={this.getChangeColor}
-                            logo={this.props.referenceData.logos.cnbc}
+                            logo={this.props.referenceData.logos.yf}
                         />
                     </Col>
                 </Row>

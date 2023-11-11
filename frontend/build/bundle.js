@@ -6902,7 +6902,7 @@ class TreasuriesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       etfs: tsyEtfs,
       data: tsyEtfData,
       getChangeColor: this.getChangeColor,
-      logo: this.props.referenceData.logos.cnbc
+      logo: this.props.referenceData.logos.yf
     }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], {
       style: {
         paddingTop: '25px'
@@ -8090,6 +8090,7 @@ const cnbcLogo = "https://upload.wikimedia.org/wikipedia/commons/e/e3/CNBC_logo.
 const wsjLogo = "https://www.redledges.com/wp-content/uploads/2021/09/WSJ-logo-black.jpeg";
 const mwLogo = "https://www.saashub.com/images/app/service_logos/19/47ac30a4ded4/medium.png?1542368413";
 const cmeLogo = "https://ffnews.com/wp-content/uploads/2022/03/1625171625444.jpg";
+const yfLogo = "https://s.yimg.com/cv/apiv2/default/20211027/logo-18-18.svg";
 const benchmarkTsys = ['US 1M', 'US 2M', 'US 3M', 'US 4M', 'US 6M', 'US 1Y', 'US 2Y', 'US 3Y', 'US 5Y', 'US 7Y', 'US 10Y', 'US 20Y', 'US 30Y'];
 const benchmarkTips = ['TIPS 5Y', 'TIPS 10Y', 'TIPS 30Y']; // default state
 
@@ -8098,7 +8099,8 @@ const _emptyState = {
     cnbc: cnbcLogo,
     wsj: wsjLogo,
     mw: mwLogo,
-    cme: cmeLogo
+    cme: cmeLogo,
+    yf: yfLogo
   },
   tips: {
     cusips: [],
