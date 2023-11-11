@@ -302,6 +302,12 @@ class CurveViewer extends React.Component {
                                     <div id="zero_rate"></div>
                                 </Row>
                                 <Row>
+                                    <div id="cpi"></div>
+                                </Row>
+                                <Row>
+                                    <div id="cpi_trend"></div>
+                                </Row>
+                                <Row>
                                     <div id="df"></div>
                                 </Row>
                                 <Row>
