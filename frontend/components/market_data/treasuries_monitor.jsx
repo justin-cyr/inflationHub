@@ -18,7 +18,19 @@ const tsyEtfs = {
     'TLH': '10-20Y',
     'TLT': '20-30Y',
 };
-const tipsEtfs = ['TIP', 'SCHP', 'SPIP', 'STIP', 'LTPZ', 'VTIP', 'TDTT', 'TIPX', 'CPII', 'RINF'];
+const tipsEtfs = {
+    'VTIP': '0-5Y',
+    'STIP': '0-5Y',
+    'TDTT': '3Y dur.',
+    'TIPX': '1-10Y',
+    'LTPZ': '15-30Y',
+    'TIP': 'Broad',
+    'SCHP': 'Broad',
+    'SPIP': 'Broad',
+    'CPII': 'Near term',
+    'RINF': 'Long term',
+    'IVOL': 'Volatility'
+};
 
 class TreasuriesMonitor extends React.Component {
     constructor(props) {
@@ -155,7 +167,7 @@ class TreasuriesMonitor extends React.Component {
 
 
         tips_data_table = <div
-            style={{ height: '200px', width: '600px', overflow: 'auto' }}
+            style={{ height: '200px', width: '560px', overflow: 'auto' }}
         >
             <Table
                 id="tips-benchmark-table"
@@ -204,21 +216,17 @@ class TreasuriesMonitor extends React.Component {
                 >
                     <Col>
                         {/* Tsy ETF table */}
-                        <h2>Treasury ETFs</h2>
+                        <h2>ETFs</h2>
                         <EtfTable
                             id="tsy-etfs-table"
                             height="325px"
-                            width="600px"
+                            width="560px"
                             etfs={tsyEtfs}
                             data={tsyEtfData}
                             getChangeColor={this.getChangeColor}
                             logo={this.props.referenceData.logos.yf}
                         />
                     </Col>
-                </Row>
-                <Row
-                    style={{ paddingTop: '25px' }}
-                >
                     <Col>
                         {/* Tips benchmark table */}
                         <h2>TIPS</h2>
