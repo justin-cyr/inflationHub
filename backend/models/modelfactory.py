@@ -24,7 +24,7 @@ class ModelFactory(object):
         domainX = params.get('domainX')
         domainY = params.get('domainY')
         fitting_method_str = params.get('fitting_method_str')
-        t0_date = params.get('t0_date', base_date)
+        t0_date = params.get('t0_date')
         calibration_tolerance = float(params.get('calibration_tolerance', cfg.calibration_tolerance_))
         opt_method = params.get('opt_method', cfg.TRUST_CONSTR)
         initial_guess = params.get('initial_guess', [])
