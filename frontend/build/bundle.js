@@ -6061,6 +6061,132 @@ const mapStateToProps = state => ({
 
 /***/ }),
 
+/***/ "./components/market_data/etf_table.jsx":
+/*!**********************************************!*\
+  !*** ./components/market_data/etf_table.jsx ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+
+
+const unchColor = '#bdbdbd'; // default text color
+
+const bbgColor = '#ff6600'; // orange
+
+class EtfTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  constructor(props) {
+    super(props);
+    /* expect these props:
+        etfs: (Object) { ticker: description }
+        data: (Object) { ticker: {price, change, changePercent, time, ... } }
+        id: (string)
+        height: (string)
+        width: (string)
+        getChangeColor: function
+        logo: (string)
+    */
+
+    this.getChangeColor = this.props.getChangeColor;
+  }
+
+  render() {
+    const loading_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("center", null, '... Loading data ...');
+    let etf_data_table = loading_data_table;
+    const etf_table_rows = Object.keys(this.props.etfs).map(ticker => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      key: ticker
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: bbgColor
+      }
+    }, ticker), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: bbgColor
+      }
+    }, this.props.etfs[ticker]), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: unchColor
+      }
+    }, ticker in this.props.data ? this.props.data[ticker].price.toFixed(3) : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: this.getChangeColor(this.props.data, ticker, 'changePercent')
+      }
+    }, ticker in this.props.data ? this.props.data[ticker].changePercent.toFixed(3) + '% (' + this.props.data[ticker].change.toFixed(3) + ')' : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center',
+        color: unchColor
+      }
+    }, ticker in this.props.data ? this.props.data[ticker].dayVolume : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+      style: {
+        textAlign: 'center'
+      }
+    }, ticker in this.props.data ? new Date(this.props.data[ticker].time).toLocaleTimeString() : '')));
+    etf_data_table = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        height: this.props.height,
+        width: this.props.width,
+        overflow: 'auto'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      id: this.props.id,
+      responsive: true,
+      hover: true
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tr", {
+      style: {
+        color: unchColor
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Ticker"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Description"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: this.props.logo,
+      width: "36",
+      height: "24"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Change"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Volume"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+      style: {
+        textAlign: 'center'
+      }
+    }, "Timestamp"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("tbody", {
+      style: {
+        color: unchColor
+      }
+    }, etf_table_rows)));
+    return etf_data_table;
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EtfTable);
+
+/***/ }),
+
 /***/ "./components/market_data/futures_table.jsx":
 /*!**************************************************!*\
   !*** ./components/market_data/futures_table.jsx ***!
@@ -6486,10 +6612,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
-/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
-/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
-/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-bootstrap/Col */ "./node_modules/react-bootstrap/esm/Col.js");
+/* harmony import */ var react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-bootstrap/Container */ "./node_modules/react-bootstrap/esm/Container.js");
+/* harmony import */ var react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-bootstrap/Row */ "./node_modules/react-bootstrap/esm/Row.js");
+/* harmony import */ var react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-bootstrap/Table */ "./node_modules/react-bootstrap/esm/Table.js");
+/* harmony import */ var _etf_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./etf_table */ "./components/market_data/etf_table.jsx");
+
 
 
 
@@ -6498,6 +6626,16 @@ __webpack_require__.r(__webpack_exports__);
 const unchColor = '#bdbdbd'; // default text color
 
 const bbgColor = '#ff6600'; // orange
+
+const tsyEtfs = {
+  'SHV': '0-1Y',
+  'SHY': '1-3Y',
+  'IEI': '3-7Y',
+  'IEF': '7-10Y',
+  'TLH': '10-20Y',
+  'TLT': '20-30Y'
+};
+const tipsEtfs = ['TIP', 'SCHP', 'SPIP', 'STIP', 'LTPZ', 'VTIP', 'TDTT', 'TIPX', 'CPII', 'RINF'];
 
 class TreasuriesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
   constructor(props) {
@@ -6572,7 +6710,7 @@ class TreasuriesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         height: '600px',
         overflow: 'auto'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "tsys-benchmark-table",
       responsive: true,
       hover: true
@@ -6697,7 +6835,7 @@ class TreasuriesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         width: '600px',
         overflow: 'auto'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Table__WEBPACK_IMPORTED_MODULE_2__["default"], {
       id: "tips-benchmark-table",
       responsive: true,
       hover: true
@@ -6741,14 +6879,35 @@ class TreasuriesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         color: unchColor
       }
-    }, tips_table_rows)));
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    }, tips_table_rows))); // Treasury ETFs table data
+
+    let tsyEtfData = {};
+
+    for (let ticker of Object.keys(tsyEtfs)) {
+      if (ticker in this.props.quotes.daily.yfQuotes) {
+        tsyEtfData[ticker] = this.props.quotes.daily.yfQuotes[ticker];
+      }
+    }
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Container__WEBPACK_IMPORTED_MODULE_3__["default"], {
       fluid: true
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Treasuries"), tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Treasuries"), tsy_data_table), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], {
       style: {
         paddingTop: '25px'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_4__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "TIPS"), tips_data_table)));
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "Treasury ETFs"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_etf_table__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      id: "tsy-etfs-table",
+      height: "325px",
+      width: "600px",
+      etfs: tsyEtfs,
+      data: tsyEtfData,
+      getChangeColor: this.getChangeColor,
+      logo: this.props.referenceData.logos.cnbc
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Row__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      style: {
+        paddingTop: '25px'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react_bootstrap_Col__WEBPACK_IMPORTED_MODULE_5__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", null, "TIPS"), tips_data_table)));
   }
 
 }

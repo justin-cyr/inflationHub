@@ -5,8 +5,20 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
+import EtfTable from './etf_table';
+
 const unchColor = '#bdbdbd'; // default text color
 const bbgColor = '#ff6600'; // orange
+
+const tsyEtfs = {
+    'SHV': '0-1Y',
+    'SHY': '1-3Y',
+    'IEI': '3-7Y',
+    'IEF': '7-10Y',
+    'TLH': '10-20Y',
+    'TLT': '20-30Y',
+};
+const tipsEtfs = ['TIP', 'SCHP', 'SPIP', 'STIP', 'LTPZ', 'VTIP', 'TDTT', 'TIPX', 'CPII', 'RINF'];
 
 class TreasuriesMonitor extends React.Component {
     constructor(props) {
@@ -172,12 +184,37 @@ class TreasuriesMonitor extends React.Component {
             </Table>
         </div>;
 
+        // Treasury ETFs table data
+        let tsyEtfData = {};
+        for (let ticker of Object.keys(tsyEtfs)) {
+            if (ticker in this.props.quotes.daily.yfQuotes) {
+                tsyEtfData[ticker] = this.props.quotes.daily.yfQuotes[ticker]
+            }
+        }
+
         return (
             <Container fluid>
                 <Row>
                     {/* Tsys benchmark table */}
                     <h2>Treasuries</h2>
                     {tsy_data_table}
+                </Row>
+                <Row
+                    style={{ paddingTop: '25px' }}
+                >
+                    <Col>
+                        {/* Tsy ETF table */}
+                        <h2>Treasury ETFs</h2>
+                        <EtfTable
+                            id="tsy-etfs-table"
+                            height="325px"
+                            width="600px"
+                            etfs={tsyEtfs}
+                            data={tsyEtfData}
+                            getChangeColor={this.getChangeColor}
+                            logo={this.props.referenceData.logos.cnbc}
+                        />
+                    </Col>
                 </Row>
                 <Row
                     style={{ paddingTop: '25px' }}
