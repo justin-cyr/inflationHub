@@ -287,7 +287,7 @@ export default (state = _emptyState, action) => {
                 daily: {
                     ...state.daily,
                     yfQuotes: {
-                        ...state.yfQuotes,
+                        ...state.daily.yfQuotes,
                         [ticker]: action.response
                     }
                 }

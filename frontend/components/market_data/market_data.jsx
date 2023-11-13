@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Tab from 'react-bootstrap/Tab';
 
 import TreasuriesMonitor from './treasuries_monitor_container';
+import InflationMonitor from './inflation_monitor_container';
 import BondFuturesMonitor from './bond_futures_monitor_container';
 import IRFuturesMonitor from './ir_futures_monitor_container';
 
@@ -46,6 +47,7 @@ class MarketData extends React.Component {
                             >
                                 <ListGroup>
                                     <ListGroup.Item action href="#/market_data/treasuries_monitor">Treasuries Monitor</ListGroup.Item>
+                                    <ListGroup.Item action href="#/market_data/inflation_monitor">Inflation Monitor</ListGroup.Item>
                                     <ListGroup.Item action href="#/market_data/bond_futures_monitor">Bond Futures Monitor</ListGroup.Item>
                                     <ListGroup.Item action href="#/market_data/ir_futures_monitor">IR Futures Monitor</ListGroup.Item>
                                 </ListGroup>
@@ -58,6 +60,11 @@ class MarketData extends React.Component {
                                     <Tab.Pane eventKey="#/market_data/treasuries_monitor">
                                         <h3>{'Treasuries Monitor'}</h3>
                                         <TreasuriesMonitor getChangeColor={this.getChangeColor} />
+                                    </Tab.Pane>
+
+                                    <Tab.Pane eventKey="#/market_data/inflation_monitor">
+                                        <h3>{'Inflation Monitor'}</h3>
+                                        <InflationMonitor getChangeColor={this.getChangeColor} />
                                     </Tab.Pane>
 
                                     <Tab.Pane eventKey="#/market_data/bond_futures_monitor">
