@@ -6142,7 +6142,7 @@ class EtfTable extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
         textAlign: 'center',
         color: unchColor
       }
-    }, ticker in this.props.data ? this.props.data[ticker].dayVolume.toLocaleString() : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
+    }, ticker in this.props.data && 'dayVolume' in this.props.data[ticker] ? this.props.data[ticker].dayVolume.toLocaleString() : ''), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("td", {
       style: {
         textAlign: 'center'
       }
