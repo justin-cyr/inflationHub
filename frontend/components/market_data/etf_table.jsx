@@ -46,7 +46,7 @@ class EtfTable extends React.Component {
                 <td style={{
                     textAlign: 'center',
                     color: unchColor
-                }}>{(ticker in this.props.data) ? this.props.data[ticker].dayVolume.toLocaleString() : ''}</td>
+                }}>{((ticker in this.props.data) && ('dayVolume' in this.props.data[ticker])) ? this.props.data[ticker].dayVolume.toLocaleString() : ''}</td>
                 <td style={{ textAlign: 'center' }}>{(ticker in this.props.data) ? (new Date(this.props.data[ticker].time)).toLocaleTimeString() : ''}</td>
             </tr>
         );
