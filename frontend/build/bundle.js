@@ -5913,7 +5913,11 @@ class BondFuturesMonitor extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
       style: {
         textAlign: 'center'
       }
-    }, "Price"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
+    }, "Price", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+      src: this.props.referenceData.logos.cme,
+      width: "30",
+      height: "30"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("th", {
       style: {
         textAlign: 'center'
       }
@@ -7789,20 +7793,24 @@ const newCtdOtrTable = (currentCtdOtrTable, responseData) => {
     return responseData;
   }
 
-  let newCtdOtrTabe = currentCtdOtrTable;
+  let newCtdOtrTabe = [];
 
   for (let record of responseData) {
-    for (let i = 0; i < newCtdOtrTabe.length; ++i) {
-      let existingRecord = newCtdOtrTabe[i];
+    for (let i = 0; i < currentCtdOtrTable.length; ++i) {
+      let existingRecord = currentCtdOtrTable[i];
 
       if (record.futureTicker === existingRecord.futureTicker) {
-        const yieldChange = existingRecord.fwdYield - record.fwdYield;
+        const yieldChange = record.fwdYield - existingRecord.fwdYield;
 
         if (yieldChange !== 0) {
-          existingRecord = record;
+          record.yieldChange = yieldChange;
+          newCtdOtrTabe.push(record);
+        } else {
+          existingRecord.yieldChange = 0;
+          newCtdOtrTabe.push(existingRecord);
         }
 
-        existingRecord.yieldChange = yieldChange;
+        break;
       }
     }
   }
