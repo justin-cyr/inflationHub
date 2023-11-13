@@ -47,12 +47,6 @@ class BuildSettingsCPICurve(BuildSettings):
         super().__init__(domainX, domainY, fitting_method_str)
 
         self.validate()
-
-        if self.domainY in [domains.TIME_WEIGHTED_ZERO_RATE, domains.ZERO_RATE]:
-            # t0_date is required
-            if not t0_date:
-                raise ValueError(f'BuildSettingsCPICurve: t0_date is required when domainY={self.domainY}.')
-            
         self.t0_date = t0_date
 
     @classmethod

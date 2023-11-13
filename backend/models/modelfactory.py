@@ -24,7 +24,7 @@ class ModelFactory(object):
         domainX = params.get('domainX')
         domainY = params.get('domainY')
         fitting_method_str = params.get('fitting_method_str')
-        t0_date = params.get('t0_date', base_date)
+        t0_date = params.get('t0_date')
         calibration_tolerance = float(params.get('calibration_tolerance', cfg.calibration_tolerance_))
         opt_method = params.get('opt_method', cfg.TRUST_CONSTR)
         initial_guess = params.get('initial_guess', [])
@@ -83,5 +83,11 @@ class ModelFactory(object):
             quotes = DataAPI(quote_source).get_and_parse_data()['data']
             benchmark_bond_quotes = [BondYieldDataPoint.from_bond_nvps(**q).serialize() for q in quotes]
             return benchmark_bond_quotes
+
+        elif model_type == cfg.CPI:
+            quote_source = params['quote_source']
+            cpi_curve_quotes = DataAPI(quote_source).get_and_parse_data()['data']
+            return cpi_curve_quotes
+
         else:
             raise ValueError(f'ModelFactory.get_model_data: unsupported model type {model_type}')

@@ -19,7 +19,6 @@ class CpiModel(Model):
 
         # initialization
         self.training_data = []
-        self.t0_date = self.build_settings.t0_date if self.build_settings.t0_date else base_date
         self.t0_cpi = None
         self.seasonality_model = SeasonalityModel(self.base_date)
 
@@ -55,6 +54,9 @@ class CpiModel(Model):
 
         # Re-sort CPI level points
         cpi_level_points.sort(key=lambda p: p.date)
+
+        # Set t0_date, default to min date in training data
+        self.t0_date = self.build_settings.t0_date if self.build_settings.t0_date else cpi_level_points[0].date
 
         # Override reference models if provided
         for ref_model in reference_models:
@@ -95,10 +97,6 @@ class CpiModel(Model):
 
     @classmethod
     def build(cls, base_date, curve_data, domainX, domainY, fitting_method_str, t0_date=None):
-        # default t0_date to base_date
-        if not t0_date:
-            t0_date = base_date
-
         build_settings = BuildSettingsCPICurve(domainX, domainY, fitting_method_str, t0_date)
         return CpiModel(base_date, curve_data, build_settings)
 

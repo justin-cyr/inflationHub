@@ -5,8 +5,32 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 
+import EtfTable from './etf_table';
+
 const unchColor = '#bdbdbd'; // default text color
 const bbgColor = '#ff6600'; // orange
+
+const tsyEtfs = {
+    'SHV': '0-1Y',
+    'SHY': '1-3Y',
+    'IEI': '3-7Y',
+    'IEF': '7-10Y',
+    'TLH': '10-20Y',
+    'TLT': '20-30Y',
+};
+const tipsEtfs = {
+    'VTIP': '0-5Y',
+    'STIP': '0-5Y',
+    'TDTT': '3Y dur.',
+    'TIPX': '1-10Y',
+    'LTPZ': '15-30Y',
+    'TIP': 'Broad',
+    'SCHP': 'Broad',
+    'SPIP': 'Broad',
+    'CPII': 'Near term',
+    'RINF': 'Long term',
+    'IVOL': 'Volatility'
+};
 
 class TreasuriesMonitor extends React.Component {
     constructor(props) {
@@ -143,7 +167,7 @@ class TreasuriesMonitor extends React.Component {
 
 
         tips_data_table = <div
-            style={{ height: '200px', width: '600px', overflow: 'auto' }}
+            style={{ height: '200px', width: '560px', overflow: 'auto' }}
         >
             <Table
                 id="tips-benchmark-table"
@@ -172,6 +196,14 @@ class TreasuriesMonitor extends React.Component {
             </Table>
         </div>;
 
+        // Treasury ETFs table data
+        let tsyEtfData = {};
+        for (let ticker of Object.keys(tsyEtfs)) {
+            if (ticker in this.props.quotes.daily.yfQuotes) {
+                tsyEtfData[ticker] = this.props.quotes.daily.yfQuotes[ticker]
+            }
+        }
+
         return (
             <Container fluid>
                 <Row>
@@ -182,6 +214,19 @@ class TreasuriesMonitor extends React.Component {
                 <Row
                     style={{ paddingTop: '25px' }}
                 >
+                    <Col>
+                        {/* Tsy ETF table */}
+                        <h2>ETFs</h2>
+                        <EtfTable
+                            id="tsy-etfs-table"
+                            height="500px"
+                            width="560px"
+                            etfs={tsyEtfs}
+                            data={tsyEtfData}
+                            getChangeColor={this.getChangeColor}
+                            logo={this.props.referenceData.logos.yf}
+                        />
+                    </Col>
                     <Col>
                         {/* Tips benchmark table */}
                         <h2>TIPS</h2>

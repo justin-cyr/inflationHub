@@ -9,6 +9,7 @@ from xml.etree import ElementTree
 from flask import current_app as app
 
 from .utils import Date, DateTime
+from .curveconstruction.curvedata import CpiLevelDataPoint, YoYDataPoint
 
 # Read DataConfig.csv
 DATA_CONFIG = pd.read_csv(
@@ -127,6 +128,10 @@ class DataAPI(object):
             self.data_parser = QuikStrikeCtdOtrParser()
         elif data_parser == 'QuikStrikeFedWatchParser':
             self.data_parser = QuikStrikeFedWatchParser()
+        elif data_parser == 'CompositeParserTimeSeriesLatest':
+            self.data_parser = CompositeParserTimeSeriesLatest()
+        elif data_parser == 'InflationExpectationCurveDataParser':
+            self.data_parser = InflationExpectationCurveDataParser()
         elif data_parser == 'YahooQuoteJsonParser':
             self.data_parser = YahooQuoteJsonParser()
         elif data_parser == 'GasPricesExcelParser':
@@ -1415,6 +1420,47 @@ class CtdForwardYieldsParser(CompositeParserSingleton):
         for record in res:
             bond_list.append(self.parse_one_record(record))
         return bond_list
+
+
+class CompositeParserTimeSeriesLatest(Parser):
+    def validate_response(self, response):
+        if not isinstance(response, dict):
+            raise ValueError(f'{self.__class__.__name__}.{__name__}: expected response to be a dict')
+
+        for k, v in response.items():
+            if not isinstance(v, dict):
+                raise ValueError(f'{self.__class__.__name__}.{__name__}: expected dict value for key {k} but got {v}.')
+
+            required_keys = ['Date', k]
+            for required_key in required_keys:
+                if required_key not in v:
+                    raise KeyError(f'{self.__class__.__name__}.{__name__}: time series {k} missing {required_key}.')
+
+                if not isinstance(v[required_key], list) or not v[required_key]:
+                    raise ValueError(f'{self.__class__.__name__}.{__name__}: expected a non-empty list for time series {k} but got {v[required_key]}.')
+
+    def parse(self, response):
+        self.validate_response(response)
+        return {k: {'Date': v['Date'][-1], 'Value': v[k][-1]} for k, v in response.items()}
+
+
+class InflationExpectationCurveDataParser(CompositeParserTimeSeriesLatest):
+    def parse(self, response):
+        res = super().parse(response)
+        points = []
+        start_date = None
+        for k, v in res.items():
+            if len(k.split('CPI')) > 1:
+                start_date = Date(v['Date'])
+                points.append(CpiLevelDataPoint(v['Value'], start_date, label=k).serialize())
+                del res[k]
+                break
+        
+        for k, v in res.items():
+            tenor = k.split('Y')[0] + 'Y'
+            points.append(YoYDataPoint(v['Value'] / 100.0, start_date, tenor, label=k).serialize())
+        
+        return points
 
 
 def get_fred_data(key, name=None):
