@@ -219,7 +219,7 @@ class TreasuriesMonitor extends React.Component {
                         <h2>ETFs</h2>
                         <EtfTable
                             id="tsy-etfs-table"
-                            height="325px"
+                            height="500px"
                             width="560px"
                             etfs={tsyEtfs}
                             data={tsyEtfData}

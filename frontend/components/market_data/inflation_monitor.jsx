@@ -128,7 +128,7 @@ class InflationMonitor extends React.Component {
                         <h2>Curve ETFs</h2>
                         <EtfTable
                             id="tips-curve-etf-table"
-                            height="300px"
+                            height="400px"
                             width="560px"
                             etfs={tipsCurveEtfs}
                             data={tipsCurveEtfData}
@@ -143,7 +143,7 @@ class InflationMonitor extends React.Component {
                         <h2>Broad ETFs</h2>
                         <EtfTable
                             id="tips-broad-etf-table"
-                            height="200px"
+                            height="300px"
                             width="560px"
                             etfs={tipsBroadEtfs}
                             data={tipsBroadEtfData}
@@ -156,7 +156,7 @@ class InflationMonitor extends React.Component {
                         <h2>Exotic ETFs</h2>
                         <EtfTable
                             id="tips-exotic-etf-table"
-                            height="200px"
+                            height="300px"
                             width="560px"
                             etfs={tipsExoticEtfs}
                             data={tipsExoticEtfData}
